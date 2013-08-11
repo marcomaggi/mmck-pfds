@@ -45,7 +45,7 @@ dnl done
 VICARE_OUTPUT
 AC_CONFIG_FILES([Makefile]
   [tests/Makefile]
-dnl  [doc/Makefile]
+  [doc/Makefile]
   [lib/Makefile]
   [meta/slackware/doinst.sh])
 AC_OUTPUT
