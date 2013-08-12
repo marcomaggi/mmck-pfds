@@ -7,16 +7,16 @@ dist_pkglibexec_SCRIPTS		= compile-all.sps
 
 # These files are hand-written.
 nobase_dist_libvicare_DATA = \
-	pdfs/bbtrees.sls		\
-	pdfs/deques.sls			\
-	pdfs/dlists.sls			\
-	pdfs/fingertrees.sls		\
-	pdfs/heaps.sls			\
-	pdfs/private/lazy-lists.sls	\
-	pdfs/psqs.sls			\
-	pdfs/queues.sls			\
-	pdfs/sequences.sls		\
-	pdfs/sets.sls
+	pfds/bbtrees.sls		\
+	pfds/deques.sls			\
+	pfds/dlists.sls			\
+	pfds/fingertrees.sls		\
+	pfds/heaps.sls			\
+	pfds/private/lazy-lists.sls	\
+	pfds/psqs.sls			\
+	pfds/queues.sls			\
+	pfds/sequences.sls		\
+	pfds/sets.sls
 
 #page
 #### generation of fasl files under the build directory
