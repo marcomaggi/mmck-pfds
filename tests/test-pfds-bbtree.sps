@@ -32,9 +32,28 @@
 
 ;;;; helpers
 
+(define-syntax test-eqv
+  (syntax-rules ()
+    ((_ ?result ?body)
+     (check ?body (=> eqv?) ?result))))
+
+(define-syntax test-equal
+  (syntax-rules ()
+    ((_ ?result ?body)
+     (check ?body => ?result))))
+
+(define-syntax test-exn
+  (syntax-rules ()
+    ((_ ?predicate ?body)
+     (check
+	 (guard (E ((?predicate E)
+		    #t)
+		   (else #f))
+	   ?body)
+       => #t))))
 
 
-(parametrise ((check-test-name	'base))
+(parametrise ((check-test-name	'core))
 
   (check
       (bbtree? (make-bbtree <))
@@ -44,50 +63,138 @@
       (bbtree-size (make-bbtree <))
     => 0)
 
+;;; --------------------------------------------------------------------
+
+  (check
+      (let ((bb (alist->bbtree '(("foo" . 10)
+				 ("bar" . 12))
+			       string<?)))
+	(bbtree-contains? bb "foo"))
+    => #t)
+
+  (check
+      (let ((bb (alist->bbtree '(("foo" . 10)
+				 ("bar" . 12))
+			       string<?)))
+	(bbtree-contains? bb "bar"))
+    => #t)
+
+  (check
+      (let ((bb (alist->bbtree '(("foo" . 10)
+				 ("bar" . 12))
+			       string<?)))
+	(bbtree-contains? bb "baz"))
+    => #f)
+
+;;; --------------------------------------------------------------------
+
+  (test-eqv '() (bbtree->alist (make-bbtree <)))
+  (test-eqv 0 (bbtree-size (alist->bbtree '() <)))
+  (test-equal '(("bar" . 12) ("baz" . 7) ("foo" . 1))
+	      (bbtree->alist (alist->bbtree '(("foo" . 1) ("bar" . 12) ("baz" . 7)) string<?)))
+  (let ((l '(48 2 89 23 7 11 78))
+	(tree-sort  (lambda (< l)
+		      (map car
+			(bbtree->alist
+			 (alist->bbtree (map (lambda (x) (cons x 'dummy))
+					  l)
+					<))))))
+    (test-equal (list-sort < l) (tree-sort < l)))
+
+  #t)
+
+
+(parametrise ((check-test-name	'setters-getters))
+
+  (let* ((tree1 (bbtree-set (make-bbtree <) 1 'a))
+	 (tree2 (bbtree-set tree1 2 'b))
+	 (tree3 (bbtree-set tree2 1 'c )))
+
+    (check (bbtree-size tree1)		=> 1)
+
+    (test-eqv 'a (bbtree-ref tree1 1))
+    (test-eqv 2 (bbtree-size tree2))
+    (test-eqv 'b (bbtree-ref tree2 2))
+    (test-eqv 2 (bbtree-size tree3))
+    (test-eqv 'c (bbtree-ref tree3 1))
+    (test-eqv #f (bbtree-ref tree1 #xdeadbeef #f))
+    (test-eqv 'not-in (bbtree-ref tree1 #xdeadbeef 'not-in))
+    (test-exn assertion-violation? (bbtree-ref tree3 20))
+
+    #f)
+
+  (check
+      (let* ((bb1 (alist->bbtree '(("one" . 1)) string<?))
+	     (bb2 (bbtree-set bb1 "two" 2)))
+	(bbtree->alist bb2))
+    => '(("one" . 1) ("two" . 2)))
+
+  #t)
+
+
+(parametrise ((check-test-name	'update))
+
+  (check
+      (let* ((bb1   (alist->bbtree '(("foo" . 10)
+				     ("bar" . 12))
+				   string<?))
+	     (dflt  0)
+	     (bb2   (bbtree-update bb1 "foo" add1 dflt)))
+	(bbtree->alist bb2))
+    => '(("bar" . 12)
+	 ("foo" . 11)))
+
+  (check
+      (let ((bb (alist->bbtree '(("foo" . 10)
+  				 ("bar" . 12))
+  			       string<?)))
+  	(bbtree->alist (bbtree-update bb "bar" add1 0)))
+    => '(("bar" . 13)
+	 ("foo" . 10)))
+
+  (check
+      (let* ((bb1  (alist->bbtree '(("foo" . 10)
+				    ("bar" . 12))
+				  string<?))
+	     (dflt 0)
+	     (bb2  (bbtree-update bb1 "baz" add1 dflt)))
+  	(bbtree->alist bb2))
+    => '(("bar" . 12)
+	 ("baz" . 1)
+	 ("foo" . 10)))
+
+  #t)
+
+
+(parametrise ((check-test-name	'delete))
+
+  (let* ((tree1 (bbtree-set (bbtree-set (bbtree-set (make-bbtree string<?) "a" 3)
+					"b" 8)
+			    "c" 19))
+	 (tree2 (bbtree-delete tree1 "b"))
+	 (tree3 (bbtree-delete tree2 "a")))
+    (test-eqv 3 (bbtree-size tree1))
+    (test-eqv #t (bbtree-contains? tree1 "b"))
+    (test-eqv #t (bbtree-contains? tree1 "a"))
+    (test-eqv 2 (bbtree-size tree2))
+    (test-eqv #f (bbtree-contains? tree2 "b"))
+    (test-eqv #t (bbtree-contains? tree2 "a"))
+    (test-eqv 1 (bbtree-size tree3))
+    (test-eqv #f (bbtree-contains? tree3 "a"))
+
+    ;;No exception raised here.
+    (check
+	(bbtree? (bbtree-delete (bbtree-delete tree3 "a") "a"))
+      => #t)
+
+    #f)
+
   #t)
 
 
 #;(parametrise ((check-test-name	'set))
 
-  (define-test-case bbtrees bbtree-set ()
-    (let* ([tree1 (bbtree-set (make-bbtree <) 1 'a)]
-	   [tree2 (bbtree-set tree1 2 'b)]
-	   [tree3 (bbtree-set tree2 1 'c )])
-      (test-eqv 1 (bbtree-size tree1))
-      (test-eqv 'a (bbtree-ref tree1 1))
-      (test-eqv 2 (bbtree-size tree2))
-      (test-eqv 'b (bbtree-ref tree2 2))
-      (test-eqv 2 (bbtree-size tree3))
-      (test-eqv 'c (bbtree-ref tree3 1))
-      (test-eqv #f (bbtree-ref tree1 #xdeadbeef #f))
-      (test-eqv 'not-in (bbtree-ref tree1 #xdeadbeef 'not-in))
-      (test-exn assertion-violation? (bbtree-ref tree3 20))))
 
-  (define-test-case bbtrees bbtree-update ()
-    (let ([bb (alist->bbtree '(("foo" . 10) ("bar" . 12)) string<?)]
-	  [add1 (lambda (x) (+ x 1))])
-      (test-case bbtree-update ()
-		 (test-eqv 11 (bbtree-update bb "foo" add1 0))
-		 (test-eqv 13 (bbtree-update bb "bar" add1 0))
-		 (test-eqv  1 (bbtree-update bb "baz" add1 0)))))
-
-  (define-test-case bbtrees bbtree-delete ()
-    (let* ([tree1 (bbtree-set (bbtree-set (bbtree-set (make-bbtree string<?) "a" 3)
-					  "b"
-					  8)
-			      "c"
-			      19)]
-	   [tree2 (bbtree-delete tree1 "b")]
-	   [tree3 (bbtree-delete tree2 "a")])
-      (test-eqv 3 (bbtree-size tree1))
-      (test-eqv #t (bbtree-contains? tree1 "b"))
-      (test-eqv #t (bbtree-contains? tree1 "a"))
-      (test-eqv 2 (bbtree-size tree2))
-      (test-eqv #f (bbtree-contains? tree2 "b"))
-      (test-eqv #t (bbtree-contains? tree2 "a"))
-      (test-eqv 1 (bbtree-size tree3))
-      (test-eqv #f (bbtree-contains? tree3 "a"))
-      (test-no-exn (bbtree-delete (bbtree-delete tree3 "a") "a"))))
 
   (define-test-case bbtrees bbtree-folds
     (let ((bb (alist->bbtree '(("foo" . 1) ("bar" . 12) ("baz" . 7)) string<?)))
@@ -114,20 +221,6 @@
 			     (bbtree->alist (bbtree-map (lambda (x) (cons x x)) bb)))
 		 (test-equal '((#\a . "foo") (#\b . "bar") (#\c . "baz") (#\d . "quux"))
 			     (bbtree->alist (bbtree-map symbol->string bb))))))
-
-  (define-test-case bbtrees conversion ()
-    (test-eqv '() (bbtree->alist (make-bbtree <)))
-    (test-eqv 0 (bbtree-size (alist->bbtree '() <)))
-    (test-equal '(("bar" . 12) ("baz" . 7) ("foo" . 1))
-		(bbtree->alist (alist->bbtree '(("foo" . 1) ("bar" . 12) ("baz" . 7)) string<?)))
-    (let ((l '(48 2 89 23 7 11 78))
-	  (tree-sort  (lambda (< l)
-			(map car
-			  (bbtree->alist
-			   (alist->bbtree (map (lambda (x) (cons x 'dummy))
-					    l)
-					  <))))))
-      (test-equal (list-sort < l) (tree-sort < l))))
 
   (define-test-case bbtrees bbtree-union
     (let ([empty (make-bbtree char<?)]

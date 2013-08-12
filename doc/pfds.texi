@@ -196,15 +196,51 @@ The package provides libraries for the following data structures:
 @cindex @library{pfds bbtrees}, library
 
 
+@menu
+* bbtrees conventions::         Documentation and @api{} conventions.
+* bbtrees core::                Constructors and predicates.
+* bbtrees inspection::          Inspection functions.
+* bbtrees setget::              Setters and getters.
+* bbtrees member::              Membership functions.
+@end menu
+
+@c page
+@node bbtrees conventions
+@section Documentation and @api{} conventions
+
+
+The following conventions for function arguments hold:
+
+@table @var
+@item bbtree
+It is the instance of bbtree the function acts upon.  Bbtree arguments
+are @strong{never} mutated.
+
+@item key
+The argument is an association key.  For all procedures which take a
+@var{key} as an argument, the @var{key} must be comparable with the
+ordering procedure of the bbtree.
+
+@item item<
+The argument @var{item<} must be the ordering procedure: a predicate
+function accepting two arguments and returning a boolean, @true{} if the
+first argument is strictly less than the second.  For numeric collected
+items: @var{item<} can be @func{<}; for string collected items:
+@var{item<} can be @func{string<?}.
+@end table
+
+@c page
+@node bbtrees core
+@section Constructors and predicates
+
 
 The following bindings are exported by the library @library{pfds
-bbtrees}.  For all procedures which take a key as an argument, the key
-must be comparable with the ordering procedure of the bbtree.
+bbtrees}.
 
 
-@defun make-bbtree @var{any} @var{any} @var{boolean}
-Return an empty bbtree.  Bbtrees derived from this one will use the
-procedure argument for ordering keys.
+@defun make-bbtree @var{item<}
+Build and return a new, empty bbtree.  Bbtrees derived from the returned
+one will use the procedure argument @var{item<} for ordering keys.
 @end defun
 
 
@@ -213,47 +249,123 @@ Return @true{} if the argument is a bbtree, @false{} otherwise.
 @end defun
 
 
+@defun bbtree->alist @var{bbtree}
+Return the key/value associations from @var{bbtree} as a list of pairs.
+The list returned is in sorted order according to the ordering procedure
+of @var{bbtree}.  A consequence of this is that one could write a sort
+procedure for lists of pairs as:
+
+@example
+(define (alist-sort alist <)
+  (bbtree->alist (alist->bbtree alist <)))
+@end example
+@end defun
+
+
+@defun alist->bbtree @var{alist} @var{item<}
+Return the bbtree containing each of the key/value pairs in @var{alist},
+using the @var{item<} argument as the ordering procedure.
+
+@example
+(import (vicare)
+  (pfds bbtrees))
+
+(alist->bbtree '(("foo" . 10) ("bar" . 12))
+               string<?)
+@result{} #[bbtree]
+@end example
+@end defun
+
+@c page
+@node bbtrees inspection
+@section Inspection functions
+
+
+The following bindings are exported by the library @library{pfds
+bbtrees}.
+
+
 @defun bbtree-size @var{bbtree}
 Return a non--negative integer representing number of elements in a
 bbtree.
 @end defun
 
 
+@defun bbtree-contains? @var{bbtree} @var{key}
+Return @true{} if there is association for @var{key} in @var{bbtree},
+@false{} otherwise.
+@end defun
+
+@c page
+@node bbtrees setget
+@section Setters and getters
+
+
+The following bindings are exported by the library @library{pfds
+bbtrees}.
+
+
 @defun bbtree-ref @var{bbtree} @var{key}
 @defunx bbtree-ref @var{bbtree} @var{key} @var{default}
-Return the value associated with the key in the bbtree.  If the value is
-not in the tree, then, if the optional third argument is passed, it is
-returned, otherwise an @condition{assertion-violation} condition is
-raised.
+Return the value associated with the @var{key} in the @var{bbtree}.  If
+the value is not in the tree, then, if the optional third argument is
+passed, it is returned, otherwise an @condition{assertion-violation}
+condition is raised.
 @end defun
 
 
 @defun bbtree-set @var{bbtree} @var{key} @var{new-value}
-Return a new bbtree with the @var{key} associated with the @var{value}.
-If the @var{key} is already in the bbtree, its associated value is
+Return a new bbtree with @var{key} associated to @var{new-value}.  If
+the @var{key} is already in @var{bbtree}, its associated value is
 replaced with the new @var{new-value} in the returned bbtree.
 @end defun
 
 
-@defun bbtree-update @var{bbtree} @var{any} (any -> any) any -> bbtree
-Return a new bbtree with the value associated with the key updated
-according to the update procedure.  If the key was not already in the
-bbtree, the update procedure is called on the default value, and the
-association is added to the bbtree.
+@defun bbtree-update @var{bbtree} @var{key} @var{proc} @var{default}
+Return a new bbtree with the value associated to @var{key} updated
+according to the update procedure @var{proc}.  If @var{key} was not
+already in @var{bbtree}, the update procedure is applied to
+@var{default}, and @var{key} is associated to the resulting value.
+
+The update procedure @var{proc} must accept a single argument, being the
+old value, and return a single value, being the new value.
+
+@example
+(import (vicare)
+  (pfds bbtrees))
+
+(let* ((bb1   (alist->bbtree '(("foo" . 10)
+                               ("bar" . 12))
+                             string<?))
+       (dflt  0)
+       (bb2   (bbtree-update bb1 "foo" add1 dflt)))
+  (bbtree->alist bb2))
+@result{} (("bar" . 12) ("foo" . 11))
+
+(let* ((bb1  (alist->bbtree '(("foo" . 10)
+                              ("bar" . 12))
+                            string<?))
+       (dflt 0)
+       (bb2  (bbtree-update bb "baz" add1 dflt)))
+  (bbtree->alist bb2))
+@result{} (("bar" . 12) ("baz" . 1) ("foo" . 10))
+@end example
 @end defun
 
 
-@defun bbtree-delete @var{bbtree} any -> bbtree
-Return a new bbtree with the key and its associated value removed.  If
-the key is not in the bbtree, the returned bbtree is a copy of the
-original
+@defun bbtree-delete @var{bbtree} @var{key}
+Return a new bbtree with the @var{key} and its associated value removed.
+If @var{key} is not in @var{bbtree}: the returned bbtree is a copy of
+the original.
 @end defun
 
+@c page
+@node bbtrees member
+@section Membership functions
 
-@defun bbtree-contains? @var{bbtree} @var{any}
-Return @true{} if there is association for @var{key} in the bbtree,
-@false{} otherwise.
-@end defun
+
+The following bindings are exported by the library @library{pfds
+bbtrees}.
 
 
 @defun bbtree-traverse : (any any (any -> any) (any -> any) any) any bbtree -> any
@@ -299,25 +411,6 @@ traversal instead (i.e. maximum to minimum).
 @defun bbtree-map : (any -> any) bbtree -> bbtree
 Return the tree obtained by updating the value of each node with the
 result of applying the procedure to its value.
-@end defun
-
-
-@defun bbtree->alist : bbtree -> Listof(Pairs)
-Return the key value associations of the bbtree as a list of pairs.  The
-list returned is in sorted order according to the ordering procedure of
-the bbtree.  A consequence of this is that one could write a sort
-procedure for lists of pairs as:
-
-@example
-(define (alist-sort alist <)
-  (bbtree->alist (alist->bbtree alist <)))
-@end example
-@end defun
-
-
-@defun alist->bbtree : Listof(Pairs) -> (any any -> boolean) -> bbtree
-Return the bbtree containing each of the key value pairs in the alist,
-using the @var{<} argument as the ordering procedure.
 @end defun
 
 
