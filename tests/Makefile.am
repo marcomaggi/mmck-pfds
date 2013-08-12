@@ -50,7 +50,7 @@ demo demos:
 #### extra files to be distributed
 
 EXTRA_DIST = \
-	test-pfds.sps
+	test-pfds-bbtree.sps
 
 #page
 #### interface to "make check"
@@ -65,7 +65,7 @@ SPS_LOG_COMPILER	= $(VICARE)
 AM_SPS_LOG_FLAGS	= $(VFLAGS)
 
 TESTS			= \
-	test-pfds.sps
+	test-pfds-bbtree.sps
 
 #page
 #### interface to "make installcheck"
