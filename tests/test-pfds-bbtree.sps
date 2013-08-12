@@ -101,6 +101,19 @@
 					<))))))
     (test-equal (list-sort < l) (tree-sort < l)))
 
+;;; --------------------------------------------------------------------
+
+  (check
+      (eq? < (bbtree-ordering-procedure (make-bbtree <)))
+    => #t)
+
+;;; --------------------------------------------------------------------
+
+  (check
+      (bbtree-keys (alist->bbtree '(("one" . 1) ("two" . 2))
+				  string<?))
+    => '("one" "two"))
+
   #t)
 
 

@@ -68,7 +68,8 @@ Vicare Scheme and providing this documentation is at:
 @center @value{REPACKAGED_GITHUB_URL}
 
 @noindent
-Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}
+Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}@*
+Edited by Marco Maggi @email{marco.maggi-ipsu@@poste.it}
 
 @quotation
 All rights reserved.
@@ -201,7 +202,9 @@ The package provides libraries for the following data structures:
 * bbtrees core::                Constructors and predicates.
 * bbtrees inspection::          Inspection functions.
 * bbtrees setget::              Setters and getters.
-* bbtrees member::              Membership functions.
+* bbtrees traversing::          Traversing functions.
+* bbtrees set::                 Set operations.
+* bbtrees index::               Indexing operations.
 @end menu
 
 @c page
@@ -296,6 +299,26 @@ Return @true{} if there is association for @var{key} in @var{bbtree},
 @false{} otherwise.
 @end defun
 
+
+@defun bbtree-ordering-procedure @var{bbtree}
+Return the ordering procedure used internally to order @var{bbtree}.
+@end defun
+
+
+@defun bbtree-keys @var{bbtree}
+Return a list containing all the keys of @var{bbtree}.  The keys are
+sorted according to the bbtree's ordering procedure.
+
+@example
+(import (vicare)
+  (pfds bbtrees))
+
+(bbtree-keys (alist->bbtree '(("one" . 1) ("two" . 2))
+                            string<?))
+@result{} ("one" "two")
+@end example
+@end defun
+
 @c page
 @node bbtrees setget
 @section Setters and getters
@@ -360,8 +383,8 @@ the original.
 @end defun
 
 @c page
-@node bbtrees member
-@section Membership functions
+@node bbtrees traversing
+@section Traversing functions
 
 
 The following bindings are exported by the library @library{pfds
@@ -413,11 +436,13 @@ Return the tree obtained by updating the value of each node with the
 result of applying the procedure to its value.
 @end defun
 
+@c page
+@node bbtrees set
+@section Set operations
 
-@defun bbtree-keys : bbtree -> Listof(any)
-Return a list containing all the keys of the bbtree.  The keys are
-sorted according to the bbtree's ordering procedure.
-@end defun
+
+The following bindings are exported by the library @library{pfds
+bbtrees}.
 
 
 @defun bbtree-union : bbtree bbtree -> bbtree
@@ -439,6 +464,14 @@ Return a bbtree containing all the associations which appear in both
 over those in @varii{bbtree}.
 @end defun
 
+@c page
+@node bbtrees index
+@section Indexing operations
+
+
+The following bindings are exported by the library @library{pfds
+bbtrees}.
+
 
 @defun bbtree-index bbtree any -> non-negative integer
 Return the index of the key in the bbtree.  Index is an integer between
@@ -451,11 +484,6 @@ procedure.
 @defun bbtree-ref/index bbtree non-negative-integer -> any any
 Return the key and value of the association in the bbtree at the given
 index.
-@end defun
-
-
-@defun bbtree-ordering-procedure : bbtree -> (any any -> bool)
-Return the ordering procedure used internally to order the bbtree.
 @end defun
 
 @c page
