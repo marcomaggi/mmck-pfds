@@ -45,6 +45,8 @@
 @set ORIGINAL_GITHUB_URL        @url{http://github.com/ijp/@value{PACKAGE_NICKNAME}}
 @set REPACKAGED_GITHUB_URL      @url{http://github.com/marcomaggi/@value{PACKAGE_NICKNAME}}
 
+@set REQUIRED_VICARE_VERSION    0.3d1
+
 @c page
 @c ------------------------------------------------------------
 @c Copyright notice.
@@ -144,10 +146,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 @menu
 * overview::                    Overview of the package.
+* bbtrees::                     Bounded Balance trees.
 
 Appendices
 
 * Package License::             Package license.
+* References::                  Bibliography and references.
 
 Indexes
 
@@ -166,7 +170,200 @@ Indexes
 This document describes version @value{VERSION} of @value{PACKAGE}, a
 set of purely functional data structures written in @rnrs{6} Scheme.
 
-The package requires at least Vicare Scheme 0.3d1.
+The package requires at least Vicare Scheme
+@value{REQUIRED_VICARE_VERSION}.
+
+The package provides libraries for the following data structures:
+
+@table @strong
+@item bbtrees
+@item deques
+@item dlists
+@item finger trees
+@item heaps
+@item priority search queues (psqs)
+@item queues
+@item sequences
+@item sets
+@end table
+
+@c page
+@node bbtrees
+@chapter Bounded Balance trees
+
+
+@cindex Library @library{pfds bbtrees}
+@cindex @library{pfds bbtrees}, library
+
+
+
+The following bindings are exported by the library @library{pfds
+bbtrees}.  For all procedures which take a key as an argument, the key
+must be comparable with the ordering procedure of the bbtree.
+
+
+@defun make-bbtree @var{any} @var{any} @var{boolean}
+Return an empty bbtree.  Bbtrees derived from this one will use the
+procedure argument for ordering keys.
+@end defun
+
+
+@defun bbtree? @var{any}
+Return @true{} if the argument is a bbtree, @false{} otherwise.
+@end defun
+
+
+@defun bbtree-size @var{bbtree}
+Return a non--negative integer representing number of elements in a
+bbtree.
+@end defun
+
+
+@defun bbtree-ref @var{bbtree} @var{key}
+@defunx bbtree-ref @var{bbtree} @var{key} @var{default}
+Return the value associated with the key in the bbtree.  If the value is
+not in the tree, then, if the optional third argument is passed, it is
+returned, otherwise an @condition{assertion-violation} condition is
+raised.
+@end defun
+
+
+@defun bbtree-set @var{bbtree} @var{key} @var{new-value}
+Return a new bbtree with the @var{key} associated with the @var{value}.
+If the @var{key} is already in the bbtree, its associated value is
+replaced with the new @var{new-value} in the returned bbtree.
+@end defun
+
+
+@defun bbtree-update @var{bbtree} @var{any} (any -> any) any -> bbtree
+Return a new bbtree with the value associated with the key updated
+according to the update procedure.  If the key was not already in the
+bbtree, the update procedure is called on the default value, and the
+association is added to the bbtree.
+@end defun
+
+
+@defun bbtree-delete @var{bbtree} any -> bbtree
+Return a new bbtree with the key and its associated value removed.  If
+the key is not in the bbtree, the returned bbtree is a copy of the
+original
+@end defun
+
+
+@defun bbtree-contains? @var{bbtree} @var{any}
+Return @true{} if there is association for @var{key} in the bbtree,
+@false{} otherwise.
+@end defun
+
+
+@defun bbtree-traverse : (any any (any -> any) (any -> any) any) any bbtree -> any
+A general tree traversal procedure.  Return the value of applying the
+traverser procedure to the current node's key, value, a procedure to
+traverse the left subtree, a procedure to traverse the right subtree,
+and a base value.  The subtree traversal procedures both take a base
+argument, and call @func{bbtree-traverse} recursively on the appropriate
+subtree.  It is mostly useful for implementing other, more specific tree
+traversal procedures. For example,
+
+@example
+(define (l-to-r-pre-order cons base bbtree)
+  (bbtree-traverse (lambda (key value left right base)
+                     (right (left (cons key value base))))
+                   base
+                   bbtree))
+@end example
+
+@noindent
+implements a left--to--right pre--order traversal variant of
+@func{bbtree-fold}.
+@end defun
+
+
+@defun bbtree-fold : (any any any -> any) any bbtree -> any
+Return the value obtained by iterating the combine procedure over each
+node in the tree.  The combine procedure takes three arguments, the key
+and value of the current node, and an accumulator value, and its return
+value is used as the accumulator value for the next node.  The initial
+accumulator value is provided by the base argument.  @func{bbtree-fold}
+performs an left--to--right in--order traversal or ``minimum key to
+maximum key''.
+@end defun
+
+
+@defun bbtree-fold-right : (any any any -> any) any bbtree -> any
+Like @func{bbtree-fold}, but it performs a right--to--left in--order
+traversal instead (i.e. maximum to minimum).
+@end defun
+
+
+@defun bbtree-map : (any -> any) bbtree -> bbtree
+Return the tree obtained by updating the value of each node with the
+result of applying the procedure to its value.
+@end defun
+
+
+@defun bbtree->alist : bbtree -> Listof(Pairs)
+Return the key value associations of the bbtree as a list of pairs.  The
+list returned is in sorted order according to the ordering procedure of
+the bbtree.  A consequence of this is that one could write a sort
+procedure for lists of pairs as:
+
+@example
+(define (alist-sort alist <)
+  (bbtree->alist (alist->bbtree alist <)))
+@end example
+@end defun
+
+
+@defun alist->bbtree : Listof(Pairs) -> (any any -> boolean) -> bbtree
+Return the bbtree containing each of the key value pairs in the alist,
+using the @var{<} argument as the ordering procedure.
+@end defun
+
+
+@defun bbtree-keys : bbtree -> Listof(any)
+Return a list containing all the keys of the bbtree.  The keys are
+sorted according to the bbtree's ordering procedure.
+@end defun
+
+
+@defun bbtree-union : bbtree bbtree -> bbtree
+Return a bbtree containing the union of the associations in
+@vari{bbtree} and @varii{bbtree}.  Where the same key occurs in both,
+the value in @vari{bbtree} is preferred.
+@end defun
+
+
+@defun bbtree-difference : bbtree bbtree -> bbtree
+Return a bbtree containing the all the associations in @vari{bbtree},
+which do not occur in @varii{bbtree}.
+@end defun
+
+
+@defun bbtree-intersection : bbtree bbtree -> bbtree
+Return a bbtree containing all the associations which appear in both
+@vari{bbtree} and @varii{bbtree}.  The value in bbtree1 are preferred
+over those in @varii{bbtree}.
+@end defun
+
+
+@defun bbtree-index bbtree any -> non-negative integer
+Return the index of the key in the bbtree.  Index is an integer between
+@code{0} and @code{@var{size} - 1}, with the a key having a lower index
+than another if first-key < second-key, according to the bbtree ordering
+procedure.
+@end defun
+
+
+@defun bbtree-ref/index bbtree non-negative-integer -> any any
+Return the key and value of the association in the bbtree at the given
+index.
+@end defun
+
+
+@defun bbtree-ordering-procedure : bbtree -> (any any -> bool)
+Return the ordering procedure used internally to order the bbtree.
+@end defun
 
 @c page
 @node Package License
@@ -208,6 +405,66 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+
+@c page
+@node References
+@appendix Bibliography and references
+
+
+The queues and deques are based on the paper:
+
+@quotation
+Chris Okasaki.  ``Simple and Efficient Purely Functional Queues and
+Deques''.  @url{http:/@//@/www.eecs.usma.edu/@/webs/@/people/@/okasaki/@/pubs.html#jfp95}.
+@end quotation
+
+The bbtrees and sets are based on the paper:
+
+@quotation
+Stephen Adams.  ``Implementing Sets Efficiently in a Functional
+Language''.  @url{http:/@//@/groups.csail.mit.edu/@/mac/@/users/@/adams/@/BB/@/92-10.ps}.
+@end quotation
+
+Dlists are a well known trick in the functional programming community,
+going back to at least:
+
+@quotation
+John Hughes.  ``A Novel Representation of Lists and its application to
+the Function @emph{Reverse}''.  1984.
+@url{http:/@//@/www.cs.tufts.edu/@/~nr/@/cs257/@/archive/@/john-hughes/@/lists.pdf}
+@end quotation
+
+@noindent
+although he does not give them this name.  The trick is likely even
+older than that (he points to a paper by Bird), though I have not the
+knowledge to confirm this.
+
+The implementation of priority search queues is described in:
+
+@quotation
+Ralf Hinze.  ``A Simple Implementation Technique for Priority Search
+Queues''.
+@url{http:/@//@/www.cs.ox.ac.uk/@/people/@/ralf.hinze/@/publications/@/UU-CS-2001-09.pdf}.
+@end quotation
+
+The heaps use a height--biased leftist tree implementation.  Finger
+trees are described in.
+
+@quotation
+Ross Paterson and Ralf Hinze.  ``Finger trees: a simple general-purpose
+data structure''.
+@url{http:/@//@/www.soi.city.ac.uk/@/~ross/@/papers/@/FingerTree.html}.
+@end quotation
+
+@c ------------------------------------------------------------
+
+@subsubheading Thanks
+
+Thanks to Llewellyn Pritchard (@url{https:/@//@/github.com/@/leppie})
+for testing this on IronScheme
+(@url{https:/@//@/ironscheme.codeplex.com/@/}), and to Andy Wingo
+(@url{http:/@//@/wingolog.org/@/}) for pointing out priority search
+queues to me, and prodding me into implementing them.
 
 @c page
 @node concept index
