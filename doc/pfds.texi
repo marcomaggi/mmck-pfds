@@ -153,6 +153,7 @@ POSSIBILITY OF SUCH DAMAGE.
 * fingertrees::                 A simple general-purpose data structure.
 * heaps::                       Heaps.
 * psqs::                        Priority search queues.
+* queues::                      Purely functional queues.
 
 Appendices
 
@@ -1165,6 +1166,68 @@ alist is ordered by key according to the predicate for @var{psq}.
 @defun psq-at-most-range @var{psq} @var{priority} @var{min-key} @var{max-key}
 Similar to @func{psq-at-most}, but it also takes an upper and lower
 bound, for the keys it will return.  These bounds are inclusive.
+@end defun
+
+@c page
+@node queues
+@chapter Purely functional queues
+
+
+@cindex Library @library{pfds queues}
+@cindex @library{pfds queues}, library
+
+
+The following bindings are exported by the library @library{pfds queues}.
+
+
+@defun make-queue
+Return a queue containing no items.
+@end defun
+
+
+@defun queue? @var{obj}
+Return @true{} if @var{obj} is a queue, @false{} otherwise.
+@end defun
+
+
+@defun queue-length @var{queue}
+Return a non--negative integer representing the number of items in
+@var{queue}.
+@end defun
+
+
+@defun queue-empty? @var{queue}
+Return @true{} if there are no items in @var{queue}, @false{} otherwise.
+@end defun
+
+
+@defun enqueue @var{queue} @var{item}
+Return a new queue with the enqueued @var{item} at the end.
+@end defun
+
+
+@defun dequeue @var{queue}
+Return 2 values: the item at the front of @var{queue}, and a new queue
+containing the all the other items.  Raise a @condition{queue-empty}
+condition if @var{queue} is empty.
+@end defun
+
+
+@defun queue-empty-condition? @var{obj}
+Return @true{} if @var{obj} is a @condition{queue-empty} condition
+object, @false{} otherwise.
+@end defun
+
+
+@defun queue->list @var{queue}
+Return a list containing all the items in @var{queue}.  The order of the
+item in the list is the same as the order of the elements in the queue.
+@end defun
+
+
+@defun list->queue @var{list-of-items}
+Return a queue containing all the items in the given list.  The order of
+the items in the queue is the same as the order in the list.
 @end defun
 
 @c page

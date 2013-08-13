@@ -6,7 +6,8 @@ PFDS_ALL_TESTS	= \
 	test-pfds-dlists.sps		\
 	test-pfds-fingertrees.sps	\
 	test-pfds-heaps.sps		\
-	test-pfds-psqs.sps
+	test-pfds-psqs.sps		\
+	test-pfds-queues.sps
 
 EXTRA_DIST	= $(PFDS_ALL_TESTS)
 TESTS		= $(PFDS_ALL_TESTS)
