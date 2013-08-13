@@ -2,7 +2,7 @@ dnl @configure_input@
 dnl
 
 AC_PREREQ([2.69])
-AC_INIT([PFDS],[0.3a0],[marco.maggi-ipsu@poste.it],
+AC_INIT([PFDS],[0.3a1],[marco.maggi-ipsu@poste.it],
   [pfds],[https://github.com/marcomaggi/pfds])
 AC_CONFIG_SRCDIR([lib])
 AC_CONFIG_MACRO_DIR([autotools])
