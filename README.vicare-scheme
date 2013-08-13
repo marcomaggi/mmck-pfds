@@ -19,8 +19,21 @@ Topics
 1. Introduction
 ---------------
 
-This package is just a  repackaging of Ian Price's PFDS with
-GNU  Autotools  for   package  infrastructure  and  verified
+PFDS is a  set of purely functional  data structures written
+in R6RS Scheme.  It contains:
+
+- queues
+- deques
+- bbtrees
+- sets
+- dlists
+- priority search queues (psqs)
+- finger trees
+- sequences
+- heaps
+
+  This package  is just  a repackaging  of Ian  Price's PFDS
+with GNU  Autotools for package infrastructure  and verified
 support for Vicare Scheme.
 
   *NOTE* The  maintainer of  this repackaging  supports only
@@ -39,7 +52,7 @@ See the LICENSE file.
 To  install PFDS  from  a proper  release  tarball, we  must
 unpack the archive then do:
 
-    $ cd pfds-0.1d0
+    $ cd pfds-0.3a0
     $ mkdir build
     $ cd build
 
@@ -128,13 +141,17 @@ and support for Vicare Scheme must be reported to:
 C. Resources
 ------------
 
-The latest  version of  PFDS for  Vicare Scheme  can be
-found here:
+The latest  version of PFDS  for Vicare Scheme can  be found
+here:
 
 	    <http://github.com/marcomaggi/pfds/>
 
-in  the "vicare-scheme"  branch.  The  original PFDS  can be
-found here:
+in   the  "vicare-scheme"   branch;  the   documentation  is
+available online:
+
+       <http://marcomaggi.github.com/docs/pfds.html>
+
+  The original PFDS can be found here:
 
 	       <https://github.com/ijp/pfds>
 
