@@ -152,6 +152,7 @@ POSSIBILITY OF SUCH DAMAGE.
 * dlists::                      Difference Lists.
 * fingertrees::                 A simple general-purpose data structure.
 * heaps::                       Heaps.
+* psqs::                        Priority search queues.
 
 Appendices
 
@@ -1017,6 +1018,153 @@ that all the items are ordered by the given procedure @var{item<}.
 
 @defun heap-ordering-procedure @var{heap}
 Return the ordering procedure used internally by @var{heap}.
+@end defun
+
+@c page
+@node psqs
+@chapter Priority search queues
+
+
+@cindex Library @library{pfds psqs}
+@cindex @library{pfds psqs}, library
+
+
+Priority search queues are a combination of two common abstract data
+types: finite maps, and priority queues.  As such, it provides for
+access, insertion, removal and update on arbitrary keys, as well as for
+easy removal of the element with the lowest priority.
+
+Where a procedure takes a key or priority these are expected to be
+compatible with the relevant ordering procedures on the psq.
+
+@menu
+* psqs basic::                  Basic operations.
+* psqs map::                    Finite map operations.
+* psqs priority::               Priority queue operations.
+* psqs ranged::                 Ranged query functions.
+@end menu
+
+@c page
+@node psqs basic
+@section Basic operations
+
+
+The following bindings are exported by the library @library{pfds psqs}.
+
+
+@defun make-psq @var{key<} @var{priority<}
+Take two ordering procedures: one for keys, and another for priorities,
+and return an empty priority search queue.
+@end defun
+
+
+@defun psq? @var{obj}
+Return @true{} if @var{obj} is a priority search queue, @false{}
+otherwise.
+@end defun
+
+
+@defun psq-empty? @var{psq}
+Return @true{} if the priority search queue contains no elements,
+@false{} otherwise.
+@end defun
+
+
+@defun psq-size @var{psq}
+Return a non--negative integer represeting the number of associations in
+the priority search queue.
+@end defun
+
+@c page
+@node psqs map
+@section Finite map operations
+
+
+The following bindings are exported by the library @library{pfds psqs}.
+
+
+@defun psq-ref @var{psq} @var{key}
+Return the priority of @var{key} if it is in @var{psq}.  If @var{key} is
+not in @var{psq} an assertion violation is raised.
+@end defun
+
+
+@defun psq-set @var{psq} @var{key} @var{priority}
+Return the priority search queue obtained from inserting @var{key} with
+a given @var{priority}.  If @var{key} is already in the priority search
+queue, it updates the priority to the new value.
+@end defun
+
+
+@defun psq-update @var{psq} @var{key} @var{priority-update} @var{priority}
+Return the priority search queue obtained by modifying the priority of
+@var{key}, by the given function @var{priority-update}.  If @var{key} is
+not in @var{psq}: it is inserted with the priority obtained by calling
+the function @var{update} on the default value @var{priority-update}.
+
+@var{priority-update} must be a procedure accepting a priority value as
+single argument and returning a priority value as single value.
+@end defun
+
+
+@defun psq-delete @var{psq} @var{key}
+Return the priority search queue obtained by removing the
+@var{key}/priority association from the @var{psq}.  If @var{key} is not
+in the queue: the returned search queue will be the same as the
+original.
+@end defun
+
+
+@defun psq-contains? @var{psq} @var{key}
+Return @true{} if there is an association for the given @var{key} in
+@var{psq}, @false{} otherwise.
+@end defun
+
+@c page
+@node psqs priority
+@section Priority queue operations
+
+
+The following bindings are exported by the library @library{pfds psqs}.
+
+
+@defun psq-min @var{psq}
+Return the key of the minimum association in @var{psq}.  If the queue is
+empty: an assertion violation is raised.
+@end defun
+
+
+@defun psq-delete-min : psq -> psq
+Return the priority search queue obtained by removing the minimum
+association in @var{psq}.  If the queue is empty: an assertion violation
+is raised.
+@end defun
+
+
+@defun psq-pop @var{psq}
+Return 2 values: the minimum key and the priority search queue obtained
+by removing the minimum association from @var{psq}.  If the queue is
+empty: an assertion violation is raised.
+@end defun
+
+@c page
+@node psqs ranged
+@section Ranged query functions
+
+
+The following bindings are exported by the library @library{pfds psqs}.
+
+
+@defun psq-at-most @var{psq} @var{priority}
+Return an alist containing all the associations in @var{psq} with
+priority less than, or equal to, the given @var{priority}.  The returned
+alist is ordered by key according to the predicate for @var{psq}.
+@end defun
+
+
+@defun psq-at-most-range @var{psq} @var{priority} @var{min-key} @var{max-key}
+Similar to @func{psq-at-most}, but it also takes an upper and lower
+bound, for the keys it will return.  These bounds are inclusive.
 @end defun
 
 @c page
