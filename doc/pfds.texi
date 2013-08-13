@@ -150,6 +150,7 @@ POSSIBILITY OF SUCH DAMAGE.
 * bbtrees::                     Bounded Balance trees.
 * deques::                      Double queues.
 * dlists::                      Difference Lists.
+* fingertrees::                 A simple general-purpose data structure.
 
 Appendices
 
@@ -722,6 +723,181 @@ Return a list consisting of all the elements of the @var{dlist}.
 @defun list->dlist @var{list-of-items}
 Return a dlist consisting of all the elements of the given list
 argument.
+@end defun
+
+@c page
+@node fingertrees
+@chapter A simple general--purpose data structure
+
+
+Fingertrees are a generalised form of deque, that we can parametrise to
+compute a value, called the ``measure'' of a fingertree.  This measure
+will be updated incrementally as we add and remove elements from the
+fingertree.  Among other things, this allows fingertrees to be used
+where you otherwise might have written a custom data structure.
+
+To compute the measure, fingertrees require pieces of information: a
+converter, a combiner, and an identity.
+
+@itemize
+@item
+The @dfn{converter} is a procedure of one argument, that maps values in
+the fingertree to other values which are used for computing the measure.
+
+@item
+The @dfn{combiner} is a procedure of two arguments, and combines these
+into one value representing them both.  A combiner must be associative
+i.e.
+
+@example
+(combine A (combine B C)) @equiv{} (combine (combine A B) C)
+@end example
+
+@noindent
+for all values @code{A}, @code{B} and @code{C}.
+
+@item
+An @dfn{identity} is a value that represents the measure of an empty
+fingertree.  It must obey the rule that @code{(combine X identity)},
+@code{(combine identity X)} and @code{X} are always the same.
+@end itemize
+
+To make things more concrete, a simple use of a fingertree is as a deque
+that keeps a running total.  In this case, the converter can simply be
+the function @code{(lambda (x) x)} if it is a deque of integers, the combiner
+would be @func{+}, and the identity @code{0}.
+
+@example
+(define l '(3 1 4 1 5 9))
+
+(define ft (list->fingertree l 0 + (lambda (x) x)))
+
+(fingertree-measure ft)
+@result{} 23
+
+(fingertree-measure (fingertree-snoc ft 2))
+@result{} 25
+
+(let-values (((head tail) (fingertree-uncons ft)))
+  (fingertree-measure tail))
+@result{} 20
+@end example
+
+Mathematically speaking, the @strong{return type} of the converter, the
+combiner and the identity element are expected to form a monoid.
+
+The following bindings are exported by the library @library{pfds
+fingertrees}.
+
+
+@defun make-fingertree @var{identity} @var{combine} @var{measure}
+Return a new fingertree, parametrised by the given monoid.
+@end defun
+
+
+@defun fingertree? @var{obj}
+Return @true{} if @var{obj} is a fingertree, @false{} otherwise.
+@end defun
+
+
+@defun fingertree-empty? @var{fingertree}
+Return @true{} if there are no items in the fingertree, @false{}
+otherwise.
+@end defun
+
+
+@defun fingertree-cons @var{item} @var{fingertree}
+Return the new fingertree created by adding the @var{item} to the front
+of @var{fingertree}.
+@end defun
+
+
+@defun fingertree-snoc @var{fingertree} @var{item}
+Return the new fingertree created by adding @var{item} to the end of
+@var{fingertree}.
+@end defun
+
+
+@defun fingertree-uncons @var{fingertree}
+Returns 2 values: the item at the front of @var{fingertree}, and a new
+fingertree containing all but the front element.  If @var{fingertree} is
+empty: a @condition{fingertree-empty} condition is raised.
+@end defun
+
+
+@defun fingertree-unsnoc @var{fingertree}
+Return 2 values: a new fingertree containing all but the rear element of
+@var{fingertree}, and the rear element itself.  If @var{fingertree} is
+empty: a @condition{fingertree-empty} condition is raised.
+@end defun
+
+
+@defun fingertree-empty-condition? @var{condition}
+Return @true{} if the argument is a @condition{fingertree-empty}
+condition, @false{} otherwise.
+@end defun
+
+
+@defun fingertree-append @vari{fingertree} @varii{fingertree}
+Return a new fingertree which contains all of the elements of
+@vari{fingertree}, followed by all the elements of @varii{fingertree}.
+The arguments are assumed to be parametrised by the same monoid.
+@end defun
+
+
+@defun list->fingertree @var{list-of-items} @var{identity} @var{append} @var{convert}
+Return a fingertree containing all of the elements of the list argument,
+in the same order.
+@end defun
+
+
+@defun fingertree->list @var{fingertree}
+Return a list of all the items in @var{fingertree}, in the order they
+would be unconsed.
+@end defun
+
+
+@defun fingertree-measure @var{fingertree}
+Return the measure of @var{fingertree}, as defined by @var{fingertree}'s
+monoid.
+@end defun
+
+
+@defun fingertree-split @var{predicate} @var{fingertree}
+Return 2 values: a new finger tree representing the largest prefix of
+@var{fingertree} for which applying the @var{predicate} to it's
+accumulated measure returns @false{}; is a new fingertree containing all
+those elements not in the first fingertree.
+
+@var{predicate} must be a function accepting a single argument and
+returning a boolean.
+@end defun
+
+
+@defun fingertree-split3 @var{predicate} @var{fingertree}
+Similar to @func{fingertree-split}, however, instead of returning the
+remainder as the second argument, return the head of the remainder as
+second value, and tail of the remainder as third value.
+@end defun
+
+
+@defun fingertree-fold @var{combiner} @var{accum-base} @var{fingertree}
+Return the value obtained by iterating the @var{combiner} procedure over
+@var{fingertree} in left--to--right order.  This procedure takes two
+arguments: the current value from @var{fingertree}, and an accumulator;
+it's return value is used as accumulator for the next iteration.  The
+initial value for the accumulator is given by the base argument.
+@end defun
+
+
+@defun fingertree-fold-right @var{combiner} @var{fingertree}
+Similar to @func{fingertree-fold}, but iterate in right--to--left order.
+@end defun
+
+
+@defun fingertree-reverse @var{fingertree}
+Return a new fingertree in which the items are in the opposite order
+from @var{fingertree}.
 @end defun
 
 @c page
