@@ -552,23 +552,23 @@ The following bindings are exported by the library @library{pfds
 bbtrees}.
 
 
-@defun bbtree-union : bbtree bbtree -> bbtree
+@defun bbtree-union @vari{bbtree} @varii{bbtree}
 Return a bbtree containing the union of the associations in
-@vari{bbtree} and @varii{bbtree}.  Where the same key occurs in both,
+@vari{bbtree} and @varii{bbtree}.  Where the same key occurs in both:
 the value in @vari{bbtree} is preferred.
 @end defun
 
 
-@defun bbtree-difference : bbtree bbtree -> bbtree
+@defun bbtree-difference @vari{bbtree} @varii{bbtree}
 Return a bbtree containing the all the associations in @vari{bbtree},
 which do not occur in @varii{bbtree}.
 @end defun
 
 
-@defun bbtree-intersection : bbtree bbtree -> bbtree
+@defun bbtree-intersection @vari{bbtree} @varii{bbtree}
 Return a bbtree containing all the associations which appear in both
-@vari{bbtree} and @varii{bbtree}.  The value in bbtree1 are preferred
-over those in @varii{bbtree}.
+@vari{bbtree} and @varii{bbtree}.  The values in @vari{bbtree} are
+preferred over those in @varii{bbtree}.
 @end defun
 
 @c page
@@ -580,17 +580,19 @@ The following bindings are exported by the library @library{pfds
 bbtrees}.
 
 
-@defun bbtree-index bbtree any -> non-negative integer
-Return the index of the key in the bbtree.  Index is an integer between
-@code{0} and @code{@var{size} - 1}, with the a key having a lower index
-than another if first-key < second-key, according to the bbtree ordering
-procedure.
+@defun bbtree-index @var{bbtree} @var{key}
+Return a non--negative integer representing the index of @var{key} in
+the @var{bbtree}.  The index is an integer between @code{0} and
+@code{@var{size} - 1}, where @var{size} is the number of associations in
+@var{bbtree}.
 @end defun
 
 
-@defun bbtree-ref/index bbtree non-negative-integer -> any any
-Return the key and value of the association in the bbtree at the given
-index.
+@defun bbtree-ref/index @var{bbtree} @var{index}
+Return 2 values: the key and value of the association in @var{bbtree} at
+the given @var{index}.  @var{index} must be a non--negative integer
+between @code{0} and @code{@var{size} - 1}, where @var{size} is the
+number of associations in @var{bbtree}.
 @end defun
 
 @c page
