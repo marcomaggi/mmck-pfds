@@ -8,8 +8,8 @@
 ;;;
 ;;;
 ;;;
-;;;Copyright (C) 2013 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;Copyright (C) 2011,2012 Ian Price <ianprice90@googlemail.com>
+;;;Edited by Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;
 ;;;Author: Ian Price <ianprice90@googlemail.com>
 ;;;
