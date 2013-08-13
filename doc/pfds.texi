@@ -148,6 +148,7 @@ POSSIBILITY OF SUCH DAMAGE.
 @menu
 * overview::                    Overview of the package.
 * dlists::                      Difference Lists.
+* sequences::                   Purely functional sequences.
 * queues::                      Purely functional queues.
 * deques::                      Double queues.
 * psqs::                        Priority search queues.
@@ -200,7 +201,7 @@ The package provides libraries for the following data structures:
 
 
 @cindex Library @library{pfds dlists}
-@cindex @library{pfds dlista}, library
+@cindex @library{pfds dlists}, library
 
 
 Repeatedly appending to a list is a common, if inefficient pattern in
@@ -250,6 +251,199 @@ Return a list consisting of all the elements of the @var{dlist}.
 @defun list->dlist @var{list-of-items}
 Return a dlist consisting of all the elements of the given list
 argument.
+@end defun
+
+@c page
+@node sequences
+@chapter Purely functional sequences
+
+
+@cindex Library @library{pfds sequences}
+@cindex @library{pfds sequences}, library
+
+
+Sequences are a general--purpose, variable--length collections, similar
+to lists, however they support efficient addition and removal from both
+ends, and random--access.  Like other Scheme collections, sequences are
+zero--indexed.
+
+The following bindings are exported by the library @library{pfds
+sequences}.
+
+
+@defun make-sequence
+Return a new empty sequence.
+@end defun
+
+
+@defun sequence @var{item} @dots{}
+Return a new sequence containing all of the argument items, in the given
+order.
+@end defun
+
+
+@defun sequence? @var{obj}
+Return @true{} if the argument is a sequence, @false{} otherwise.
+@end defun
+
+
+@defun sequence-empty? @var{sequence}
+Return @true{} if @var{sequence} contains no items, @false{}
+otherwise.
+@end defun
+
+
+@defun sequence-size @var{sequence}
+Return a non--negative integer representing the number of items in
+@var{sequence}.
+@end defun
+
+
+@defun sequence-cons @var{item} @var{sequence}
+Return a new sequence created by adding @var{item} to the front of
+@var{sequence}.
+@end defun
+
+
+@defun sequence-uncons @var{sequence}
+Return 2 values: the first item of @var{sequence}, and a new sequence
+containing all but the first items.  If the sequence is empty: a
+@condition{sequence-empty} condition is raised.
+@end defun
+
+
+@defun sequence-snoc @var{sequence} @var{item}
+Return a new sequence created by adding @var{item} to the end of
+@var{sequence}.
+@end defun
+
+
+@defun sequence-unsnoc @var{sequence}
+Return 2 values: a new sequence containing all but the last item of
+@var{sequence}, and the last item itself.  If @var{sequence} is empty: a
+@condition{sequence-empty} condition is raised.
+@end defun
+
+
+@defun sequence-empty-condition? @var{obj}
+Return @true{} if @var{obj} is a @condition{sequence-empty} condition,
+@false{} otherwise.
+@end defun
+
+
+@defun sequence-append @vari{sequence} @varii{sequence}
+Return a new sequence containing all the items of @vari{sequence},
+followed by all the items of @varii{sequence}.
+@end defun
+
+
+@defun list->sequence @var{list-of-items}
+Return a new sequence containing all the items from the given list, in
+the same order.
+@end defun
+
+
+@defun sequence->list @var{sequence}
+Return a new list containing all the items of @var{sequence}, in the
+same order.
+@end defun
+
+
+@defun sequence-split-at @var{sequence} @var{N}
+Return 2 new sequences: the first containing the first @var{N} items of
+@var{sequence}, the second containing the remaining items.  If @var{N}
+is negative: return the empty sequence as the first value, and the
+original sequence as the second value.  Similarly, if @var{N} is greater
+than the size of @var{sequence}: return the original sequence as the
+first value, and the empty sequence as the second value.
+
+Consequently:
+
+@example
+(let-values (((a b) (sequence-split-at SEQ N)))
+  (sequence-append a b))
+@end example
+
+@noindent
+is equivalent to @var{SEQ} for all sequences @var{SEQ}, and integers @var{N}.
+@end defun
+
+
+@defun sequence-take @var{sequence} @var{N}
+Return a new sequence containing the first @var{N} items of
+@var{sequence}.  If @var{N} is negative: the empty sequence is returned.
+If @var{N} is larger than the size of @var{sequence}: the whole sequence
+is returned.
+@end defun
+
+
+@defun sequence-drop @var{sequence} @var{N}
+Return a new sequence containing all but the first @var{N} items of
+@var{sequence}.  If @var{N} is negative: the whole sequence is returned.
+If @var{N} is larger than the size of @var{sequence}: the empty sequence
+is returned.
+@end defun
+
+
+@defun sequence-ref @var{sequence} @var{index}
+Return the item at the specified @var{index} in the sequence;
+@var{index} must be a non--negative exact integer.  If @var{index} is
+outside the range:
+
+@example
+0 <= @var{index} < (sequence-size @var{sequence})
+@end example
+
+@noindent
+an assertion violation is raised.
+@end defun
+
+
+@defun sequence-set @var{sequence} @var{index} @var{item}
+Return the new sequence obtained by replacing the item at the specified
+@var{index} in @var{sequence} with the given @var{item}.  If @var{index}
+is outside the range:
+
+@example
+0 <= @var{index} < (sequence-size @var{sequence})
+@end example
+
+@noindent
+an assertion violation is raised.
+@end defun
+
+
+@defun sequence-fold @var{combiner} @var{accum-base} @var{sequence}
+Return the value obtained by iterating the @var{combiner} procedure over
+@var{sequence} in left--to--right order.  The @var{combiner} procedure
+takes two arguments: the value of the position in the sequence, and an
+accumulator, and its return value is used as the value of the
+accumulator for the next call.  The initial accumulator value is given
+by the @var{accum-base} argument.
+@end defun
+
+
+@defun sequence-fold-right @var{combiner} @var{accum-base} @var{sequence}
+Like @func{sequence-fold}, but the sequence is traversed in
+right--to--left order, rather than left--to--right.
+@end defun
+
+
+@defun sequence-reverse @var{sequence}
+Return a new sequence containing all the item of @var{sequence}, in
+reverse order.
+@end defun
+
+
+@defun sequence-map @var{mapper} @var{sequence}
+Return a new sequence obtained by applying the procedure @var{mapper} to
+each item of @var{sequence} in turn.
+@end defun
+
+
+@defun sequence-filter @var{predicate} @var{sequence}
+Return a new sequence containing all the items of @var{sequence} for
+which the @var{predicate} is true.
 @end defun
 
 @c page
