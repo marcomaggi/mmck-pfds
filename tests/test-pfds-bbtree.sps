@@ -205,35 +205,80 @@
   #t)
 
 
+(parametrise ((check-test-name	'traversal))
+
+  (check
+      (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
+				 '(0 1 2 3 4 5 6 7 8 9))
+			       <)))
+	(define (left-first key value left right accum)
+	  (right (left (cons key accum))))
+	(bbtree-traverse left-first '() bb))
+    => '(9 8 6 7 4 5 2 0 1 3))
+
+  (check
+      (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
+				 '(0 1 2 3 4 5 6 7 8 9))
+			       <)))
+	(define (right-first key value left right accum)
+	  (left (right (cons key accum))))
+	(bbtree-traverse right-first '() bb))
+    => '(0 2 1 4 6 9 8 7 5 3))
+
+;;; --------------------------------------------------------------------
+
+  ;; empty bbtrees
+  (test-eqv #t (bbtree-fold       (lambda args #f) #t (make-bbtree >)))
+  (test-eqv #t (bbtree-fold-right (lambda args #f) #t (make-bbtree >)))
+
+  (let ((bb (alist->bbtree '(("foo" . 1) ("bar" . 12) ("baz" . 7))
+			   string<?)))
+    ;; associative operations
+    (test-eqv 20 (bbtree-fold (lambda (key value accum) (+ value accum)) 0 bb))
+    (test-eqv 20 (bbtree-fold-right (lambda (key value accum) (+ value accum)) 0 bb))
+    ;; non-associative operations
+    (test-equal '("foo" "baz" "bar")
+		(bbtree-fold (lambda (key value accum) (cons key accum)) '() bb))
+    (test-equal '("bar" "baz" "foo")
+		(bbtree-fold-right (lambda (key value accum) (cons key accum)) '() bb)))
+
+  (check
+      (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
+				 '(0 1 2 3 4 5 6 7 8 9))
+			       <)))
+	(bbtree-fold (lambda (key value accum)
+		       (cons key accum))
+		     '()
+		     bb))
+    => '(9 8 7 6 5 4 3 2 1 0))
+
+  (check
+      (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
+				 '(0 1 2 3 4 5 6 7 8 9))
+			       <)))
+	(bbtree-fold-right (lambda (key value accum)
+			     (cons key accum))
+			   '()
+			   bb))
+    => '(0 1 2 3 4 5 6 7 8 9))
+
+;;; --------------------------------------------------------------------
+
+  (let ((empty (make-bbtree <))
+	(bb    (alist->bbtree '((#\a . foo) (#\b . bar) (#\c . baz) (#\d . quux))
+			      char<?)))
+    (test-eqv 0 (bbtree-size (bbtree-map (lambda (x) 'foo) empty)))
+    (test-equal '((#\a foo . foo) (#\b bar . bar) (#\c baz . baz) (#\d quux . quux))
+		(bbtree->alist (bbtree-map (lambda (x) (cons x x)) bb)))
+    (test-equal '((#\a . "foo") (#\b . "bar") (#\c . "baz") (#\d . "quux"))
+		(bbtree->alist (bbtree-map symbol->string bb))))
+
+  #t)
+
+
 #;(parametrise ((check-test-name	'set))
 
 
-
-  (define-test-case bbtrees bbtree-folds
-    (let ((bb (alist->bbtree '(("foo" . 1) ("bar" . 12) ("baz" . 7)) string<?)))
-      (test-case bbtree-folds ()
-		 ;; empty case
-		 (test-eqv #t (bbtree-fold (lambda args #f) #t (make-bbtree >)))
-		 (test-eqv #t (bbtree-fold-right (lambda args #f) #t (make-bbtree >)))
-		 ;; associative operations
-		 (test-eqv 20 (bbtree-fold (lambda (key value accum) (+ value accum)) 0 bb))
-		 (test-eqv 20 (bbtree-fold-right (lambda (key value accum) (+ value accum)) 0 bb))
-		 ;; non-associative operations
-		 (test-equal '("foo" "baz" "bar")
-			     (bbtree-fold (lambda (key value accum) (cons key accum)) '() bb))
-		 (test-equal '("bar" "baz" "foo")
-			     (bbtree-fold-right (lambda (key value accum) (cons key accum)) '() bb)))))
-
-  (define-test-case bbtrees bbtree-map
-    (let ((empty (make-bbtree <))
-	  (bb (alist->bbtree '((#\a . foo) (#\b . bar) (#\c . baz) (#\d . quux))
-			     char<?)))
-      (test-case bbtree-map ()
-		 (test-eqv 0 (bbtree-size (bbtree-map (lambda (x) 'foo) empty)))
-		 (test-equal '((#\a foo . foo) (#\b bar . bar) (#\c baz . baz) (#\d quux . quux))
-			     (bbtree->alist (bbtree-map (lambda (x) (cons x x)) bb)))
-		 (test-equal '((#\a . "foo") (#\b . "bar") (#\c . "baz") (#\d . "quux"))
-			     (bbtree->alist (bbtree-map symbol->string bb))))))
 
   (define-test-case bbtrees bbtree-union
     (let ([empty (make-bbtree char<?)]
