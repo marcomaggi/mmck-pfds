@@ -155,6 +155,7 @@ POSSIBILITY OF SUCH DAMAGE.
 * sequences::                   Purely functional sequences.
 * heaps::                       Heaps.
 * bbtrees::                     Bounded Balance trees.
+* sets::                        Purely functional sets.
 
 Appendices
 
@@ -1422,6 +1423,135 @@ Return 2 values: the key and value of the association in @var{bbtree} at
 the given @var{index}.  @var{index} must be a non--negative integer
 between @code{0} and @code{@var{size} - 1}, where @var{size} is the
 number of associations in @var{bbtree}.
+@end defun
+
+@c page
+@node sets
+@chapter Purely functional sets
+
+
+@cindex Library @library{pfds sets}
+@cindex @library{pfds sets}, library
+
+
+For all the procedures: the argument @var{item<} must be the ordering
+procedure: a predicate function accepting two arguments and returning a
+boolean, @true{} if the first argument is strictly less than the second.
+For numeric collected items: @var{item<} can be @func{<}; for string
+collected items: @var{item<} can be @func{string<?}.
+
+The following bindings are exported by the library @library{pfds sets}.
+
+
+@defun make-set @var{item<}
+Return a new empty set ordered by the procedure @var{item<}.
+@end defun
+
+
+@defun set? @var{obj}
+Return @true{} if @var{obj} is a set, @false{} otherwise.
+@end defun
+
+
+@defun set-member? @var{set} @var{item}
+Return @true{} if @var{item} is in @var{set}, @false{} otherwise.
+@end defun
+
+
+@defun set-insert @var{set} @var{item}
+Return a new set created by inserting @var{item} into @var{set}.
+@end defun
+
+
+@defun set-remove @var{set} @var{item}
+Return a new set created by removing @var{item} from @var{set}.
+@end defun
+
+
+@defun set-size @var{set}
+Return an exact integer representing the number of items in @var{set}.
+@end defun
+
+
+@defun set<? @vari{set} @varii{set}
+@defunx proper-subset? @vari{set} @varii{set}
+Return @true{} if @vari{set} is a proper subset of @varii{set}, @false{}
+otherwise.  That is, if all items of @vari{set} are in @varii{set}, and
+there is at least one item of @varii{set} not in @vari{set}.
+@end defun
+
+
+@defun set<=? @vari{set} @varii{set}
+@defunx subset? @vari{set} @varii{set}
+Return @true{} if @vari{set} is a subset of @varii{set}, @false{}
+otherwise, i.e. if all items of @vari{set} are in @varii{set}.
+@end defun
+
+
+@defun set=? @vari{set} @varii{set}
+Return @true{} if every item of @vari{set} is in @varii{set}, and vice
+versa, @false{} otherwise.
+@end defun
+
+
+@defun set>=? @vari{set} @varii{set}
+Return @true{} if @varii{set} is a subset of @vari{set}, @false{}
+otherwise.
+@end defun
+
+
+@defun set>? @vari{set} @varii{set}
+Return @true{} if @varii{set} is a proper subset of @vari{set}, @false{}
+otherwise.
+@end defun
+
+
+@defun set-map @var{mapper} @var{set}
+Return the new set created by applying the procedure @var{mapper} to
+each item of @var{set}.
+@end defun
+
+
+@defun set-fold @var{combine} @var{accum-base} @var{set}
+Return the value obtained by iterating the procedure @var{combine} over
+each item of @var{set} and an accumulator value (in this order).  The
+value of the accumulator is initially @var{accum-base}, and the return
+value of @var{combine} is used as the accumulator for the next
+iteration.
+@end defun
+
+
+@defun list->set @var{list-of-items} @var{item<}
+Return the set containing all the items of the given list, ordered by
+@var{item<}.
+@end defun
+
+
+@defun set->list @var{set}
+Return all the items of @var{set} as a list.
+@end defun
+
+
+@defun set-union @vari{set} @varii{set}
+Return the union of @vari{set} and @varii{set}, i.e. a new set that
+contains all items of @vari{set} and @varii{set}.
+@end defun
+
+
+@defun set-intersection @vari{set} @varii{set}
+Return the intersection of @vari{set} and @varii{set2}, i.e. a new set
+of all items that are in both @vari{set} and @varii{set}.
+@end defun
+
+
+@defun set-difference @vari{set} @varii{set}
+Return the difference of @vari{set} and @varii{set}, i.e. the set of all
+items in @vari{set} that are @strong{not} in @varii{set}.
+@end defun
+
+
+@defun set-ordering-procedure @var{set}
+Return the ordering procedure used internally by @var{set}.
 @end defun
 
 @c page
