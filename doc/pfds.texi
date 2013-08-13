@@ -149,6 +149,7 @@ POSSIBILITY OF SUCH DAMAGE.
 * overview::                    Overview of the package.
 * bbtrees::                     Bounded Balance trees.
 * deques::                      Double queues.
+* dlists::                      Difference Lists.
 
 Appendices
 
@@ -667,6 +668,60 @@ from the front of the deque.
 Return a deque containing all of the elements in the list argument.  The
 order of the elements in the deque is the same as the order of the
 elements in the list.
+@end defun
+
+@c page
+@node dlists
+@chapter Difference Lists
+
+
+Repeatedly appending to a list is a common, if inefficient pattern in
+functional programs.  Usually the trick we use is to build up the list
+in reverse, and then to reverse it as the last action of a function.
+Dlists are a representation of lists as functions that provide for
+constant time append to either the front or end of a dlist that may be
+used instead.
+
+The following bindings are exported by the library @library{pfds
+dlists}.
+
+
+@defun dlist @var{obj} @dots{}
+Return a dlist containing all the given arguments.
+@end defun
+
+
+@defun dlist? @var{obj}
+Return @true{} if @var{obj} is a dlist, @false{} otherwise.
+@end defun
+
+
+@defun dlist-cons @var{item} @var{dlist}
+Return a new dlist created by prepending @var{item} to the head of
+@var{dlist}.
+@end defun
+
+
+@defun dlist-snoc @var{dlist} @var{item}
+Return a new dlist created by appending @var{item} to the tail of
+@var{dlist}.
+@end defun
+
+
+@defun dlist-append @vari{dlist} @varii{dlist}
+Return a new dlist consisting of all the elements of @vari{dlist},
+followed by all the items of @varii{dlist}.
+@end defun
+
+
+@defun dlist->list @var{dlist}
+Return a list consisting of all the elements of the @var{dlist}.
+@end defun
+
+
+@defun list->dlist @var{list-of-items}
+Return a dlist consisting of all the elements of the given list
+argument.
 @end defun
 
 @c page
