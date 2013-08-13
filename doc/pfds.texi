@@ -151,6 +151,7 @@ POSSIBILITY OF SUCH DAMAGE.
 * deques::                      Double queues.
 * dlists::                      Difference Lists.
 * fingertrees::                 A simple general-purpose data structure.
+* heaps::                       Heaps.
 
 Appendices
 
@@ -603,6 +604,10 @@ number of associations in @var{bbtree}.
 @chapter Double queues
 
 
+@cindex Library @library{pfds deques}
+@cindex @library{pfds deques}, library
+
+
 The following bindings are exported by the library @library{pfds
 deques}.
 
@@ -676,6 +681,10 @@ elements in the list.
 @chapter Difference Lists
 
 
+@cindex Library @library{pfds dlists}
+@cindex @library{pfds dlista}, library
+
+
 Repeatedly appending to a list is a common, if inefficient pattern in
 functional programs.  Usually the trick we use is to build up the list
 in reverse, and then to reverse it as the last action of a function.
@@ -728,6 +737,10 @@ argument.
 @c page
 @node fingertrees
 @chapter A simple general--purpose data structure
+
+
+@cindex Library @library{pfds fingertrees}
+@cindex @library{pfds fingertrees}, library
 
 
 Fingertrees are a generalised form of deque, that we can parametrise to
@@ -898,6 +911,112 @@ Similar to @func{fingertree-fold}, but iterate in right--to--left order.
 @defun fingertree-reverse @var{fingertree}
 Return a new fingertree in which the items are in the opposite order
 from @var{fingertree}.
+@end defun
+
+@c page
+@node heaps
+@chapter Heaps
+
+
+@cindex Library @library{pfds heaps}
+@cindex @library{pfds heaps}, library
+
+
+For all the procedures: the argument @var{item<} must be a procedure
+accepting 2 arguments, being items from the heap, and returning
+@true{} if the first is less than the second; if the collected items are
+numbers: @var{item<} can be @func{<}; if the collected items are
+strings: @var{item<} can be @func{string<?}.
+
+The following bindings are exported by the library @library{pfds heaps}.
+
+
+@defun make-heap @var{item<}
+Return a new empty heap which uses the given ordering procedure.
+@end defun
+
+
+@defun heap @var{item<} @var{item} @dots{}
+Return a new heap, ordered by the procedure argument @var{item<}, that
+contains all the other arguments as items.
+@end defun
+
+
+@defun heap? @var{obj}
+Return @true{} if @var{obj} is a heap, @false{} otherwise.
+@end defun
+
+
+@defun heap-size @var{heap}
+Return a non--negative integer representing the number of items in
+@var{heap}.
+@end defun
+
+
+@defun heap-empty? @var{heap}
+Return @true{} if the heap contains no items, @false{} otherwise.
+@end defun
+
+
+@defun heap-min @var{heap}
+Return the minimum item in @var{heap}, according the heap's ordering
+procedure.  If there are no items: a @condition{heap-empty} condition is
+raised.
+@end defun
+
+
+@defun heap-delete-min @var{heap}
+Return a new heap containing all the items of @var{heap}, except for the
+minimum argument, as determined by the heap's ordering procedure.  If
+there are no items: a @condition{heap-empty} condition is raised.
+@end defun
+
+
+@defun heap-empty-condition? @var{obj}
+Return @true{} if @var{obj} is a @condition{heap-empty} condition,
+@false{} otherwise.
+@end defun
+
+
+@defun heap-pop @var{heap}
+Return two values: the the minimum item in @var{heap}, and a heap
+obtained by removing the minimum value from the original @var{heap}.  If
+@var{heap} is empty: a @condition{&heap-empty} condition is raised.
+@end defun
+
+
+@defun heap-insert @var{heap} @var{item}
+Return a new heap obtained by adding @var{item} to those in the
+@var{heap}.
+@end defun
+
+
+@defun heap->list @var{heap}
+Return a list containing all the items of @var{heap}.  The items of the
+list are ordered according to the heap's ordering procedure.
+@end defun
+
+
+@defun list->heap @var{list-of-items} @var{item<}
+Return a heap containing all the items of the given list, using the
+procedure argument @var{item<} to order them.
+@end defun
+
+
+@defun heap-merge @vari{heap} @varii{heap}
+Return the heap containing all the items of the argument heaps.  The
+argument heaps are assumed to be using the same ordering procedure.
+@end defun
+
+
+@defun heap-sort @var{item<} @var{list-of-items}
+Return a new list that is a permutation of the @var{list-of-items}, such
+that all the items are ordered by the given procedure @var{item<}.
+@end defun
+
+
+@defun heap-ordering-procedure @var{heap}
+Return the ordering procedure used internally by @var{heap}.
 @end defun
 
 @c page
