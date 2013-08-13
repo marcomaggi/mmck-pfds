@@ -144,10 +144,17 @@ C. Resources
 The latest  version of PFDS  for Vicare Scheme can  be found
 here:
 
+    <http://sourceforge.net/projects/vicare-pfds/files/>
+
+development takes place at:
+
 	    <http://github.com/marcomaggi/pfds/>
 
-in   the  "vicare-scheme"   branch;  the   documentation  is
-available online:
+in the "vicare-scheme" branch; and as backup at:
+
+       <http://sourceforge.net/projects/vicare-pfds/>
+
+the documentation is available online:
 
        <http://marcomaggi.github.com/docs/pfds.html>
 

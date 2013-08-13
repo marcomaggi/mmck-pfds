@@ -44,6 +44,7 @@
 
 @set ORIGINAL_GITHUB_URL        @url{http://github.com/ijp/@value{PACKAGE_NICKNAME}}
 @set REPACKAGED_GITHUB_URL      @url{http://github.com/marcomaggi/@value{PACKAGE_NICKNAME}}
+@set REPACKAGED_SOURCEFORGE_URL @url{http://sourceforge.net/projects/vicare-pfds/}
 
 @set REQUIRED_VICARE_VERSION    0.3d1
 
@@ -66,6 +67,11 @@ a repackaging under the @gnu{} Autotools, with verified support for
 Vicare Scheme and providing this documentation is at:
 
 @center @value{REPACKAGED_GITHUB_URL}
+
+@noindent
+and as backup at:
+
+@center @value{REPACKAGED_SOURCEFORGE_URL}
 
 @noindent
 Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}@*
