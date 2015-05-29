@@ -1,7 +1,7 @@
-Subject: [announce] PFDS for Vicare revision 0.3a1
+﻿Subject: [announce] PFDS for Vicare revision 0.4d0
 
-			   PFDS for Vicare
-			   ===============
+			    PFDS for Vicare
+			    ===============
 
 
 PFDS  is a  set of  purely functional  data structures  written in  R6RS
@@ -23,33 +23,33 @@ Scheme.
 
   The home page of the Vicare project is at:
 
-	       <http://marcomaggi.github.com/vicare.html>
+	       <http://marcomaggi.github.io/vicare.html>
 
   The latest version of PFDS for Vicare Scheme can be found here:
 
-	  <http://sourceforge.net/projects/vicare-pfds/files/>
+	   <https://bitbucket.org/marcomaggi/pfds/downloads>
 
 development takes place at:
 
 		  <http://github.com/marcomaggi/pfds/>
 
-in the "vicare-scheme" branch; and as backup at:
+in the "vicare-scheme" branch, and as backup at:
 
-	     <http://sourceforge.net/projects/vicare-pfds/>
+		<https://bitbucket.org/marcomaggi/pfds/>
 
 the documentation is available online:
 
-	     <http://marcomaggi.github.com/docs/pfds.html>
+	      <http://marcomaggi.github.io/docs/pfds.html>
 
   The original PFDS can be found here:
 
 		     <https://github.com/ijp/pfds>
 
 
-Notes for revision 0.3a1
+Notes for revision 0.4d0
 ------------------------
 
-*
+* Start support for Vicare Scheme 0.4.
 
 
 Notes for revision 0.3a0

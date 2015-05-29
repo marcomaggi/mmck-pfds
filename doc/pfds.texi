@@ -44,9 +44,12 @@
 
 @set ORIGINAL_GITHUB_URL        @url{http://github.com/ijp/@value{PACKAGE_NICKNAME}}
 @set REPACKAGED_GITHUB_URL      @url{http://github.com/marcomaggi/@value{PACKAGE_NICKNAME}}
-@set REPACKAGED_SOURCEFORGE_URL @url{http://sourceforge.net/projects/vicare-pfds/}
+@set REPACKAGED_BITBUCKET_URL   @url{https://bitbucket.org/marcomaggi/@value{PACKAGE_NICKNAME}}
+@set REPACKAGED_DOWNLOAD_URL    @url{https://bitbucket.org/marcomaggi/@value{PACKAGE_NICKNAME}/downloads}
+@set DOCUMENTATION_URL          @url{http://marcomaggi.github.io/docs/@value{PACKAGE_NICKNAME}.html}
+@set VICARE_HOMEPAGE_URL        @url{http://marcomaggi.github.io/vicare.html}
 
-@set REQUIRED_VICARE_VERSION    0.3d1
+@set REQUIRED_VICARE_VERSION    0.4
 
 @c page
 @c ------------------------------------------------------------
@@ -71,7 +74,7 @@ Vicare Scheme and providing this documentation is at:
 @noindent
 and as backup at:
 
-@center @value{REPACKAGED_SOURCEFORGE_URL}
+@center @value{REPACKAGED_BITBUCKET_URL}
 
 @noindent
 Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}@*
@@ -1604,6 +1607,41 @@ POSSIBILITY OF SUCH DAMAGE.
 @node References
 @appendix Bibliography and references
 
+
+The documentation of @value{PACKAGE} is available online:
+
+@center @value{DOCUMENTATION_URL}
+
+@noindent
+the latest version of this package for Vicare Scheme can be downloaded
+from:
+
+@center @value{REPACKAGED_DOWNLOAD_URL}
+
+@noindent
+the original package is available at:
+
+@center @value{ORIGINAL_GITHUB_URL}
+
+@noindent
+the repackaging under the @gnu{} Autotools, with verified support for
+Vicare Scheme and providing this documentation is at:
+
+@center @value{REPACKAGED_GITHUB_URL}
+
+@noindent
+and as backup at:
+
+@center @value{REPACKAGED_BITBUCKET_URL}
+
+@noindent
+the home page of the Vicare project is at:
+
+@center @value{VICARE_HOMEPAGE_URL}
+
+@c ------------------------------------------------------------------------
+
+@appendixsec Papers and publications
 
 The queues and deques are based on the paper:
 
