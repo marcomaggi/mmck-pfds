@@ -58,10 +58,11 @@
 
 @copying
 This document describes version @value{VERSION} of @value{PACKAGE}, a
-set of purely functional data structures written in @rnrs{6} Scheme.
+set of purely functional data structures written in @rnrs{6} Scheme and
+ported under the Vicare Scheme packaging infrastructure.
 
-The package is distributed under the terms of a liberal license and can
-be downloaded from:
+The original package is distributed under the terms of a liberal license
+and can be downloaded from:
 
 @center @value{ORIGINAL_GITHUB_URL}
 
