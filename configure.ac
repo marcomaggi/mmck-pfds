@@ -2,7 +2,7 @@ dnl @configure_input@
 dnl
 
 AC_PREREQ([2.69])
-AC_INIT([PFDS],[0.4d0],[marco.maggi-ipsu@poste.it],
+AC_INIT([PFDS],[0.4d1],[marco.maggi-ipsu@poste.it],
   [pfds],[https://github.com/marcomaggi/pfds])
 AC_CONFIG_SRCDIR([lib])
 AC_CONFIG_MACRO_DIR([meta/autotools])
@@ -19,10 +19,7 @@ AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 
 VICARE_SCHEME
-VICARE_CHECK_LIBRARY([VICARE],
-  [(vicare (or (0 4 2015 5 (>= 28))
-               (0 4 2015 (>= 6))
-               (0 4 (>= 2016))))])
+VICARE_CHECK_LIBRARY([VICARE],[(vicare (0 4 2017 1 (>= 10)))])
 AS_IF([test "$vicare_cv_schemelib_VICARE" = no],
   [AC_MSG_ERROR([wrong Vicare version],1)])
 
