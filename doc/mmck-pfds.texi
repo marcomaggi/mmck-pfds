@@ -100,7 +100,7 @@ and as backup at:
 
 @noindent
 Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}
-Copyright @copyright{} 2011 Ian Price @email{ianprice90@@googlemail.com}@*
+Copyright @copyright{} 2011, 2012 Ian Price @email{ianprice90@@googlemail.com}@*
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document under the terms of the @gnu{}
@@ -183,7 +183,7 @@ supporting the language features as defined in the ``Revised^5 Report on Scheme'
 
 This package supports @posix{} platforms.  This package depends upon the @chicken{} egg
 @code{coops}.  To run the tests distributed with the source code: this package depends upon the
-package @mmck{} Checks.
+package @mmck{} Checks and the @chicken{} egg @code{simple-conditions}.
 
 The package installs the library @library{mmck pfds} along with its import library.  To require the
 library and import its syntactic bindings in a module we can do:

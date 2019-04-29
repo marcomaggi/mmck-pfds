@@ -11,7 +11,7 @@ features as defined in the ``Revised^5 Report on Scheme''.
 
 The library targets POSIX systems.   The libraries depend on the CHICKEN
 egg `coops`.   To run the tests:  this package depends upon  the package
-MMCK Checks.
+MMCK Checks and the CHICKEN egg `simple-conditions`.
 
 The package uses the GNU Autotools and it is tested, using Travis CI, on
 both Ubuntu GNU+Linux  systems and OS X systems.
@@ -22,7 +22,7 @@ tested CHICKEN 5.0.0.
 ## License
 
 Copyright (c) 2019 Marco Maggi `marco.maggi-ipsu@poste.it`<br/>
-Copyright (c) 2011 Ian Price `ianprice90@googlemail.com`<br/>
+Copyright (c) 2011, 2012 Ian Price `ianprice90@googlemail.com`<br/>
 All rights reserved.
 
 Redistribution  and use  in source  and  binary forms,  with or  without

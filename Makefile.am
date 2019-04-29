@@ -143,15 +143,15 @@ sharedlib_SCRIPTS	= $(MMCK_ALL_RUNTIME_SHARED_LIBS) $(MMCK_ALL_IMPORT_SHARED_LIB
 
 EXTRA_DIST		+= \
 	tests/test-version.scm		\
-	tests/test-bbtrees.scm
+	tests/test-pfds-bbtrees.scm
 
 MMCK_CHECK_OBJECTS	= \
 	tests/test-version.$(OBJEXT)	\
-	tests/test-bbtrees.$(OBJEXT)
+	tests/test-pfds-bbtrees.$(OBJEXT)
 
 MMCK_CHECK_PROGS	= \
 	tests/test-version.exe		\
-	tests/test-bbtrees.exe
+	tests/test-pfds-bbtrees.exe
 
 CLEANFILES	+= $(MMCK_CHECK_PROGS) $(MMCK_CHECK_OBJECTS)
 
@@ -171,10 +171,10 @@ tests/test-version.exe: tests/test-version.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
-tests/test-bbtrees.$(OBJEXT): tests/test-bbtrees.scm $(MMCK_CHECK_DEPS)
+tests/test-pfds-bbtrees.$(OBJEXT): tests/test-pfds-bbtrees.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
-tests/test-bbtrees.exe: tests/test-bbtrees.$(OBJEXT)
+tests/test-pfds-bbtrees.exe: tests/test-pfds-bbtrees.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ### end of file

@@ -1,36 +1,80 @@
-;;; -*- coding: utf-8-unix -*-
+;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: PFDS
-;;;Contents: generic library tests
-;;;Date: Sat Aug 10, 2013
+;;;Part of: MMCK PFDS
+;;;Contents: test program for bbtrees
+;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
+;;;	This is a test program for bbtrees.
 ;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
 ;;;
-;;;Copyright (C) 2011,2012 Ian Price <ianprice90@googlemail.com>
-;;;Edited by Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
 ;;;
-;;;Author: Ian Price <ianprice90@googlemail.com>
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
 ;;;
-;;;This program is free software,  you can redistribute it and/or modify
-;;;it under the terms of the new-style BSD license.
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
 ;;;
-;;;You should  have received a copy  of the BSD license  along with this
-;;;program.  If not, see <http://www.debian.org/misc/bsd.license>.
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 ;;;
 
 
-#!r6rs
-(import (vicare)
-  (pfds bbtrees)
-  (vicare checks))
+;;;; units and module header
+
+(require-library (mmck pfds))
+(require-library (mmck checks))
+
+(module (test-bbtrees)
+    ()
+  (import (scheme)
+	  (only (chicken base)
+		case-lambda
+		let-values)
+	  (only (chicken sort)
+		sort)
+	  (mmck pfds)
+	  (mmck checks)
+	  (only (chicken condition)
+		condition-case)
+	  (only (simple-exceptions)
+		guard))
 
 (check-set-mode! 'report-failed)
-(check-display "*** testing PFDS: bbtree\n")
+(check-display "*** testing bbtrees\n")
 
 
 ;;;; helpers
+
+(define (add1 x)
+  (+ 1 x))
+
+(define (list-sort less? seq)
+  (sort seq less?))
+
+(define (assertion-violation? E)
+  (condition-case E
+    ((exn assertion)
+     #t)
+    (() #f)))
 
 (define-syntax test-eqv
   (syntax-rules ()
@@ -48,12 +92,15 @@
      (check
 	 (guard (E ((?predicate E)
 		    #t)
-		   (else #f))
+		   (else
+		    (write E)
+		    (newline)
+		    #f))
 	   ?body)
        => #t))))
 
 
-(parametrise ((check-test-name	'core))
+(parameterise ((check-test-name	'core))
 
   (check
       (bbtree? (make-bbtree <))
@@ -117,7 +164,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'setters-getters))
+(parameterise ((check-test-name	'setters-getters))
 
   (let* ((tree1 (bbtree-set (make-bbtree <) 1 'a))
 	 (tree2 (bbtree-set tree1 2 'b))
@@ -145,7 +192,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'update))
+(parameterise ((check-test-name	'update))
 
   (check
       (let* ((bb1   (alist->bbtree '(("foo" . 10)
@@ -179,7 +226,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'delete))
+(parameterise ((check-test-name	'delete))
 
   (let* ((tree1 (bbtree-set (bbtree-set (bbtree-set (make-bbtree string<?) "a" 3)
 					"b" 8)
@@ -205,7 +252,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'traversal))
+(parameterise ((check-test-name	'traversal))
 
   (check
       (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
@@ -276,7 +323,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'set))
+(parameterise ((check-test-name	'set))
 
   (let ((empty (make-bbtree char<?))
 	(bbtree1 (alist->bbtree '((#\g . 103) (#\u . 117) (#\i . 105) (#\l . 108) (#\e . 101))
@@ -351,7 +398,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'index))
+(parameterise ((check-test-name	'index))
 
   (let* ((l  (string->list "abcdefghijklmno"))
 	 (bb (alist->bbtree (map (lambda (x) (cons x #f)) l) char<?)))
@@ -372,5 +419,7 @@
 ;;;; done
 
 (check-report)
+
+#| end of module |# )
 
 ;;; end of file
