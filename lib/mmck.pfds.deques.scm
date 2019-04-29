@@ -1,17 +1,43 @@
-#!r6rs
-;;; deques.sls --- Purely functional deques
+;;; -*- coding: utf-8-unix  -*-
+;;;
+;;;Part of: MMCK Pfds
+;;;Contents: module deques
+;;;Date: Apr 29, 2019
+;;;
+;;;Abstract
+;;;
+;;;	This unit defines the module deques: purely functional deques.
+;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
+;;;
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
+;;;
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
+;;;
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
+;;;
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 
-;; Copyright (C) 2011,2012 Ian Price <ianprice90@googlemail.com>
-
-;; Author: Ian Price <ianprice90@googlemail.com>
-
-;; This program is free software, you can redistribute it and/or
-;; modify it under the terms of the new-style BSD license.
-
-;; You should have received a copy of the BSD license along with this
-;; program. If not, see <http://www.debian.org/misc/bsd.license>.
-
-;; Documentation:
+
+;;;; documentation:
 ;;
 ;; make-deque : () -> deque
 ;; returns a deque containing to items
@@ -54,21 +80,33 @@
 ;; order of the elements in the deque is the same as the order of the
 ;; elements in the list.
 ;;
-(library (pfds deques)
-(export make-deque
-        deque?
-        deque-length
-        deque-empty?
-        enqueue-front
-        enqueue-rear
-        dequeue-front
-        dequeue-rear
-        deque-empty-condition?
-        deque->list
-        list->deque
-        )
-(import (except (rnrs) cons*)
-        (pfds private lazy-lists))
+
+
+(declare (unit mmck.pfds.deques)
+	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.private.lazy-lists)
+	 (emit-import-library mmck.pfds.deques))
+
+(module (mmck.pfds.deques)
+    (make-deque
+     deque?
+     deque-length
+     deque-empty?
+     enqueue-front
+     enqueue-rear
+     dequeue-front
+     dequeue-rear
+     deque-empty-condition?
+     deque->list
+     list->deque)
+  (import (scheme)
+	  (mmck pfds private helpers)
+	  (mmck pfds private coops)
+	  (mmck pfds private lazy-lists))
+
+
+;;;; implementation
 
 (define c 2)
 
@@ -86,15 +124,22 @@
                    (drop c r)
                    (append* (rev (take c r)) a)))))
 
-(define-record-type (deque %make-deque deque?)
-  (fields
-   (immutable length)
-   (immutable lenL)
-   (immutable lenR)
-   (immutable l)
-   (immutable r)
-   (immutable l^)
-   (immutable r^)))
+(define-class deque
+    (<standard-class>)
+  ((length	#:reader deque-length)
+   (lenL	#:reader deque-lenL)
+   (lenR	#:reader deque-lenR)
+   (l		#:reader deque-l)
+   (r		#:reader deque-r)
+   (l^		#:reader deque-l^)
+   (r^		#:reader deque-r^)))
+
+(define (%make-deque len lenL lenR l r l^ r^)
+  (make deque
+    'length len 'lenL lenL 'lenR lenR 'l l 'r r 'l l^ 'r r^))
+
+(define (deque? obj)
+  (is-a? obj deque))
 
 (define (make-deque)
   (%make-deque 0 0 0 '() '() '() '()))
@@ -125,10 +170,8 @@
 (define (dequeue-front deque)
   (when (deque-empty? deque)
     (raise (condition
-            (make-deque-empty-condition)
-            (make-who-condition 'dequeue-front)
-            (make-message-condition "There are no elements to remove")
-            (make-irritants-condition (list deque)))))
+	     `(exn location deque-front message "There are no elements to remove" arguments ,(list deque))
+	     '(deque-empty-condition))))
   (let ((len (deque-length deque))
         (lenL (deque-lenL deque))
         (lenR (deque-lenR deque))
@@ -138,22 +181,20 @@
         (r^ (deque-r^ deque)))
     (if (empty? l)
         (values (head r) (make-deque))
-        (values (head l)
-                (makedq (- len 1)
-                        (- lenL 1)
-                        lenR
-                        (tail l)
-                        r
-                        (tail (tail l^))
-                        (tail (tail r^)))))))
+      (values (head l)
+              (makedq (- len 1)
+                      (- lenL 1)
+                      lenR
+                      (tail l)
+                      r
+                      (tail (tail l^))
+                      (tail (tail r^)))))))
 
 (define (dequeue-rear deque)
   (when (deque-empty? deque)
     (raise (condition
-            (make-deque-empty-condition)
-            (make-who-condition 'dequeue-rear)
-            (make-message-condition "There are no elements to remove")
-            (make-irritants-condition (list deque)))))
+	     `(exn location deque-front message "There are no elements to remove" arguments ,(list deque))
+	     '(deque-empty-condition))))
   (let ((len (deque-length deque))
         (lenL (deque-lenL deque))
         (lenR (deque-lenR deque))
@@ -188,11 +229,6 @@
         (else
          (%make-deque len lenL lenR l r l^ r^))))
 
-(define-condition-type &deque-empty
-  &assertion
-  make-deque-empty-condition
-  deque-empty-condition?)
-
 (define (list->deque l)
   (fold-left enqueue-rear (make-deque) l))
 
@@ -204,4 +240,15 @@
           (recur deq* (cons last l)))))
   (recur deq '()))
 
-)
+(define (deque-empty-condition? obj)
+  (condition-case obj
+    ((deque-empty-condition)
+     #t)
+    (() #f)))
+
+
+;;;; done
+
+#| end of module |# )
+
+;;; end of file

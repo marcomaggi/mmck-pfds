@@ -158,10 +158,9 @@
 ;;;; units and module header
 
 (declare (unit mmck.pfds.bbtrees)
+	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.private.coops)
 	 (emit-import-library mmck.pfds.bbtrees))
-
-(require-library (coops)
-		 (coops-primitive-objects))
 
 (module (mmck.pfds.bbtrees)
     (make-bbtree
@@ -186,43 +185,8 @@
      bbtree-index
      bbtree-ref/index)
   (import (scheme)
-	  (coops)
-	  (coops-primitive-objects)
-	  (only (chicken base)
-		error
-		case-lambda
-		let-values
-		unless)
-	  (only (chicken condition)
-		abort
-		condition))
-
-
-;;;; helpers
-
-(define (is-a? obj cls)
-  ;;Return true  if OBJ  is an  instance of  class CLS,  or of  one of  its subtypes;
-  ;;otherwise return false.
-  ;;
-  (let ((obj.cls (class-of obj)))
-    (or (eq? obj.cls cls)
-	(subclass? obj.cls cls))))
-
-(define (assertion-violation who message . irritants)
-  (abort
-   (condition `(exn location ,who message ,message arguments ,irritants)
-	      '(assertion-violation))))
-
-(define (fold-left combine nil ell)
-  (if (pair? ell)
-      (fold-left combine (combine nil (car ell)) (cdr ell))
-    nil))
-
-(define-syntax assert
-  (syntax-rules ()
-    ((_ ?expr)
-     (unless ?expr
-       (error 'assert "failed assertion" (quote ?expr))))))
+	  (mmck pfds private helpers)
+	  (mmck pfds private coops))
 
 
 ;;;; implementation

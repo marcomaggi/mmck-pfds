@@ -16,22 +16,34 @@ doc_mmck_pfds_TEXINFOS = \
 # All the source files of the extension library.
 #
 MMCK_PFDS_MODULES		= \
+	lib/mmck.pfds.private.helpers.scm	\
+	lib/mmck.pfds.private.lazy-lists.scm	\
+	lib/mmck.pfds.private.coops.scm		\
 	lib/mmck.pfds.bbtrees.scm		\
+	lib/mmck.pfds.deques.scm		\
 	lib/mmck.pfds.version.scm		\
 	lib/mmck.pfds.scm
 
 # All the object files that must be linked in the extension library.
 #
 MMCK_PFDS_RUNTIME_OBJECTS	= \
-	lib/mmck.pfds.bbtrees.$(OBJEXT)	\
-	lib/mmck.pfds.version.$(OBJEXT)	\
+	lib/mmck.pfds.private.helpers.$(OBJEXT)		\
+	lib/mmck.pfds.private.lazy-lists.$(OBJEXT)	\
+	lib/mmck.pfds.private.coops.$(OBJEXT)		\
+	lib/mmck.pfds.bbtrees.$(OBJEXT)			\
+	lib/mmck.pfds.deques.$(OBJEXT)			\
+	lib/mmck.pfds.version.$(OBJEXT)			\
 	lib/mmck.pfds.$(OBJEXT)
 
 # All the source files of all the modules' import libraries.
 #
 MMCK_PFDS_IMPORT_SOURCES	= \
-	lib/mmck.pfds.bbtrees.import.scm	\
-	lib/mmck.pfds.version.import.scm	\
+	lib/mmck.pfds.private.helpers.import.scm	\
+	lib/mmck.pfds.private.lazy-lists.import.scm	\
+	lib/mmck.pfds.private.coops.import.scm		\
+	lib/mmck.pfds.bbtrees.import.scm		\
+	lib/mmck.pfds.deques.import.scm			\
+	lib/mmck.pfds.version.import.scm		\
 	lib/mmck.pfds.import.scm
 
 # The module's import libraries needed to compile main module's object
@@ -40,7 +52,11 @@ MMCK_PFDS_IMPORT_SOURCES	= \
 #   lib/mmck.pfds.import.$(MMCK_SOEXT)
 #
 MMCK_PFDS_IMPORT_DEPS	= \
-	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.lazy-lists.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.deques.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.version.import.$(MMCK_SOEXT)
 
 # The import  libraries needed  to compile new  code using  the shared
@@ -48,8 +64,12 @@ MMCK_PFDS_IMPORT_DEPS	= \
 # them.
 #
 MMCK_PFDS_IMPORT_SHARED_LIBS	= \
-	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.version.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.lazy-lists.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.deques.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.version.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.import.$(MMCK_SOEXT)
 
 # This is the "(mmck pfds)" shared library file pathname.
@@ -79,13 +99,68 @@ lib/mmck.pfds.version.import.$(MMCK_SOEXT): lib/mmck.pfds.version.import.scm
 
 ## --------------------------------------------------------------------
 
-lib/mmck.pfds.bbtrees.$(OBJEXT): lib/mmck.pfds.bbtrees.scm $(MMCK_OBJECTS_DEPS)
+lib/mmck.pfds.private.helpers.$(OBJEXT): lib/mmck.pfds.private.helpers.scm $(MMCK_OBJECTS_DEPS)
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
+	@$(MV) mmck.pfds.private.helpers.import.scm lib/mmck.pfds.private.helpers.import.scm
+
+lib/mmck.pfds.private.helpers.import.scm: lib/mmck.pfds.private.helpers.$(OBJEXT)
+
+lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT): lib/mmck.pfds.private.helpers.import.scm
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+lib/mmck.pfds.private.lazy-lists.$(OBJEXT): lib/mmck.pfds.private.lazy-lists.scm $(MMCK_OBJECTS_DEPS)
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
+	@$(MV) mmck.pfds.private.lazy-lists.import.scm lib/mmck.pfds.private.lazy-lists.import.scm
+
+lib/mmck.pfds.private.lazy-lists.import.scm: lib/mmck.pfds.private.lazy-lists.$(OBJEXT)
+
+lib/mmck.pfds.private.lazy-lists.import.$(MMCK_SOEXT): lib/mmck.pfds.private.lazy-lists.import.scm
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+lib/mmck.pfds.private.coops.$(OBJEXT): lib/mmck.pfds.private.coops.scm $(MMCK_OBJECTS_DEPS)
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
+	@$(MV) mmck.pfds.private.coops.import.scm lib/mmck.pfds.private.coops.import.scm
+
+lib/mmck.pfds.private.coops.import.scm: lib/mmck.pfds.private.coops.$(OBJEXT)
+
+lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT): lib/mmck.pfds.private.coops.import.scm
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+MMCK_PFDS_BBTREES_DEPS = \
+	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	$(MMCK_OBJECTS_DEPS)
+
+lib/mmck.pfds.bbtrees.$(OBJEXT): lib/mmck.pfds.bbtrees.scm $(MMCK_PFDS_BBTREES_DEPS)
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
 	@$(MV) mmck.pfds.bbtrees.import.scm lib/mmck.pfds.bbtrees.import.scm
 
 lib/mmck.pfds.bbtrees.import.scm: lib/mmck.pfds.bbtrees.$(OBJEXT)
 
 lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT): lib/mmck.pfds.bbtrees.import.scm
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+MMCK_PFDS_DEQUES_DEPS = \
+	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.lazy-lists.import.$(MMCK_SOEXT)	\
+	$(MMCK_OBJECTS_DEPS)
+
+lib/mmck.pfds.deques.$(OBJEXT): lib/mmck.pfds.deques.scm $(MMCK_PFDS_DEQUES_DEPS)
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
+	@$(MV) mmck.pfds.deques.import.scm lib/mmck.pfds.deques.import.scm
+
+lib/mmck.pfds.deques.import.scm: lib/mmck.pfds.deques.$(OBJEXT)
+
+lib/mmck.pfds.deques.import.$(MMCK_SOEXT): lib/mmck.pfds.deques.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
 ## --------------------------------------------------------------------

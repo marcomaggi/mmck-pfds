@@ -1,16 +1,12 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: MMCK PFDS
-;;;Contents: main compilation unit
+;;;Part of: MMCK Pfds
+;;;Contents: add lazy lists
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This is the main compilation unit; it USES all the other compilation units.
-;;;
-;;;	This compilation  units defines the main  module: it imports all  the modules
-;;;	exporting  public syntactic  bindings  and it  reexports  all such  syntactic
-;;;	bindings.
+;;;	This unit defines the module lazy lists.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
@@ -41,20 +37,71 @@
 ;;;DAMAGE.
 
 
-;;;; units and module header
+;;;; commentary
+;;
+;; If you want real lazy lists, use SRFI 41, but Okazaki uses 'odd'
+;; lists, so I wrote a quick implementation.
 
-(declare (unit mmck.pfds)
-	 (uses mmck.pfds.bbtrees)
-	 (uses mmck.pfds.deques)
-	 (uses mmck.pfds.version)
-	 (emit-import-library mmck.pfds))
+
+(declare (unit mmck.pfds.private.lazy-lists)
+	 (emit-import-library mmck.pfds.private.lazy-lists))
 
-(module (mmck.pfds)
-    ()
-  (import (only (chicken module) reexport))
-  (reexport (mmck.pfds.bbtrees))
-  (reexport (mmck.pfds.deques))
-  (reexport (mmck.pfds.version))
-  #| end of module |# )
+(module (mmck pfds private lazy-lists)
+    (cons*
+     tail
+     head
+     empty?
+     take
+     drop
+     rev
+     append*)
+  (import (scheme)
+	  (only (chicken base)
+		delay-force))
+
+
+;;;; implementation
+
+(define-syntax cons*
+  (syntax-rules ()
+    ((cons* a b)
+     (cons a (delay b)))))
+
+(define head car)
+
+(define empty? null?)
+
+(define (tail pair)
+  (if (empty? pair)
+      pair
+      (force (cdr pair))))
+
+(define (take n l)
+  (if (zero? n)
+      '()
+      (cons* (head l)
+             (take (- n 1) (tail l)))))
+
+(define (drop n l)
+  (if (zero? n)
+      l
+      (drop (- n 1) (tail l))))
+
+(define (append* x y)
+  (if (empty? x)
+      y
+      (cons* (head x)
+             (append* (tail x) y))))
+
+(define (rev l)
+  (let loop ((l l) (a '()))
+    (if (empty? l)
+        a
+        (loop (tail l) (cons* (head l) a)))))
+
+
+;;;; done
+
+#| end of module |# )
 
 ;;; end of file

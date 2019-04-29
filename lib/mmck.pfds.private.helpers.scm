@@ -1,19 +1,14 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: MMCK PFDS
-;;;Contents: main compilation unit
+;;;Part of: MMCK Pfds
+;;;Contents: common helper functions
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This is the main compilation unit; it USES all the other compilation units.
-;;;
-;;;	This compilation  units defines the main  module: it imports all  the modules
-;;;	exporting  public syntactic  bindings  and it  reexports  all such  syntactic
-;;;	bindings.
+;;;	This unit defines common helper functions.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
-;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
 ;;;All rights reserved.
 ;;;
 ;;;Redistribution and use  in source and binary forms, with  or without modification,
@@ -41,20 +36,62 @@
 ;;;DAMAGE.
 
 
-;;;; units and module header
+(declare (unit mmck.pfds.private.helpers)
+	 (emit-import-library mmck.pfds.private.helpers))
 
-(declare (unit mmck.pfds)
-	 (uses mmck.pfds.bbtrees)
-	 (uses mmck.pfds.deques)
-	 (uses mmck.pfds.version)
-	 (emit-import-library mmck.pfds))
+(module (mmck pfds private helpers)
+    ((syntax: assert error)
+     fold-left
+     assertion-violation
+     ;; reexports
+     case-lambda
+     condition
+     condition-case
+     delay-force
+     error
+     let-values
+     raise
+     raise
+     unless
+     when)
+  (import (scheme)
+	  (only (chicken base)
+		case-lambda
+		error
+		let-values
+		delay-force
+		unless
+		when)
+	  (only (chicken condition)
+		condition
+		abort
+		condition-case))
 
-(module (mmck.pfds)
-    ()
-  (import (only (chicken module) reexport))
-  (reexport (mmck.pfds.bbtrees))
-  (reexport (mmck.pfds.deques))
-  (reexport (mmck.pfds.version))
-  #| end of module |# )
+
+;;;; helpers
+
+(define (raise obj)
+  (abort obj))
+
+(define (assertion-violation who message . irritants)
+  (raise
+   (condition `(exn location ,who message ,message arguments ,irritants)
+	      '(assertion-violation))))
+
+(define (fold-left combine nil ell)
+  (if (pair? ell)
+      (fold-left combine (combine nil (car ell)) (cdr ell))
+    nil))
+
+(define-syntax assert
+  (syntax-rules ()
+    ((_ ?expr)
+     (unless ?expr
+       (error 'assert "failed assertion" (quote ?expr))))))
+
+
+;;;; done
+
+#| end of module |# )
 
 ;;; end of file
