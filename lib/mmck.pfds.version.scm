@@ -1,12 +1,12 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: MMCK Pfds
-;;;Contents: test program for version functions
+;;;Part of: MMCK PFDS
+;;;Contents: version functions
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This program tests version functions.
+;;;	This unit defines version functions.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
@@ -35,29 +35,34 @@
 ;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
 ;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
 ;;;DAMAGE.
-;;;
 
 
 ;;;; units and module header
 
-(require-library (mmck pfds))
+(declare (unit mmck.pfds.version)
+	 (emit-import-library mmck.pfds.version))
 
-(module (test-version)
-    ()
+(module (mmck.pfds.version)
+    (mmck-pfds-package-major-version
+     mmck-pfds-package-minor-version
+     mmck-pfds-package-patch-level
+     mmck-pfds-package-prerelease-tag
+     mmck-pfds-package-build-metadata
+     mmck-pfds-package-version
+     mmck-pfds-package-semantic-version)
   (import (scheme)
-	  (mmck pfds)
-	  (chicken pretty-print))
+	  (prefix mmck.pfds.config config::))
 
 
-;;;; stuff
+;;;; version functions
 
-(pretty-print (list 'mmck-pfds-package-major-version	(mmck-pfds-package-major-version)))
-(pretty-print (list 'mmck-pfds-package-minor-version	(mmck-pfds-package-minor-version)))
-(pretty-print (list 'mmck-pfds-package-patch-level	(mmck-pfds-package-patch-level)))
-(pretty-print (list 'mmck-pfds-package-prerelease-tag	(mmck-pfds-package-prerelease-tag)))
-(pretty-print (list 'mmck-pfds-package-build-metadata	(mmck-pfds-package-build-metadata)))
-(pretty-print (list 'mmck-pfds-package-version		(mmck-pfds-package-version)))
-(pretty-print (list 'mmck-pfds-package-semantic-version	(mmck-pfds-package-semantic-version)))
+(define (mmck-pfds-package-major-version)	config::MMUX_PKG_MAJOR_VERSION)
+(define (mmck-pfds-package-minor-version)	config::MMUX_PKG_MINOR_VERSION)
+(define (mmck-pfds-package-patch-level)		config::MMUX_PKG_PATCH_LEVEL)
+(define (mmck-pfds-package-prerelease-tag)	config::MMUX_PKG_PRERELEASE_TAG)
+(define (mmck-pfds-package-build-metadata)	config::MMUX_PKG_BUILD_METADATA)
+(define (mmck-pfds-package-version)		config::MMUX_PKG_VERSION)
+(define (mmck-pfds-package-semantic-version)	config::MMUX_PKG_SEMANTIC_VERSION)
 
 
 ;;;; done

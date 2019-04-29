@@ -1,49 +1,62 @@
-# MMCK Template
+# MMCK PFDS
 
-[![Build Status](https://travis-ci.org/marcomaggi/mmck-template.svg?branch=master)](https://travis-ci.org/marcomaggi/mmck-template)
+[![Build Status](https://travis-ci.org/marcomaggi/mmck-pfds.svg?branch=master)](https://travis-ci.org/marcomaggi/mmck-pfds)
 
 ## Introduction
 
-This is  a template project, to  be used as starting  point for packages
-that  build  and  install  CHICKEN language  libraries.   CHICKEN  is  a
-Scheme-to-C compiler supporting the language  features as defined in the
-``Revised^5 Report on Scheme''.
+This project  builds and  installs a  set of  libraries for  the CHICKEN
+language; the  libraries implement Purely Functional  Data Structures in
+Scheme.   CHICKEN  is a  Scheme-to-C  compiler  supporting the  language
+features as defined in the ``Revised^5 Report on Scheme''.
 
-The  library targets  POSIX systems.   To  run the  tests: this  package
-depends upon the package MMCK Checks.
+The library targets POSIX systems.   The libraries depend on the CHICKEN
+egg `coops`.   To run the tests:  this package depends upon  the package
+MMCK Checks.
 
 The package uses the GNU Autotools and it is tested, using Travis CI, on
-both Ubuntu GNU+Linux  systems and OS X systems.  The  package relies on
-`pkg-config` to find the dependencies installed on the system.
+both Ubuntu GNU+Linux  systems and OS X systems.
 
 The last time  the maintainer bothered to update this  paragraph: he had
 tested CHICKEN 5.0.0.
 
 ## License
 
-Copyright (c) 2019 Marco Maggi<br/>
-`marco.maggi-ipsu@poste.it`<br/>
+Copyright (c) 2019 Marco Maggi `marco.maggi-ipsu@poste.it`<br/>
+Copyright (c) 2011 Ian Price `ianprice90@googlemail.com`<br/>
 All rights reserved.
 
-This program is free software: you  can redistribute it and/or modify it
-under the terms of the GNU Lesser General Public License as published by
-the Free  Software Foundation, either version  3 of the License,  or (at
-your option) any later version.
+Redistribution  and use  in source  and  binary forms,  with or  without
+modification, are  permitted provided that the  following conditions are
+met:
 
-This program  is distributed  in the  hope that it  will be  useful, but
-WITHOUT   ANY   WARRANTY;  without   even   the   implied  warranty   of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
-General Public License for more details.
+1.  Redistributions  of source  code  must  retain the  above  copyright
+   notice, this list of conditions and the following disclaimer.
 
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+2. Redistributions  in binary  form must  reproduce the  above copyright
+   notice, this list  of conditions and the following  disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. The name of the author may not be used to endorse or promote products
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE  IS PROVIDED BY  THE AUTHOR ``AS  IS'' AND ANY  EXPRESS OR
+IMPLIED  WARRANTIES,   INCLUDING,  BUT  NOT  LIMITED   TO,  THE  IMPLIED
+WARRANTIES OF MERCHANTABILITY  AND FITNESS FOR A  PARTICULAR PURPOSE ARE
+DISCLAIMED.  IN  NO EVENT  SHALL THE  AUTHOR BE  LIABLE FOR  ANY DIRECT,
+INDIRECT,  INCIDENTAL,  SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL  DAMAGES
+(INCLUDING,  BUT NOT  LIMITED  TO, PROCUREMENT  OF  SUBSTITUTE GOODS  OR
+SERVICES;  LOSS OF  USE,  DATA, OR  PROFITS;  OR BUSINESS  INTERRUPTION)
+HOWEVER  CAUSED AND  ON ANY  THEORY OF  LIABILITY, WHETHER  IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY  WAY OUT  OF  THE USE  OF  THIS  SOFTWARE, EVEN  IF  ADVISED OF  THE
+POSSIBILITY OF SUCH DAMAGE.
 
 ## Install
 
 To install from a proper release tarball, do this:
 
 ```
-$ cd mmck-template-0.1.0
+$ cd mmck-pfds-0.1.0
 $ mkdir build
 $ cd build
 $ ../configure
@@ -71,13 +84,13 @@ The Makefile supports the DESTDIR  environment variable to install files
 in a temporary location, example: to see what will happen:
 
 ```
-$ make -n install DESTDIR=/tmp/mmck-template
+$ make -n install DESTDIR=/tmp/mmck-pfds
 ```
 
 to really do it:
 
 ```
-$ make install DESTDIR=/tmp/mmck-template
+$ make install DESTDIR=/tmp/mmck-pfds
 ```
 
 After the  installation it is  possible to verify the  installed library
@@ -93,7 +106,7 @@ Libtool), then  we must first run  the script `autogen.sh` from  the top
 source directory, to generate the needed files:
 
 ```
-$ cd mmck-template
+$ cd mmck-pfds
 $ sh autogen.sh
 
 ```
@@ -134,10 +147,12 @@ $ make install-html
 
 ## Credits
 
-The  stuff was  written by  Marco Maggi.   If this  package exists  it's
-because  of the  great GNU  software tools  that he  uses all  the time.
-CHICKEN was  originally a creation  of Felix  L.  Winkelmann, it  is now
-developed and maintained The CHICKEN Team.
+The  original   PFDS  package   is  by  Ian   Price  and   targets  R6RS
+implementations  of Scheme;  it was  later  ported to  chicken by  Marco
+Maggi.  If  this package exists it's  because of the great  GNU software
+tools that he  uses all the time.  CHICKEN was  originally a creation of
+Felix L.   Winkelmann, it  is now developed  and maintained  The CHICKEN
+Team.
 
 ## Bugs, vulnerabilities and contributions
 
@@ -150,19 +165,19 @@ Pull Requests feature at the project's GitHub site.
 
 The latest release of this package can be downloaded from:
 
-[https://bitbucket.org/marcomaggi/mmck-template/downloads](https://bitbucket.org/marcomaggi/mmck-template/downloads)
+[https://bitbucket.org/marcomaggi/mmck-pfds/downloads](https://bitbucket.org/marcomaggi/mmck-pfds/downloads)
 
 development takes place at:
 
-[http://github.com/marcomaggi/mmck-template/](http://github.com/marcomaggi/mmck-template/)
+[http://github.com/marcomaggi/mmck-pfds/](http://github.com/marcomaggi/mmck-pfds/)
 
 and as backup at:
 
-[https://bitbucket.org/marcomaggi/mmck-template/](https://bitbucket.org/marcomaggi/mmck-template/)
+[https://bitbucket.org/marcomaggi/mmck-pfds/](https://bitbucket.org/marcomaggi/mmck-pfds/)
 
 the documentation is available online:
 
-[http://marcomaggi.github.io/docs/mmck-template.html](http://marcomaggi.github.io/docs/mmck-template.html)
+[http://marcomaggi.github.io/docs/mmck-pfds.html](http://marcomaggi.github.io/docs/mmck-pfds.html)
 
 the GNU Project software can be found here:
 
@@ -176,6 +191,10 @@ the package MMCK Checks is available from:
 
 [https://github.com/marcomaggi/mmck-checks/](https://github.com/marcomaggi/mmck-checks/)
 
+the original PFDS package is available at:
+
+[http://github.com/ijp/pfds](http://github.com/ijp/pfds)
+
 ## Badges and static analysis
 
 ### Travis CI
@@ -184,7 +203,7 @@ Travis CI is  a hosted, distributed continuous  integration service used
 to build and test software projects  hosted at GitHub.  We can find this
 project's dashboard at:
 
-[https://travis-ci.org/marcomaggi/mmck-template](https://travis-ci.org/marcomaggi/mmck-template)
+[https://travis-ci.org/marcomaggi/mmck-pfds](https://travis-ci.org/marcomaggi/mmck-pfds)
 
 Usage of this  service is configured through the  file `.travis.yml` and
 additional scripts are under the directory `meta/travis-ci`.

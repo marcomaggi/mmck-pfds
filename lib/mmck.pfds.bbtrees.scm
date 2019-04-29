@@ -1,12 +1,12 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
 ;;;Part of: MMCK Pfds
-;;;Contents: test program for version functions
+;;;Contents: module bbtrees
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This program tests version functions.
+;;;	This unit defines the module BBTREES.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
@@ -35,29 +35,22 @@
 ;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
 ;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
 ;;;DAMAGE.
-;;;
 
 
 ;;;; units and module header
 
-(require-library (mmck pfds))
+(declare (unit mmck.pfds.bbtrees)
+	 (emit-import-library mmck.pfds.bbtrees))
 
-(module (test-version)
-    ()
-  (import (scheme)
-	  (mmck pfds)
-	  (chicken pretty-print))
+(module (mmck.pfds.bbtrees)
+    (the-func)
+  (import (scheme))
 
 
-;;;; stuff
+;;;; miscellaneous functions
 
-(pretty-print (list 'mmck-pfds-package-major-version	(mmck-pfds-package-major-version)))
-(pretty-print (list 'mmck-pfds-package-minor-version	(mmck-pfds-package-minor-version)))
-(pretty-print (list 'mmck-pfds-package-patch-level	(mmck-pfds-package-patch-level)))
-(pretty-print (list 'mmck-pfds-package-prerelease-tag	(mmck-pfds-package-prerelease-tag)))
-(pretty-print (list 'mmck-pfds-package-build-metadata	(mmck-pfds-package-build-metadata)))
-(pretty-print (list 'mmck-pfds-package-version		(mmck-pfds-package-version)))
-(pretty-print (list 'mmck-pfds-package-semantic-version	(mmck-pfds-package-semantic-version)))
+(define (the-func)
+  #t)
 
 
 ;;;; done

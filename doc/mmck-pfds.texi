@@ -1,7 +1,7 @@
 \input texinfo.tex
 @c %**start of header
-@setfilename mmck-template.info
-@settitle @sc{mmck} Template
+@setfilename mmck-pfds.info
+@settitle Purely Functional Data Structures in Scheme
 @c %**end of header
 
 @include version.texi
@@ -12,16 +12,16 @@
 @c Values.
 @c ------------------------------------------------------------
 
-@set TITLE                      Template for @sc{chicken}
+@set TITLE                      Purely Functional Data Structures in Scheme
 
 @c To be used as @value{PACKAGE} whenever we need to include the full
 @c name of this package.
-@set PACKAGE                    @sc{mmck} Template
+@set PACKAGE                    @sc{mmck} @sc{PFDS}
 
 @c To be used as @value{PACKAGE} whenever we need to include the
 @c nickname of the project: the name that is used to compose the
 @c distribution tarball or the web address.
-@set PACKAGE_NICKNAME           mmck-template
+@set PACKAGE_NICKNAME           mmck-pfds
 
 @c To be used as @value{AUTHOR} whenever we need to include the list of
 @c authors of this document.
@@ -39,15 +39,18 @@
 
 @c ------------------------------------------------------------
 
-@set PackageStem                template
+@set PackageStem                pfds
 
-@set PackageAutoconfPrefix      MMCK_TEMPLATE
-@set PackagePkgconfigModule     mmck-template
+@set PackageAutoconfPrefix      MMCK_PFDS
+@set PackagePkgconfigModule     mmck-pfds
 
 @set GithubUrl                  @url{https://github.com/marcomaggi/@value{PACKAGE_NICKNAME}}
 @set BitbucketUrl               @url{https://bitbucket.org/marcomaggi/@value{PACKAGE_NICKNAME}}
 @set DownloadUrl                @url{https://bitbucket.org/marcomaggi/@value{PACKAGE_NICKNAME}/downloads}
 @set DocumentationUrl           @url{https://marcomaggi.github.io/docs/@value{PACKAGE_NICKNAME}.html}
+
+@set OriginalGithubUrl          @url{http://github.com/ijp/pfds}
+
 
 @c page
 @c ------------------------------------------------------------
@@ -62,14 +65,8 @@
 @sc{chicken}
 @end macro
 
-@c ------------------------------------------------------------------------
-
-@macro templateref{NODE, TITLE}
-@xref{\NODE\,\TITLE\,\TITLE\,template}
-@end macro
-
-@macro template{}
-@acronym{TEMPLATE}
+@macro pfds{}
+@sc{PFDS}
 @end macro
 
 @c page
@@ -78,14 +75,14 @@
 @c ------------------------------------------------------------
 
 @copying
-This document describes version @value{VERSION} of @value{PACKAGE}, a @chicken{} language library
-implementing a template library.  @chicken{} is a Scheme--to--C compiler supporting the language
-features as defined in the ``Revised^5 Report on Scheme''.
+This document describes version @value{VERSION} of @value{PACKAGE}, a set of @chicken{} language
+libraries implementing purely functional data structures.  @chicken{} is a Scheme--to--C compiler
+supporting the language features as defined in the ``Revised^5 Report on Scheme''.
 
 The library supports @posix{} platforms.  This package has been tested with @chicken{} version
 @value{CHICKEN_VERSION}.
 
-This package is distributed under the terms of the @gnu{} Lesser General Public License (@lgpl{}).
+This package is distributed under the terms of a liberal license.
 
 The latest release can be downloaded from:
 
@@ -103,6 +100,7 @@ and as backup at:
 
 @noindent
 Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}
+Copyright @copyright{} 2011 Ian Price @email{ianprice90@@googlemail.com}@*
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document under the terms of the @gnu{}
@@ -132,7 +130,7 @@ included in the section entitled ``@gnu{} Free Documentation License''.
 @ifinfo
 @dircategory Development
 @direntry
-* mmck-template: (mmck-template).   A template library for @chicken{}.
+* mmck-pfds: (mmck-pfds).   A pfds library for @chicken{}.
 @end direntry
 @end ifinfo
 
@@ -157,7 +155,7 @@ included in the section entitled ``@gnu{} Free Documentation License''.
 
 Appendices
 
-* Package License::             GNU Lesser General Public License.
+* Package License::             Package license.
 * Documentation License::       GNU Free Documentation License.
 * references::                  Bibliography and references.
 
@@ -175,31 +173,31 @@ Indexes
 @chapter Overview of the package
 
 
-@cindex @library{mmck template}, library
-@cindex Library @library{mmck template}
+@cindex @library{mmck pfds}, library
+@cindex Library @library{mmck pfds}
 
 
-This document describes version @value{VERSION} of @value{PACKAGE}, a @chicken{} language library
-implementing a template library.  @chicken{} is a Scheme-to-C compiler supporting the language
-features as defined in the ``Revised^5 Report on Scheme''.
+This document describes version @value{VERSION} of @value{PACKAGE}, a set of @chicken{} language
+libraries implementing purely functional data structures.  @chicken{} is a Scheme--to--C compiler
+supporting the language features as defined in the ``Revised^5 Report on Scheme''.
 
 This package supports @posix{} platforms.  This package depends upon the @chicken{} egg
 @code{coops}.  To run the tests distributed with the source code: this package depends upon the
 package @mmck{} Checks.
 
-The package installs the library @library{mmck template} along with its import library.  To require
-the library and import its syntactic bindings in a module we can do:
+The package installs the library @library{mmck pfds} along with its import library.  To require the
+library and import its syntactic bindings in a module we can do:
 
 @example
 (declare (unit my-module)
          (emit-import-library my-module))
 
-(require-library (mmck template))
+(require-library (mmck pfds))
 
 (module (my-module)
     ()
   (import (scheme)
-    (mmck template))
+    (mmck pfds))
 
   ...
 
@@ -267,11 +265,46 @@ version is @samp{1.2.3-devel.0+x86-64}: the package version is the string
 @end defun
 
 @c page
+@node Package License
+@appendix Package license
+
+
+Copyright @copyright{} 2019 Marco Maggi @email{marco.maggi-ipsu@@poste.it}@*
+Copyright @copyright{} 2011 Ian Price @email{ianprice90@@googlemail.com}@*
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+@enumerate
+@item
+Redistributions of source code must retain the above copyright notice, this list of conditions and
+the following disclaimer.
+
+@item
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+and the following disclaimer in the documentation and/or other materials provided with the
+distribution.
+
+@item
+The name of the author may not be used to endorse or promote products derived from this software
+without specific prior written permission.
+@end enumerate
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+@c page
 @c ------------------------------------------------------------
 @c Appendices.
 @c ------------------------------------------------------------
 
-@include lgpl-3.0.texi
 @include fdl-1.3.texi
 
 @c page
@@ -308,6 +341,11 @@ the package @mmck{} Checks is available from:
 
 @center @url{https://github.com/marcomaggi/mmck-checks/}
 
+@noindent
+the original @pfds{} package is available at:
+
+@center @value{OriginalGithubUrl}
+
 @c page
 @node concept index
 @appendix An entry for each concept
@@ -333,4 +371,6 @@ the package @mmck{} Checks is available from:
 @bye
 
 @c end of file
-
+@c Local Variables:
+@c ispell-local-dictionary: "en_GB-ise-w_accents"
+@c end:

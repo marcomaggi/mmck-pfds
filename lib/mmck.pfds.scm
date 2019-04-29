@@ -1,12 +1,16 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: MMCK Pfds
-;;;Contents: test program for version functions
+;;;Part of: MMCK PFDS
+;;;Contents: main compilation unit
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This program tests version functions.
+;;;	This is the main compilation unit; it USES all the other compilation units.
+;;;
+;;;	This compilation  units defines the main  module: it imports all  the modules
+;;;	exporting  public syntactic  bindings  and it  reexports  all such  syntactic
+;;;	bindings.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
@@ -35,33 +39,20 @@
 ;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
 ;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
 ;;;DAMAGE.
-;;;
 
 
 ;;;; units and module header
 
-(require-library (mmck pfds))
+(declare (unit mmck.pfds)
+	 (uses mmck.pfds.bbtrees)
+	 (uses mmck.pfds.version)
+	 (emit-import-library mmck.pfds))
 
-(module (test-version)
+(module (mmck.pfds)
     ()
-  (import (scheme)
-	  (mmck pfds)
-	  (chicken pretty-print))
-
-
-;;;; stuff
-
-(pretty-print (list 'mmck-pfds-package-major-version	(mmck-pfds-package-major-version)))
-(pretty-print (list 'mmck-pfds-package-minor-version	(mmck-pfds-package-minor-version)))
-(pretty-print (list 'mmck-pfds-package-patch-level	(mmck-pfds-package-patch-level)))
-(pretty-print (list 'mmck-pfds-package-prerelease-tag	(mmck-pfds-package-prerelease-tag)))
-(pretty-print (list 'mmck-pfds-package-build-metadata	(mmck-pfds-package-build-metadata)))
-(pretty-print (list 'mmck-pfds-package-version		(mmck-pfds-package-version)))
-(pretty-print (list 'mmck-pfds-package-semantic-version	(mmck-pfds-package-semantic-version)))
-
-
-;;;; done
-
-#| end of module |# )
+  (import (only (chicken module) reexport))
+  (reexport (mmck.pfds.bbtrees))
+  (reexport (mmck.pfds.version))
+  #| end of module |# )
 
 ;;; end of file

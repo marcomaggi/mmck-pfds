@@ -1,7 +1,7 @@
 ;; @configure_input@
 ;;
 
-(module (mmck.template.config)
+(module (mmck.pfds.config)
     (MMUX_PKG_MAJOR_VERSION
      MMUX_PKG_MINOR_VERSION
      MMUX_PKG_PATCH_LEVEL

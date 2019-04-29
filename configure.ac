@@ -2,8 +2,8 @@
 #
 
 AC_PREREQ([2.69])
-MMUX_PKG_VERSIONS([0],[1],[0],[devel.0])
-AC_INIT([MMCK Pfds],[MMUX_PACKAGE_VERSION],
+MMUX_PKG_VERSIONS([0],[5],[0],[devel.1])
+AC_INIT([MMCK PFDS],[MMUX_PACKAGE_VERSION],
   [marco.maggi-ipsu@poste.it],
   [mmck-pfds],[http://github.com/marcomaggi/mmck-pfds])
 MMUX_INIT
@@ -61,10 +61,6 @@ AC_CACHE_SAVE
 
 
 #### external libraries
-
-PKG_PREREQ([0.29])
-PKG_INSTALLDIR
-MMUX_CHECK_PKG_CONFIG_MACROS
 
 MMUX_CHICKEN_SCHEME
 MMUX_CHICKEN_CHECK_LIBRARY([COOPS],[coops])

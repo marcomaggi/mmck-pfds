@@ -1,12 +1,12 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: MMCK Pfds
-;;;Contents: test program for version functions
+;;;Part of: MMCK PFDS
+;;;Contents: test program for bbtrees
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This program tests version functions.
+;;;	This is a test program for bbtrees.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
@@ -41,26 +41,33 @@
 ;;;; units and module header
 
 (require-library (mmck pfds))
+(require-library (mmck checks))
 
-(module (test-version)
+(module (test-bbtrees)
     ()
   (import (scheme)
+	  (chicken base)
 	  (mmck pfds)
-	  (chicken pretty-print))
+	  (mmck checks))
+
+(check-set-mode! 'report-failed)
+(check-display "*** testing bbtrees\n")
 
 
 ;;;; stuff
 
-(pretty-print (list 'mmck-pfds-package-major-version	(mmck-pfds-package-major-version)))
-(pretty-print (list 'mmck-pfds-package-minor-version	(mmck-pfds-package-minor-version)))
-(pretty-print (list 'mmck-pfds-package-patch-level	(mmck-pfds-package-patch-level)))
-(pretty-print (list 'mmck-pfds-package-prerelease-tag	(mmck-pfds-package-prerelease-tag)))
-(pretty-print (list 'mmck-pfds-package-build-metadata	(mmck-pfds-package-build-metadata)))
-(pretty-print (list 'mmck-pfds-package-version		(mmck-pfds-package-version)))
-(pretty-print (list 'mmck-pfds-package-semantic-version	(mmck-pfds-package-semantic-version)))
+(parameterize ((check-test-name		'alpha))
+
+  (check
+      (the-func)
+    => #t)
+
+  (values))
 
 
 ;;;; done
+
+(check-report)
 
 #| end of module |# )
 
