@@ -1,33 +1,65 @@
-;;; -*- coding: utf-8-unix -*-
+;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: PFDS
-;;;Contents: generic library tests
-;;;Date: Tue Aug 13, 2013
+;;;Part of: MMCK PFDS
+;;;Contents: test program for deques
+;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
+;;;	This is a test program for deques.
 ;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
 ;;;
-;;;Copyright (C) 2011,2012 Ian Price <ianprice90@googlemail.com>
-;;;Edited by Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
 ;;;
-;;;Author: Ian Price <ianprice90@googlemail.com>
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
 ;;;
-;;;This program is free software,  you can redistribute it and/or modify
-;;;it under the terms of the new-style BSD license.
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
 ;;;
-;;;You should  have received a copy  of the BSD license  along with this
-;;;program.  If not, see <http://www.debian.org/misc/bsd.license>.
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 ;;;
 
 
-#!r6rs
-(import (vicare)
-  (pfds deques)
-  (vicare checks))
+;;;; units and module header
+
+(require-library (mmck pfds)
+		 (mmck checks))
+
+(module (test-deques)
+    ()
+  (import (scheme)
+	  (only (chicken base)
+		let-values
+		let*-values
+		current-error-port)
+	  (only (chicken condition)
+		condition-case
+		handle-exceptions
+		print-error-message
+		condition)
+	  (mmck pfds)
+	  (mmck checks))
 
 (check-set-mode! 'report-failed)
-(check-display "*** testing PFDS: deques\n")
+(check-display "*** testing deques\n")
 
 
 ;;;; helpers
@@ -42,16 +74,6 @@
     ((_ ?result ?body)
      (check ?body => ?result))))
 
-(define-syntax test-exn
-  (syntax-rules ()
-    ((_ ?predicate ?body)
-     (check
-	 (guard (E ((?predicate E)
-		    #t)
-		   (else #f))
-	   ?body)
-       => #t))))
-
 (define-syntax test-predicate
   (syntax-rules ()
     ((_ ?pred ?body)
@@ -64,10 +86,18 @@
 (define (foldl kons knil list)
   (if (null? list)
       knil
-      (foldl kons (kons (car list) knil) (cdr list))))
+    (foldl kons (kons (car list) knil) (cdr list))))
 
 
-(parametrise ((check-test-name	'core))
+(parameterise ((check-test-name	'conditions))
+
+  (check-for-true	(deque-empty-condition? (condition '(pfds-deque-empty-condition))))
+  (check-for-false	(deque-empty-condition? (condition '(exn location here))))
+
+  #t)
+
+
+(parameterise ((check-test-name	'core))
 
   (test-predicate deque? (make-deque))
   (test-predicate deque-empty? (make-deque))
@@ -76,7 +106,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'insert))
+(parameterise ((check-test-name	'insert))
 
   (let ((deq (enqueue-front (make-deque) 'foo)))
     (test-predicate deque? deq)
@@ -99,7 +129,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'remove))
+(parameterise ((check-test-name	'remove))
 
   (let ((deq (enqueue-front (make-deque) 'foo)))
     (let-values (((item0 deque0) (dequeue-front deq))
@@ -133,22 +163,23 @@
       (test-eqv 3 item2)
       (test-eqv 3 (deque-length deque2))))
 
-  (let ((empty (make-deque)))
-    (test-eqv #t
-	      (guard (exn ((deque-empty-condition? exn) #t)
-			  (else #f))
-		(dequeue-front empty)
-		#f))
-    (test-eqv #t
-	      (guard (exn ((deque-empty-condition? exn) #t)
-			  (else #f))
-		(dequeue-rear empty)
-		#f)))
+  (test-eqv #t
+	    (condition-case (let ((empty (make-deque)))
+			      (dequeue-front empty)
+			      #f)
+	      ((pfds-deque-empty-condition)	#t)
+	      (()				#f)))
+  (test-eqv #t
+	    (condition-case (let ((empty (make-deque)))
+			      (dequeue-rear empty)
+			      #f)
+	      ((pfds-deque-empty-condition)	#t)
+	      (()				#f)))
 
-  #t)
+  (values))
 
 
-(parametrise ((check-test-name	'mixed))
+(parameterise ((check-test-name	'mixed))
 
   (let ((deque (foldl (lambda (pair deque)
                         ((car pair) deque (cdr pair)))
@@ -184,7 +215,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'list))
+(parameterise ((check-test-name	'list))
 
   (let ((id-list (lambda (list)
 		   (deque->list (list->deque list))))
@@ -203,5 +234,7 @@
 ;;;; done
 
 (check-report)
+
+#| end of module |# )
 
 ;;; end of file

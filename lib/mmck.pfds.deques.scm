@@ -136,7 +136,7 @@
 
 (define (%make-deque len lenL lenR l r l^ r^)
   (make deque
-    'length len 'lenL lenL 'lenR lenR 'l l 'r r 'l l^ 'r r^))
+    'length len 'lenL lenL 'lenR lenR 'l l 'r r 'l^ l^ 'r^ r^))
 
 (define (deque? obj)
   (is-a? obj deque))
@@ -168,10 +168,7 @@
     (makedq (+ 1 len) lenL (+ 1 lenR) l (cons* item r) (tail l^) (tail r^))))
 
 (define (dequeue-front deque)
-  (when (deque-empty? deque)
-    (raise (condition
-	     `(exn location deque-front message "There are no elements to remove" arguments ,(list deque))
-	     '(deque-empty-condition))))
+  (assert-deque-not-empty 'deque-front deque)
   (let ((len (deque-length deque))
         (lenL (deque-lenL deque))
         (lenR (deque-lenR deque))
@@ -191,10 +188,7 @@
                       (tail (tail r^)))))))
 
 (define (dequeue-rear deque)
-  (when (deque-empty? deque)
-    (raise (condition
-	     `(exn location deque-front message "There are no elements to remove" arguments ,(list deque))
-	     '(deque-empty-condition))))
+  (assert-deque-not-empty 'deque-front deque)
   (let ((len (deque-length deque))
         (lenL (deque-lenL deque))
         (lenR (deque-lenR deque))
@@ -240,11 +234,20 @@
           (recur deq* (cons last l)))))
   (recur deq '()))
 
-(define (deque-empty-condition? obj)
-  (condition-case obj
-    ((deque-empty-condition)
-     #t)
-    (() #f)))
+
+;;;; exceptional conditions
+
+(define deque-empty-condition?
+  (condition-predicate 'pfds-deque-empty-condition))
+
+(define (assert-deque-not-empty who deque)
+  (when (deque-empty? deque)
+    (raise
+     (condition
+       `(exn location ,who
+	     message "empty deque, there are no elements to remove"
+	     arguments ,(list deque))
+       '(pfds-deque-empty-condition)))))
 
 
 ;;;; done

@@ -47,6 +47,7 @@
      case-lambda
      condition
      condition-case
+     condition-predicate
      delay-force
      error
      let-values
@@ -65,7 +66,8 @@
 	  (only (chicken condition)
 		condition
 		abort
-		condition-case))
+		condition-case
+		condition-predicate))
 
 
 ;;;; helpers
