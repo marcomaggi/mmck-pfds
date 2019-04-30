@@ -192,7 +192,7 @@ supporting the language features as defined in the ``Revised^5 Report on Scheme'
 
 This package supports @posix{} platforms.  This package depends upon the @chicken{} egg
 @code{coops}.  To run the tests distributed with the source code: this package depends upon the
-package @mmck{} Checks and the @chicken{} egg @code{simple-conditions}.
+package @mmck{} Checks.
 
 The package installs the library @library{mmck pfds} along with its import library.  To require the
 library and import its syntactic bindings in a module we can do:
