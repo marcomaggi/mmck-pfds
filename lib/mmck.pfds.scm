@@ -46,15 +46,17 @@
 (declare (unit mmck.pfds)
 	 (uses mmck.pfds.bbtrees)
 	 (uses mmck.pfds.deques)
+	 (uses mmck.pfds.dlists)
 	 (uses mmck.pfds.version)
 	 (emit-import-library mmck.pfds))
 
 (module (mmck.pfds)
     ()
   (import (only (chicken module) reexport))
-  (reexport (mmck.pfds.bbtrees))
-  (reexport (mmck.pfds.deques))
-  (reexport (mmck.pfds.version))
+  (reexport (mmck pfds bbtrees))
+  (reexport (mmck pfds deques))
+  (reexport (mmck pfds dlists))
+  (reexport (mmck pfds version))
   #| end of module |# )
 
 ;;; end of file
