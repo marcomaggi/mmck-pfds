@@ -278,19 +278,10 @@ version is @samp{1.2.3-devel.0+x86-64}: the package version is the string
 @chapter Difference Lists
 
 
-@cindex Library @library{pfds dlists}
-@cindex @library{pfds dlists}, library
-
-
-Repeatedly appending to a list is a common, if inefficient pattern in
-functional programs.  Usually the trick we use is to build up the list
-in reverse, and then to reverse it as the last action of a function.
-Dlists are a representation of lists as functions that provide for
-constant time append to either the front or end of a dlist that may be
-used instead.
-
-The following bindings are exported by the library @library{pfds
-dlists}.
+Repeatedly appending to a list is a common, if inefficient pattern in functional programs.  Usually
+the trick we use is to build up the list in reverse, and then to reverse it as the last action of a
+function.  Dlists are a representation of lists as functions that provide for constant time append
+to either the front or end of a dlist that may be used instead.
 
 
 @defun dlist @var{obj} @dots{}
@@ -304,20 +295,18 @@ Return @true{} if @var{obj} is a dlist, @false{} otherwise.
 
 
 @defun dlist-cons @var{item} @var{dlist}
-Return a new dlist created by prepending @var{item} to the head of
-@var{dlist}.
+Return a new dlist created by prepending @var{item} to the head of @var{dlist}.
 @end defun
 
 
 @defun dlist-snoc @var{dlist} @var{item}
-Return a new dlist created by appending @var{item} to the tail of
-@var{dlist}.
+Return a new dlist created by appending @var{item} to the tail of @var{dlist}.
 @end defun
 
 
 @defun dlist-append @vari{dlist} @varii{dlist}
-Return a new dlist consisting of all the elements of @vari{dlist},
-followed by all the items of @varii{dlist}.
+Return a new dlist consisting of all the elements of @vari{dlist}, followed by all the items of
+@varii{dlist}.
 @end defun
 
 
@@ -327,20 +316,12 @@ Return a list consisting of all the elements of the @var{dlist}.
 
 
 @defun list->dlist @var{list-of-items}
-Return a dlist consisting of all the elements of the given list
-argument.
+Return a dlist consisting of all the elements of the given list argument.
 @end defun
 
 @c page
 @node queues
 @chapter Purely functional queues
-
-
-@cindex Library @library{pfds queues}
-@cindex @library{pfds queues}, library
-
-
-The following bindings are exported by the library @library{pfds queues}.
 
 
 @defun make-queue
@@ -354,8 +335,7 @@ Return @true{} if @var{obj} is a queue, @false{} otherwise.
 
 
 @defun queue-length @var{queue}
-Return a non--negative integer representing the number of items in
-@var{queue}.
+Return a non--negative integer representing the number of items in @var{queue}.
 @end defun
 
 
@@ -370,40 +350,31 @@ Return a new queue with the enqueued @var{item} at the end.
 
 
 @defun dequeue @var{queue}
-Return 2 values: the item at the front of @var{queue}, and a new queue
-containing the all the other items.  Raise a @condition{queue-empty}
-condition if @var{queue} is empty.
+Return 2 values: the item at the front of @var{queue}, and a new queue containing the all the other
+items.  Raise a condition with kind @code{pfds-queue-empty} condition if @var{queue} is empty.
 @end defun
 
 
 @defun queue-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a @condition{queue-empty} condition
-object, @false{} otherwise.
+Return @true{} if @var{obj} is a condition object with kind @code{pfds-queue-empty}; otherwise
+return @false{}.
 @end defun
 
 
 @defun queue->list @var{queue}
-Return a list containing all the items in @var{queue}.  The order of the
-item in the list is the same as the order of the elements in the queue.
+Return a list containing all the items in @var{queue}.  The order of the item in the list is the
+same as the order of the elements in the queue.
 @end defun
 
 
 @defun list->queue @var{list-of-items}
-Return a queue containing all the items in the given list.  The order of
-the items in the queue is the same as the order in the list.
+Return a queue containing all the items in the given list.  The order of the items in the queue is
+the same as the order in the list.
 @end defun
 
 @c page
 @node deques
 @chapter Double queues
-
-
-@cindex Library @library{pfds deques}
-@cindex @library{pfds deques}, library
-
-
-The following bindings are exported by the library @library{pfds
-deques}.
 
 
 @defun make-deque
@@ -417,8 +388,7 @@ Return @true{} if @var{obj} is a deque, @false{} otherwise.
 
 
 @defun deque-length @var{deque}
-Return a non--negative integer representing the number of items in
-@var{deque}.
+Return a non--negative integer representing the number of items in @var{deque}.
 @end defun
 
 
@@ -438,36 +408,31 @@ Return a new deque with the @var{item} inserted at the rear.
 
 
 @defun dequeue-front @var{deque}
-Return two values: the item at the front of @var{deque}, and a new deque
-containing all the other items.  Raise a @condition{deque-empty}
-condition if @var{deque} is empty.
+Return two values: the item at the front of @var{deque}, and a new deque containing all the other
+items.  Raise a condition with kind @code{pfds-deque-empty} if @var{deque} is empty.
 @end defun
 
 
 @defun dequeue-rear @var{deque}
-Return two values: the item at the rear of the deque, and a new deque
-containing all the other items.  Raise a @condition{deque-empty}
-condition if @var{deque} is empty.
+Return two values: the item at the rear of the deque, and a new deque containing all the other
+items.  Raise a condition with kind @code{pfds-deque-empty} condition if @var{deque} is empty.
 @end defun
 
 
 @defun deque-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a @condition{deque-empty} condition,
-@false{} otherwise.
+Return @true{} if @var{obj} is a condition with kind @code{pfds-deque-empty}, @false{} otherwise.
 @end defun
 
 
 @defun deque->list @var{deque}
-Return a list containing all the elements of @var{deque}.  The order of
-the elements in the list is the same as the order they would be dequeued
-from the front of the deque.
+Return a list containing all the elements of @var{deque}.  The order of the elements in the list is
+the same as the order they would be dequeued from the front of the deque.
 @end defun
 
 
 @defun list->deque @var{list-of-items}
-Return a deque containing all of the elements in the list argument.  The
-order of the elements in the deque is the same as the order of the
-elements in the list.
+Return a deque containing all of the elements in the list argument.  The order of the elements in
+the deque is the same as the order of the elements in the list.
 @end defun
 
 @c page
@@ -475,17 +440,12 @@ elements in the list.
 @chapter Priority search queues
 
 
-@cindex Library @library{pfds psqs}
-@cindex @library{pfds psqs}, library
+Priority search queues are a combination of two common abstract data types: finite maps, and
+priority queues.  As such, it provides for access, insertion, removal and update on arbitrary keys,
+as well as for easy removal of the element with the lowest priority.
 
-
-Priority search queues are a combination of two common abstract data
-types: finite maps, and priority queues.  As such, it provides for
-access, insertion, removal and update on arbitrary keys, as well as for
-easy removal of the element with the lowest priority.
-
-Where a procedure takes a key or priority these are expected to be
-compatible with the relevant ordering procedures on the psq.
+Where a procedure takes a key or priority these are expected to be compatible with the relevant
+ordering procedures on the psq.
 
 @menu
 * psqs basic::                  Basic operations.
@@ -499,30 +459,24 @@ compatible with the relevant ordering procedures on the psq.
 @section Basic operations
 
 
-The following bindings are exported by the library @library{pfds psqs}.
-
-
 @defun make-psq @var{key<} @var{priority<}
-Take two ordering procedures: one for keys, and another for priorities,
-and return an empty priority search queue.
+Take two ordering procedures: one for keys, and another for priorities, and return an empty priority
+search queue.
 @end defun
 
 
 @defun psq? @var{obj}
-Return @true{} if @var{obj} is a priority search queue, @false{}
-otherwise.
+Return @true{} if @var{obj} is a priority search queue, @false{} otherwise.
 @end defun
 
 
 @defun psq-empty? @var{psq}
-Return @true{} if the priority search queue contains no elements,
-@false{} otherwise.
+Return @true{} if the priority search queue contains no elements, @false{} otherwise.
 @end defun
 
 
 @defun psq-size @var{psq}
-Return a non--negative integer represeting the number of associations in
-the priority search queue.
+Return a non--negative integer represeting the number of associations in the priority search queue.
 @end defun
 
 @c page
@@ -530,44 +484,37 @@ the priority search queue.
 @section Finite map operations
 
 
-The following bindings are exported by the library @library{pfds psqs}.
-
-
 @defun psq-ref @var{psq} @var{key}
-Return the priority of @var{key} if it is in @var{psq}.  If @var{key} is
-not in @var{psq} an assertion violation is raised.
+Return the priority of @var{key} if it is in @var{psq}.  If @var{key} is not in @var{psq} an
+assertion violation is raised.
 @end defun
 
 
 @defun psq-set @var{psq} @var{key} @var{priority}
-Return the priority search queue obtained from inserting @var{key} with
-a given @var{priority}.  If @var{key} is already in the priority search
-queue, it updates the priority to the new value.
+Return the priority search queue obtained from inserting @var{key} with a given @var{priority}.  If
+@var{key} is already in the priority search queue, it updates the priority to the new value.
 @end defun
 
 
 @defun psq-update @var{psq} @var{key} @var{priority-update} @var{priority}
-Return the priority search queue obtained by modifying the priority of
-@var{key}, by the given function @var{priority-update}.  If @var{key} is
-not in @var{psq}: it is inserted with the priority obtained by calling
-the function @var{update} on the default value @var{priority-update}.
+Return the priority search queue obtained by modifying the priority of @var{key}, by the given
+function @var{priority-update}.  If @var{key} is not in @var{psq}: it is inserted with the priority
+obtained by calling the function @var{update} on the default value @var{priority-update}.
 
-@var{priority-update} must be a procedure accepting a priority value as
-single argument and returning a priority value as single value.
+@var{priority-update} must be a procedure accepting a priority value as single argument and
+returning a priority value as single value.
 @end defun
 
 
 @defun psq-delete @var{psq} @var{key}
-Return the priority search queue obtained by removing the
-@var{key}/priority association from the @var{psq}.  If @var{key} is not
-in the queue: the returned search queue will be the same as the
+Return the priority search queue obtained by removing the @var{key}/priority association from the
+@var{psq}.  If @var{key} is not in the queue: the returned search queue will be the same as the
 original.
 @end defun
 
 
 @defun psq-contains? @var{psq} @var{key}
-Return @true{} if there is an association for the given @var{key} in
-@var{psq}, @false{} otherwise.
+Return @true{} if there is an association for the given @var{key} in @var{psq}, @false{} otherwise.
 @end defun
 
 @c page
@@ -575,26 +522,21 @@ Return @true{} if there is an association for the given @var{key} in
 @section Priority queue operations
 
 
-The following bindings are exported by the library @library{pfds psqs}.
-
-
 @defun psq-min @var{psq}
-Return the key of the minimum association in @var{psq}.  If the queue is
-empty: an assertion violation is raised.
+Return the key of the minimum association in @var{psq}.  If the queue is empty: an assertion
+violation is raised.
 @end defun
 
 
 @defun psq-delete-min : psq -> psq
-Return the priority search queue obtained by removing the minimum
-association in @var{psq}.  If the queue is empty: an assertion violation
-is raised.
+Return the priority search queue obtained by removing the minimum association in @var{psq}.  If the
+queue is empty: an assertion violation is raised.
 @end defun
 
 
 @defun psq-pop @var{psq}
-Return 2 values: the minimum key and the priority search queue obtained
-by removing the minimum association from @var{psq}.  If the queue is
-empty: an assertion violation is raised.
+Return 2 values: the minimum key and the priority search queue obtained by removing the minimum
+association from @var{psq}.  If the queue is empty: an assertion violation is raised.
 @end defun
 
 @c page
@@ -602,19 +544,16 @@ empty: an assertion violation is raised.
 @section Ranged query functions
 
 
-The following bindings are exported by the library @library{pfds psqs}.
-
-
 @defun psq-at-most @var{psq} @var{priority}
-Return an alist containing all the associations in @var{psq} with
-priority less than, or equal to, the given @var{priority}.  The returned
-alist is ordered by key according to the predicate for @var{psq}.
+Return an alist containing all the associations in @var{psq} with priority less than, or equal to,
+the given @var{priority}.  The returned alist is ordered by key according to the predicate for
+@var{psq}.
 @end defun
 
 
 @defun psq-at-most-range @var{psq} @var{priority} @var{min-key} @var{max-key}
-Similar to @func{psq-at-most}, but it also takes an upper and lower
-bound, for the keys it will return.  These bounds are inclusive.
+Similar to @func{psq-at-most}, but it also takes an upper and lower bound, for the keys it will
+return.  These bounds are inclusive.
 @end defun
 
 @c page
@@ -622,28 +561,22 @@ bound, for the keys it will return.  These bounds are inclusive.
 @chapter A simple general--purpose data structure
 
 
-@cindex Library @library{pfds fingertrees}
-@cindex @library{pfds fingertrees}, library
+Fingertrees are a generalised form of deque, that we can parametrise to compute a value, called the
+``measure'' of a fingertree.  This measure will be updated incrementally as we add and remove
+elements from the fingertree.  Among other things, this allows fingertrees to be used where you
+otherwise might have written a custom data structure.
 
-
-Fingertrees are a generalised form of deque, that we can parametrise to
-compute a value, called the ``measure'' of a fingertree.  This measure
-will be updated incrementally as we add and remove elements from the
-fingertree.  Among other things, this allows fingertrees to be used
-where you otherwise might have written a custom data structure.
-
-To compute the measure, fingertrees require pieces of information: a
-converter, a combiner, and an identity.
+To compute the measure, fingertrees require pieces of information: a converter, a combiner, and an
+identity.
 
 @itemize
 @item
-The @dfn{converter} is a procedure of one argument, that maps values in
-the fingertree to other values which are used for computing the measure.
+The @dfn{converter} is a procedure of one argument, that maps values in the fingertree to other
+values which are used for computing the measure.
 
 @item
-The @dfn{combiner} is a procedure of two arguments, and combines these
-into one value representing them both.  A combiner must be associative
-i.e.
+The @dfn{combiner} is a procedure of two arguments, and combines these into one value representing
+them both.  A combiner must be associative i.e.
 
 @example
 (combine A (combine B C)) @equiv{} (combine (combine A B) C)
@@ -653,15 +586,13 @@ i.e.
 for all values @code{A}, @code{B} and @code{C}.
 
 @item
-An @dfn{identity} is a value that represents the measure of an empty
-fingertree.  It must obey the rule that @code{(combine X identity)},
-@code{(combine identity X)} and @code{X} are always the same.
+An @dfn{identity} is a value that represents the measure of an empty fingertree.  It must obey the
+rule that @code{(combine X identity)}, @code{(combine identity X)} and @code{X} are always the same.
 @end itemize
 
-To make things more concrete, a simple use of a fingertree is as a deque
-that keeps a running total.  In this case, the converter can simply be
-the function @code{(lambda (x) x)} if it is a deque of integers, the combiner
-would be @func{+}, and the identity @code{0}.
+To make things more concrete, a simple use of a fingertree is as a deque that keeps a running total.
+In this case, the converter can simply be the function @code{(lambda (x) x)} if it is a deque of
+integers, the combiner would be @func{+}, and the identity @code{0}.
 
 @example
 (define l '(3 1 4 1 5 9))
@@ -679,11 +610,8 @@ would be @func{+}, and the identity @code{0}.
 @result{} 20
 @end example
 
-Mathematically speaking, the @strong{return type} of the converter, the
-combiner and the identity element are expected to form a monoid.
-
-The following bindings are exported by the library @library{pfds
-fingertrees}.
+Mathematically speaking, the @strong{return type} of the converter, the combiner and the identity
+element are expected to form a monoid.
 
 
 @defun make-fingertree @var{identity} @var{combine} @var{measure}
@@ -703,86 +631,76 @@ otherwise.
 
 
 @defun fingertree-cons @var{item} @var{fingertree}
-Return the new fingertree created by adding the @var{item} to the front
-of @var{fingertree}.
+Return the new fingertree created by adding the @var{item} to the front of @var{fingertree}.
 @end defun
 
 
 @defun fingertree-snoc @var{fingertree} @var{item}
-Return the new fingertree created by adding @var{item} to the end of
-@var{fingertree}.
+Return the new fingertree created by adding @var{item} to the end of @var{fingertree}.
 @end defun
 
 
 @defun fingertree-uncons @var{fingertree}
-Returns 2 values: the item at the front of @var{fingertree}, and a new
-fingertree containing all but the front element.  If @var{fingertree} is
-empty: a @condition{fingertree-empty} condition is raised.
+Returns 2 values: the item at the front of @var{fingertree}, and a new fingertree containing all but
+the front element.  If @var{fingertree} is empty: a @condition{fingertree-empty} condition is
+raised.
 @end defun
 
 
 @defun fingertree-unsnoc @var{fingertree}
-Return 2 values: a new fingertree containing all but the rear element of
-@var{fingertree}, and the rear element itself.  If @var{fingertree} is
-empty: a @condition{fingertree-empty} condition is raised.
+Return 2 values: a new fingertree containing all but the rear element of @var{fingertree}, and the
+rear element itself.  If @var{fingertree} is empty: a @condition{fingertree-empty} condition is
+raised.
 @end defun
 
 
 @defun fingertree-empty-condition? @var{condition}
-Return @true{} if the argument is a @condition{fingertree-empty}
-condition, @false{} otherwise.
+Return @true{} if the argument is a @condition{fingertree-empty} condition, @false{} otherwise.
 @end defun
 
 
 @defun fingertree-append @vari{fingertree} @varii{fingertree}
-Return a new fingertree which contains all of the elements of
-@vari{fingertree}, followed by all the elements of @varii{fingertree}.
-The arguments are assumed to be parametrised by the same monoid.
+Return a new fingertree which contains all of the elements of @vari{fingertree}, followed by all the
+elements of @varii{fingertree}.  The arguments are assumed to be parametrised by the same monoid.
 @end defun
 
 
 @defun list->fingertree @var{list-of-items} @var{identity} @var{append} @var{convert}
-Return a fingertree containing all of the elements of the list argument,
-in the same order.
+Return a fingertree containing all of the elements of the list argument, in the same order.
 @end defun
 
 
 @defun fingertree->list @var{fingertree}
-Return a list of all the items in @var{fingertree}, in the order they
-would be unconsed.
+Return a list of all the items in @var{fingertree}, in the order they would be unconsed.
 @end defun
 
 
 @defun fingertree-measure @var{fingertree}
-Return the measure of @var{fingertree}, as defined by @var{fingertree}'s
-monoid.
+Return the measure of @var{fingertree}, as defined by @var{fingertree}'s monoid.
 @end defun
 
 
 @defun fingertree-split @var{predicate} @var{fingertree}
-Return 2 values: a new finger tree representing the largest prefix of
-@var{fingertree} for which applying the @var{predicate} to it's
-accumulated measure returns @false{}; is a new fingertree containing all
-those elements not in the first fingertree.
+Return 2 values: a new finger tree representing the largest prefix of @var{fingertree} for which
+applying the @var{predicate} to it's accumulated measure returns @false{}; is a new fingertree
+containing all those elements not in the first fingertree.
 
-@var{predicate} must be a function accepting a single argument and
-returning a boolean.
+@var{predicate} must be a function accepting a single argument and returning a boolean.
 @end defun
 
 
 @defun fingertree-split3 @var{predicate} @var{fingertree}
-Similar to @func{fingertree-split}, however, instead of returning the
-remainder as the second argument, return the head of the remainder as
-second value, and tail of the remainder as third value.
+Similar to @func{fingertree-split}, however, instead of returning the remainder as the second
+argument, return the head of the remainder as second value, and tail of the remainder as third
+value.
 @end defun
 
 
 @defun fingertree-fold @var{combiner} @var{accum-base} @var{fingertree}
-Return the value obtained by iterating the @var{combiner} procedure over
-@var{fingertree} in left--to--right order.  This procedure takes two
-arguments: the current value from @var{fingertree}, and an accumulator;
-it's return value is used as accumulator for the next iteration.  The
-initial value for the accumulator is given by the base argument.
+Return the value obtained by iterating the @var{combiner} procedure over @var{fingertree} in
+left--to--right order.  This procedure takes two arguments: the current value from @var{fingertree},
+and an accumulator; it's return value is used as accumulator for the next iteration.  The initial
+value for the accumulator is given by the base argument.
 @end defun
 
 
@@ -792,8 +710,7 @@ Similar to @func{fingertree-fold}, but iterate in right--to--left order.
 
 
 @defun fingertree-reverse @var{fingertree}
-Return a new fingertree in which the items are in the opposite order
-from @var{fingertree}.
+Return a new fingertree in which the items are in the opposite order from @var{fingertree}.
 @end defun
 
 @c page
@@ -801,17 +718,9 @@ from @var{fingertree}.
 @chapter Purely functional sequences
 
 
-@cindex Library @library{pfds sequences}
-@cindex @library{pfds sequences}, library
-
-
-Sequences are a general--purpose, variable--length collections, similar
-to lists, however they support efficient addition and removal from both
-ends, and random--access.  Like other Scheme collections, sequences are
-zero--indexed.
-
-The following bindings are exported by the library @library{pfds
-sequences}.
+Sequences are a general--purpose, variable--length collections, similar to lists, however they
+support efficient addition and removal from both ends, and random--access.  Like other Scheme
+collections, sequences are zero--indexed.
 
 
 @defun make-sequence
@@ -820,8 +729,7 @@ Return a new empty sequence.
 
 
 @defun sequence @var{item} @dots{}
-Return a new sequence containing all of the argument items, in the given
-order.
+Return a new sequence containing all of the argument items, in the given order.
 @end defun
 
 
@@ -831,74 +739,65 @@ Return @true{} if the argument is a sequence, @false{} otherwise.
 
 
 @defun sequence-empty? @var{sequence}
-Return @true{} if @var{sequence} contains no items, @false{}
-otherwise.
+Return @true{} if @var{sequence} contains no items, @false{} otherwise.
 @end defun
 
 
 @defun sequence-size @var{sequence}
-Return a non--negative integer representing the number of items in
-@var{sequence}.
+Return a non--negative integer representing the number of items in @var{sequence}.
 @end defun
 
 
 @defun sequence-cons @var{item} @var{sequence}
-Return a new sequence created by adding @var{item} to the front of
-@var{sequence}.
+Return a new sequence created by adding @var{item} to the front of @var{sequence}.
 @end defun
 
 
 @defun sequence-uncons @var{sequence}
-Return 2 values: the first item of @var{sequence}, and a new sequence
-containing all but the first items.  If the sequence is empty: a
-@condition{sequence-empty} condition is raised.
+Return 2 values: the first item of @var{sequence}, and a new sequence containing all but the first
+items.  If the sequence is empty: raise a condition with kind @code{pfds-sequence-empty}.
 @end defun
 
 
 @defun sequence-snoc @var{sequence} @var{item}
-Return a new sequence created by adding @var{item} to the end of
-@var{sequence}.
+Return a new sequence created by adding @var{item} to the end of @var{sequence}.
 @end defun
 
 
 @defun sequence-unsnoc @var{sequence}
-Return 2 values: a new sequence containing all but the last item of
-@var{sequence}, and the last item itself.  If @var{sequence} is empty: a
-@condition{sequence-empty} condition is raised.
+Return 2 values: a new sequence containing all but the last item of @var{sequence}, and the last
+item itself.  If @var{sequence} is empty: raise a condition with kind @code{pfds-sequence-empty}.
 @end defun
 
 
 @defun sequence-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a @condition{sequence-empty} condition,
-@false{} otherwise.
+Return @true{} if @var{obj} is a condition with kind @code{pfds-sequence-empty}; otherwise return
+@false{}.
 @end defun
 
 
 @defun sequence-append @vari{sequence} @varii{sequence}
-Return a new sequence containing all the items of @vari{sequence},
-followed by all the items of @varii{sequence}.
+Return a new sequence containing all the items of @vari{sequence}, followed by all the items of
+@varii{sequence}.
 @end defun
 
 
 @defun list->sequence @var{list-of-items}
-Return a new sequence containing all the items from the given list, in
-the same order.
+Return a new sequence containing all the items from the given list, in the same order.
 @end defun
 
 
 @defun sequence->list @var{sequence}
-Return a new list containing all the items of @var{sequence}, in the
-same order.
+Return a new list containing all the items of @var{sequence}, in the same order.
 @end defun
 
 
 @defun sequence-split-at @var{sequence} @var{N}
-Return 2 new sequences: the first containing the first @var{N} items of
-@var{sequence}, the second containing the remaining items.  If @var{N}
-is negative: return the empty sequence as the first value, and the
-original sequence as the second value.  Similarly, if @var{N} is greater
-than the size of @var{sequence}: return the original sequence as the
-first value, and the empty sequence as the second value.
+Return 2 new sequences: the first containing the first @var{N} items of @var{sequence}, the second
+containing the remaining items.  If @var{N} is negative: return the empty sequence as the first
+value, and the original sequence as the second value.  Similarly, if @var{N} is greater than the
+size of @var{sequence}: return the original sequence as the first value, and the empty sequence as
+the second value.
 
 Consequently:
 
@@ -913,25 +812,22 @@ is equivalent to @var{SEQ} for all sequences @var{SEQ}, and integers @var{N}.
 
 
 @defun sequence-take @var{sequence} @var{N}
-Return a new sequence containing the first @var{N} items of
-@var{sequence}.  If @var{N} is negative: the empty sequence is returned.
-If @var{N} is larger than the size of @var{sequence}: the whole sequence
-is returned.
+Return a new sequence containing the first @var{N} items of @var{sequence}.  If @var{N} is negative:
+the empty sequence is returned.  If @var{N} is larger than the size of @var{sequence}: the whole
+sequence is returned.
 @end defun
 
 
 @defun sequence-drop @var{sequence} @var{N}
-Return a new sequence containing all but the first @var{N} items of
-@var{sequence}.  If @var{N} is negative: the whole sequence is returned.
-If @var{N} is larger than the size of @var{sequence}: the empty sequence
-is returned.
+Return a new sequence containing all but the first @var{N} items of @var{sequence}.  If @var{N} is
+negative: the whole sequence is returned.  If @var{N} is larger than the size of @var{sequence}: the
+empty sequence is returned.
 @end defun
 
 
 @defun sequence-ref @var{sequence} @var{index}
-Return the item at the specified @var{index} in the sequence;
-@var{index} must be a non--negative exact integer.  If @var{index} is
-outside the range:
+Return the item at the specified @var{index} in the sequence; @var{index} must be a non--negative
+exact integer.  If @var{index} is outside the range:
 
 @example
 0 <= @var{index} < (sequence-size @var{sequence})
@@ -943,9 +839,8 @@ an assertion violation is raised.
 
 
 @defun sequence-set @var{sequence} @var{index} @var{item}
-Return the new sequence obtained by replacing the item at the specified
-@var{index} in @var{sequence} with the given @var{item}.  If @var{index}
-is outside the range:
+Return the new sequence obtained by replacing the item at the specified @var{index} in
+@var{sequence} with the given @var{item}.  If @var{index} is outside the range:
 
 @example
 0 <= @var{index} < (sequence-size @var{sequence})
@@ -957,36 +852,33 @@ an assertion violation is raised.
 
 
 @defun sequence-fold @var{combiner} @var{accum-base} @var{sequence}
-Return the value obtained by iterating the @var{combiner} procedure over
-@var{sequence} in left--to--right order.  The @var{combiner} procedure
-takes two arguments: the value of the position in the sequence, and an
-accumulator, and its return value is used as the value of the
-accumulator for the next call.  The initial accumulator value is given
-by the @var{accum-base} argument.
+Return the value obtained by iterating the @var{combiner} procedure over @var{sequence} in
+left--to--right order.  The @var{combiner} procedure takes two arguments: the value of the position
+in the sequence, and an accumulator, and its return value is used as the value of the accumulator
+for the next call.  The initial accumulator value is given by the @var{accum-base} argument.
 @end defun
 
 
 @defun sequence-fold-right @var{combiner} @var{accum-base} @var{sequence}
-Like @func{sequence-fold}, but the sequence is traversed in
-right--to--left order, rather than left--to--right.
+Like @func{sequence-fold}, but the sequence is traversed in right--to--left order, rather than
+left--to--right.
 @end defun
 
 
 @defun sequence-reverse @var{sequence}
-Return a new sequence containing all the item of @var{sequence}, in
-reverse order.
+Return a new sequence containing all the item of @var{sequence}, in reverse order.
 @end defun
 
 
 @defun sequence-map @var{mapper} @var{sequence}
-Return a new sequence obtained by applying the procedure @var{mapper} to
-each item of @var{sequence} in turn.
+Return a new sequence obtained by applying the procedure @var{mapper} to each item of @var{sequence}
+in turn.
 @end defun
 
 
 @defun sequence-filter @var{predicate} @var{sequence}
-Return a new sequence containing all the items of @var{sequence} for
-which the @var{predicate} is true.
+Return a new sequence containing all the items of @var{sequence} for which the @var{predicate} is
+true.
 @end defun
 
 @c page
@@ -994,17 +886,10 @@ which the @var{predicate} is true.
 @chapter Heaps
 
 
-@cindex Library @library{pfds heaps}
-@cindex @library{pfds heaps}, library
-
-
-For all the procedures: the argument @var{item<} must be a procedure
-accepting 2 arguments, being items from the heap, and returning
-@true{} if the first is less than the second; if the collected items are
-numbers: @var{item<} can be @func{<}; if the collected items are
-strings: @var{item<} can be @func{string<?}.
-
-The following bindings are exported by the library @library{pfds heaps}.
+For all the procedures: the argument @var{item<} must be a procedure accepting 2 arguments, being
+items from the heap, and returning @true{} if the first is less than the second; if the collected
+items are numbers: @var{item<} can be @func{<}; if the collected items are strings: @var{item<} can
+be @func{string<?}.
 
 
 @defun make-heap @var{item<}
@@ -1013,8 +898,8 @@ Return a new empty heap which uses the given ordering procedure.
 
 
 @defun heap @var{item<} @var{item} @dots{}
-Return a new heap, ordered by the procedure argument @var{item<}, that
-contains all the other arguments as items.
+Return a new heap, ordered by the procedure argument @var{item<}, that contains all the other
+arguments as items.
 @end defun
 
 
@@ -1024,8 +909,7 @@ Return @true{} if @var{obj} is a heap, @false{} otherwise.
 
 
 @defun heap-size @var{heap}
-Return a non--negative integer representing the number of items in
-@var{heap}.
+Return a non--negative integer representing the number of items in @var{heap}.
 @end defun
 
 
@@ -1035,59 +919,57 @@ Return @true{} if the heap contains no items, @false{} otherwise.
 
 
 @defun heap-min @var{heap}
-Return the minimum item in @var{heap}, according the heap's ordering
-procedure.  If there are no items: a @condition{heap-empty} condition is
-raised.
+Return the minimum item in @var{heap}, according the heap's ordering procedure.  If there are no
+items: a @condition{heap-empty} condition is raised.
 @end defun
 
 
 @defun heap-delete-min @var{heap}
-Return a new heap containing all the items of @var{heap}, except for the
-minimum argument, as determined by the heap's ordering procedure.  If
-there are no items: a @condition{heap-empty} condition is raised.
+Return a new heap containing all the items of @var{heap}, except for the minimum argument, as
+determined by the heap's ordering procedure.  If there are no items: raise a condition with kind
+@code{pfds-heap-empty}.
 @end defun
 
 
 @defun heap-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a @condition{heap-empty} condition,
-@false{} otherwise.
+Return @true{} if @var{obj} is a condition with kind @code{pfds-heap-empty}; otherwise return
+@false{}.
 @end defun
 
 
 @defun heap-pop @var{heap}
-Return two values: the the minimum item in @var{heap}, and a heap
-obtained by removing the minimum value from the original @var{heap}.  If
-@var{heap} is empty: a @condition{&heap-empty} condition is raised.
+Return two values: the the minimum item in @var{heap}, and a heap obtained by removing the minimum
+value from the original @var{heap}.  If @var{heap} is empty: raise a condition with kind
+@code{pfds-heap-empty}.
 @end defun
 
 
 @defun heap-insert @var{heap} @var{item}
-Return a new heap obtained by adding @var{item} to those in the
-@var{heap}.
+Return a new heap obtained by adding @var{item} to those in the @var{heap}.
 @end defun
 
 
 @defun heap->list @var{heap}
-Return a list containing all the items of @var{heap}.  The items of the
-list are ordered according to the heap's ordering procedure.
+Return a list containing all the items of @var{heap}.  The items of the list are ordered according
+to the heap's ordering procedure.
 @end defun
 
 
 @defun list->heap @var{list-of-items} @var{item<}
-Return a heap containing all the items of the given list, using the
-procedure argument @var{item<} to order them.
+Return a heap containing all the items of the given list, using the procedure argument @var{item<}
+to order them.
 @end defun
 
 
 @defun heap-merge @vari{heap} @varii{heap}
-Return the heap containing all the items of the argument heaps.  The
-argument heaps are assumed to be using the same ordering procedure.
+Return the heap containing all the items of the argument heaps.  The argument heaps are assumed to
+be using the same ordering procedure.
 @end defun
 
 
 @defun heap-sort @var{item<} @var{list-of-items}
-Return a new list that is a permutation of the @var{list-of-items}, such
-that all the items are ordered by the given procedure @var{item<}.
+Return a new list that is a permutation of the @var{list-of-items}, such that all the items are
+ordered by the given procedure @var{item<}.
 @end defun
 
 
@@ -1098,10 +980,6 @@ Return the ordering procedure used internally by @var{heap}.
 @c page
 @node bbtrees
 @chapter Bounded Balance trees
-
-
-@cindex Library @library{pfds bbtrees}
-@cindex @library{pfds bbtrees}, library
 
 
 @menu
@@ -1123,20 +1001,17 @@ The following conventions for function arguments hold:
 
 @table @var
 @item bbtree
-It is the instance of bbtree the function acts upon.  Bbtree arguments
-are @strong{never} mutated.
+It is the instance of bbtree the function acts upon.  Bbtree arguments are @strong{never} mutated.
 
 @item key
-The argument is an association key.  For all procedures which take a
-@var{key} as an argument, the @var{key} must be comparable with the
-ordering procedure of the bbtree.
+The argument is an association key.  For all procedures which take a @var{key} as an argument, the
+@var{key} must be comparable with the ordering procedure of the bbtree.
 
 @item item<
-The argument @var{item<} must be the ordering procedure: a predicate
-function accepting two arguments and returning a boolean, @true{} if the
-first argument is strictly less than the second.  For numeric collected
-items: @var{item<} can be @func{<}; for string collected items:
-@var{item<} can be @func{string<?}.
+The argument @var{item<} must be the ordering procedure: a predicate function accepting two
+arguments and returning a boolean, @true{} if the first argument is strictly less than the second.
+For numeric collected items: @var{item<} can be @func{<}; for string collected items: @var{item<}
+can be @func{string<?}.
 @end table
 
 @c page
@@ -1144,13 +1019,9 @@ items: @var{item<} can be @func{<}; for string collected items:
 @section Constructors and predicates
 
 
-The following bindings are exported by the library @library{pfds
-bbtrees}.
-
-
 @defun make-bbtree @var{item<}
-Build and return a new, empty bbtree.  Bbtrees derived from the returned
-one will use the procedure argument @var{item<} for ordering keys.
+Build and return a new, empty bbtree.  Bbtrees derived from the returned one will use the procedure
+argument @var{item<} for ordering keys.
 @end defun
 
 
@@ -1160,10 +1031,9 @@ Return @true{} if the argument is a bbtree, @false{} otherwise.
 
 
 @defun bbtree->alist @var{bbtree}
-Return the key/value associations from @var{bbtree} as a list of pairs.
-The list returned is in sorted order according to the ordering procedure
-of @var{bbtree}.  A consequence of this is that one could write a sort
-procedure for lists of pairs as:
+Return the key/value associations from @var{bbtree} as a list of pairs.  The list returned is in
+sorted order according to the ordering procedure of @var{bbtree}.  A consequence of this is that one
+could write a sort procedure for lists of pairs as:
 
 @example
 (define (alist-sort alist <)
@@ -1173,13 +1043,10 @@ procedure for lists of pairs as:
 
 
 @defun alist->bbtree @var{alist} @var{item<}
-Return the bbtree containing each of the key/value pairs in @var{alist},
-using the @var{item<} argument as the ordering procedure.
+Return the bbtree containing each of the key/value pairs in @var{alist}, using the @var{item<}
+argument as the ordering procedure.
 
 @example
-(import (vicare)
-  (pfds bbtrees))
-
 (alist->bbtree '(("foo" . 10) ("bar" . 12))
                string<?)
 @result{} #[bbtree]
@@ -1191,19 +1058,13 @@ using the @var{item<} argument as the ordering procedure.
 @section Inspection functions
 
 
-The following bindings are exported by the library @library{pfds
-bbtrees}.
-
-
 @defun bbtree-size @var{bbtree}
-Return a non--negative integer representing number of elements in a
-bbtree.
+Return a non--negative integer representing number of elements in a bbtree.
 @end defun
 
 
 @defun bbtree-contains? @var{bbtree} @var{key}
-Return @true{} if there is association for @var{key} in @var{bbtree},
-@false{} otherwise.
+Return @true{} if there is association for @var{key} in @var{bbtree}, @false{} otherwise.
 @end defun
 
 
@@ -1213,13 +1074,10 @@ Return the ordering procedure used internally to order @var{bbtree}.
 
 
 @defun bbtree-keys @var{bbtree}
-Return a list containing all the keys of @var{bbtree}.  The keys are
-sorted according to the bbtree's ordering procedure.
+Return a list containing all the keys of @var{bbtree}.  The keys are sorted according to the
+bbtree's ordering procedure.
 
 @example
-(import (vicare)
-  (pfds bbtrees))
-
 (bbtree-keys (alist->bbtree '(("one" . 1) ("two" . 2))
                             string<?))
 @result{} ("one" "two")
@@ -1231,39 +1089,29 @@ sorted according to the bbtree's ordering procedure.
 @section Setters and getters
 
 
-The following bindings are exported by the library @library{pfds
-bbtrees}.
-
-
 @defun bbtree-ref @var{bbtree} @var{key}
 @defunx bbtree-ref @var{bbtree} @var{key} @var{default}
-Return the value associated with the @var{key} in the @var{bbtree}.  If
-the value is not in the tree, then, if the optional third argument is
-passed, it is returned, otherwise an @condition{assertion-violation}
-condition is raised.
+Return the value associated with the @var{key} in the @var{bbtree}.  If the value is not in the
+tree, then, if the optional third argument is passed, it is returned, otherwise raise a condition
+with kind @code{pfds-assertion-violation}.
 @end defun
 
 
 @defun bbtree-set @var{bbtree} @var{key} @var{new-value}
-Return a new bbtree with @var{key} associated to @var{new-value}.  If
-the @var{key} is already in @var{bbtree}, its associated value is
-replaced with the new @var{new-value} in the returned bbtree.
+Return a new bbtree with @var{key} associated to @var{new-value}.  If the @var{key} is already in
+@var{bbtree}, its associated value is replaced with the new @var{new-value} in the returned bbtree.
 @end defun
 
 
 @defun bbtree-update @var{bbtree} @var{key} @var{proc} @var{default}
-Return a new bbtree with the value associated to @var{key} updated
-according to the update procedure @var{proc}.  If @var{key} was not
-already in @var{bbtree}, the update procedure is applied to
+Return a new bbtree with the value associated to @var{key} updated according to the update procedure
+@var{proc}.  If @var{key} was not already in @var{bbtree}, the update procedure is applied to
 @var{default}, and @var{key} is associated to the resulting value.
 
-The update procedure @var{proc} must accept a single argument, being the
-old value, and return a single value, being the new value.
+The update procedure @var{proc} must accept a single argument, being the old value, and return a
+single value, being the new value.
 
 @example
-(import (vicare)
-  (pfds bbtrees))
-
 (let* ((bb1   (alist->bbtree '(("foo" . 10)
                                ("bar" . 12))
                              string<?))
@@ -1284,9 +1132,8 @@ old value, and return a single value, being the new value.
 
 
 @defun bbtree-delete @var{bbtree} @var{key}
-Return a new bbtree with the @var{key} and its associated value removed.
-If @var{key} is not in @var{bbtree}: the returned bbtree is a copy of
-the original.
+Return a new bbtree with the @var{key} and its associated value removed.  If @var{key} is not in
+@var{bbtree}: the returned bbtree is a copy of the original.
 @end defun
 
 @c page
@@ -1294,15 +1141,10 @@ the original.
 @section Traversing functions
 
 
-The following bindings are exported by the library @library{pfds
-bbtrees}.
-
-
 @defun bbtree-traverse @var{traverser} @var{accum-base} @var{bbtree}
-A general tree traversal procedure.  Return the value of applying the
-@var{traverser} procedure to: the current node's key, the current node's
-value, a procedure to traverse the left subtree, a procedure to traverse
-the right subtree, and an accumulator value.
+A general tree traversal procedure.  Return the value of applying the @var{traverser} procedure to:
+the current node's key, the current node's value, a procedure to traverse the left subtree, a
+procedure to traverse the right subtree, and an accumulator value.
 
 The @var{traverser} procedure must look like:
 
@@ -1312,29 +1154,22 @@ The @var{traverser} procedure must look like:
 @end example
 
 @noindent
-and return the new accumulator value.  The subtree traversal procedures
-are generated by @func{bbtree-traverse}; both take the current
-accumulator value as argument, return the new accumulator value, and
-call @func{bbtree-traverse} recursively on the appropriate subtree.
-@var{traverser} must call both @var{left-traverse} and
-@var{right-traverse}:
+and return the new accumulator value.  The subtree traversal procedures are generated by
+@func{bbtree-traverse}; both take the current accumulator value as argument, return the new
+accumulator value, and call @func{bbtree-traverse} recursively on the appropriate subtree.
+@var{traverser} must call both @var{left-traverse} and @var{right-traverse}:
 
 @itemize
 @item
-If @var{left-traverse} is called first: the left subtree is visited
-first.
+If @var{left-traverse} is called first: the left subtree is visited first.
 
 @item
-If @var{right-traverse} is called first: the right subtree is visited
-first.
+If @var{right-traverse} is called first: the right subtree is visited first.
 @end itemize
 
 To perform a left--first preorder iteration:
 
 @example
-(import (rnrs)
-  (pfds bbtrees))
-
 (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
                            '(0 1 2 3 4 5 6 7 8 9))
                          <)))
@@ -1348,9 +1183,6 @@ To perform a left--first preorder iteration:
 and to perform a right--first preorder iteration:
 
 @example
-(import (rnrs)
-  (pfds bbtrees))
-
 (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
                            '(0 1 2 3 4 5 6 7 8 9))
                          <)))
@@ -1360,8 +1192,8 @@ and to perform a right--first preorder iteration:
 @result{} (0 2 1 4 6 9 8 7 5 3)
 @end example
 
-This function is mostly useful for implementing other, more specific
-tree traversal procedures.  For example:
+This function is mostly useful for implementing other, more specific tree traversal procedures.  For
+example:
 
 @example
 (define (l-to-r-pre-order cons base bbtree)
@@ -1372,25 +1204,19 @@ tree traversal procedures.  For example:
 @end example
 
 @noindent
-implements a left--to--right pre--order traversal variant of
-@func{bbtree-fold}.
+implements a left--to--right pre--order traversal variant of @func{bbtree-fold}.
 @end defun
 
 
 @defun bbtree-fold @var{combine} @var{accum-base} @var{bbtree}
-Return the value obtained by iterating the @var{combine} procedure over
-each node in the tree.  The combine procedure takes 3 arguments: the key
-and value of the current node, and an accumulator value; its return
-value is used as the accumulator value for the next node.  The initial
-accumulator value is provided by the @var{accum-base} argument.
+Return the value obtained by iterating the @var{combine} procedure over each node in the tree.  The
+combine procedure takes 3 arguments: the key and value of the current node, and an accumulator
+value; its return value is used as the accumulator value for the next node.  The initial accumulator
+value is provided by the @var{accum-base} argument.
 
-@func{bbtree-fold} performs a left--to--right in--order traversal or
-``minimum key to maximum key''.
+@func{bbtree-fold} performs a left--to--right in--order traversal or ``minimum key to maximum key''.
 
 @example
-(import (rnrs)
-  (pfds bbtrees))
-
 (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
                            '(0 1 2 3 4 5 6 7 8 9))
                          <)))
@@ -1405,13 +1231,10 @@ accumulator value is provided by the @var{accum-base} argument.
 
 
 @defun bbtree-fold-right @var{combine} @var{accum-base} @var{bbtree}
-Like @func{bbtree-fold}, but it performs a right--to--left in--order
-traversal instead (i.e. maximum to minimum).
+Like @func{bbtree-fold}, but it performs a right--to--left in--order traversal instead (i.e. maximum
+to minimum).
 
 @example
-(import (rnrs)
-  (pfds bbtrees))
-
 (let ((bb (alist->bbtree (map (lambda (x) (cons x x))
                            '(0 1 2 3 4 5 6 7 8 9))
                          <)))
@@ -1426,15 +1249,11 @@ traversal instead (i.e. maximum to minimum).
 
 
 @defun bbtree-map @var{func} @var{bbtree}
-Return a new bbtree obtained by updating the value of each node in
-@var{bbtree} with the result of applying the procedure to its value.
-@var{func} must take a single argument, being the original value, and
-return a single value, being the new value.
+Return a new bbtree obtained by updating the value of each node in @var{bbtree} with the result of
+applying the procedure to its value.  @var{func} must take a single argument, being the original
+value, and return a single value, being the new value.
 
 @example
-(import (rnrs)
-  (pfds bbtrees))
-
 (define bb
   (alist->bbtree '((#\a . foo)
                    (#\b . bar)
@@ -1455,27 +1274,21 @@ return a single value, being the new value.
 @section Set operations
 
 
-The following bindings are exported by the library @library{pfds
-bbtrees}.
-
-
 @defun bbtree-union @vari{bbtree} @varii{bbtree}
-Return a bbtree containing the union of the associations in
-@vari{bbtree} and @varii{bbtree}.  Where the same key occurs in both:
-the value in @vari{bbtree} is preferred.
+Return a bbtree containing the union of the associations in @vari{bbtree} and @varii{bbtree}.  Where
+the same key occurs in both: the value in @vari{bbtree} is preferred.
 @end defun
 
 
 @defun bbtree-difference @vari{bbtree} @varii{bbtree}
-Return a bbtree containing the all the associations in @vari{bbtree},
-which do not occur in @varii{bbtree}.
+Return a bbtree containing the all the associations in @vari{bbtree}, which do not occur in
+@varii{bbtree}.
 @end defun
 
 
 @defun bbtree-intersection @vari{bbtree} @varii{bbtree}
-Return a bbtree containing all the associations which appear in both
-@vari{bbtree} and @varii{bbtree}.  The values in @vari{bbtree} are
-preferred over those in @varii{bbtree}.
+Return a bbtree containing all the associations which appear in both @vari{bbtree} and
+@varii{bbtree}.  The values in @vari{bbtree} are preferred over those in @varii{bbtree}.
 @end defun
 
 @c page
@@ -1483,23 +1296,17 @@ preferred over those in @varii{bbtree}.
 @section Indexing operations
 
 
-The following bindings are exported by the library @library{pfds
-bbtrees}.
-
-
 @defun bbtree-index @var{bbtree} @var{key}
-Return a non--negative integer representing the index of @var{key} in
-the @var{bbtree}.  The index is an integer between @code{0} and
-@code{@var{size} - 1}, where @var{size} is the number of associations in
-@var{bbtree}.
+Return a non--negative integer representing the index of @var{key} in the @var{bbtree}.  The index
+is an integer between @code{0} and @code{@var{size} - 1}, where @var{size} is the number of
+associations in @var{bbtree}.
 @end defun
 
 
 @defun bbtree-ref/index @var{bbtree} @var{index}
-Return 2 values: the key and value of the association in @var{bbtree} at
-the given @var{index}.  @var{index} must be a non--negative integer
-between @code{0} and @code{@var{size} - 1}, where @var{size} is the
-number of associations in @var{bbtree}.
+Return 2 values: the key and value of the association in @var{bbtree} at the given @var{index}.
+@var{index} must be a non--negative integer between @code{0} and @code{@var{size} - 1}, where
+@var{size} is the number of associations in @var{bbtree}.
 @end defun
 
 @c page
@@ -1507,14 +1314,9 @@ number of associations in @var{bbtree}.
 @chapter Purely functional sets
 
 
-@cindex Library @library{pfds sets}
-@cindex @library{pfds sets}, library
-
-
-For all the procedures: the argument @var{item<} must be the ordering
-procedure: a predicate function accepting two arguments and returning a
-boolean, @true{} if the first argument is strictly less than the second.
-For numeric collected items: @var{item<} can be @func{<}; for string
+For all the procedures: the argument @var{item<} must be the ordering procedure: a predicate
+function accepting two arguments and returning a boolean, @true{} if the first argument is strictly
+less than the second.  For numeric collected items: @var{item<} can be @func{<}; for string
 collected items: @var{item<} can be @func{string<?}.
 
 The following bindings are exported by the library @library{pfds sets}.
@@ -1552,55 +1354,48 @@ Return an exact integer representing the number of items in @var{set}.
 
 @defun set<? @vari{set} @varii{set}
 @defunx proper-subset? @vari{set} @varii{set}
-Return @true{} if @vari{set} is a proper subset of @varii{set}, @false{}
-otherwise.  That is, if all items of @vari{set} are in @varii{set}, and
-there is at least one item of @varii{set} not in @vari{set}.
+Return @true{} if @vari{set} is a proper subset of @varii{set}, @false{} otherwise.  That is, if all
+items of @vari{set} are in @varii{set}, and there is at least one item of @varii{set} not in
+@vari{set}.
 @end defun
 
 
 @defun set<=? @vari{set} @varii{set}
 @defunx subset? @vari{set} @varii{set}
-Return @true{} if @vari{set} is a subset of @varii{set}, @false{}
-otherwise, i.e. if all items of @vari{set} are in @varii{set}.
+Return @true{} if @vari{set} is a subset of @varii{set}, @false{} otherwise, i.e. if all items of
+@vari{set} are in @varii{set}.
 @end defun
 
 
 @defun set=? @vari{set} @varii{set}
-Return @true{} if every item of @vari{set} is in @varii{set}, and vice
-versa, @false{} otherwise.
+Return @true{} if every item of @vari{set} is in @varii{set}, and vice versa, @false{} otherwise.
 @end defun
 
 
 @defun set>=? @vari{set} @varii{set}
-Return @true{} if @varii{set} is a subset of @vari{set}, @false{}
-otherwise.
+Return @true{} if @varii{set} is a subset of @vari{set}, @false{} otherwise.
 @end defun
 
 
 @defun set>? @vari{set} @varii{set}
-Return @true{} if @varii{set} is a proper subset of @vari{set}, @false{}
-otherwise.
+Return @true{} if @varii{set} is a proper subset of @vari{set}, @false{} otherwise.
 @end defun
 
 
 @defun set-map @var{mapper} @var{set}
-Return the new set created by applying the procedure @var{mapper} to
-each item of @var{set}.
+Return the new set created by applying the procedure @var{mapper} to each item of @var{set}.
 @end defun
 
 
 @defun set-fold @var{combine} @var{accum-base} @var{set}
-Return the value obtained by iterating the procedure @var{combine} over
-each item of @var{set} and an accumulator value (in this order).  The
-value of the accumulator is initially @var{accum-base}, and the return
-value of @var{combine} is used as the accumulator for the next
-iteration.
+Return the value obtained by iterating the procedure @var{combine} over each item of @var{set} and
+an accumulator value (in this order).  The value of the accumulator is initially @var{accum-base},
+and the return value of @var{combine} is used as the accumulator for the next iteration.
 @end defun
 
 
 @defun list->set @var{list-of-items} @var{item<}
-Return the set containing all the items of the given list, ordered by
-@var{item<}.
+Return the set containing all the items of the given list, ordered by @var{item<}.
 @end defun
 
 
@@ -1610,20 +1405,20 @@ Return all the items of @var{set} as a list.
 
 
 @defun set-union @vari{set} @varii{set}
-Return the union of @vari{set} and @varii{set}, i.e. a new set that
-contains all items of @vari{set} and @varii{set}.
+Return the union of @vari{set} and @varii{set}, i.e. a new set that contains all items of @vari{set}
+and @varii{set}.
 @end defun
 
 
 @defun set-intersection @vari{set} @varii{set}
-Return the intersection of @vari{set} and @varii{set2}, i.e. a new set
-of all items that are in both @vari{set} and @varii{set}.
+Return the intersection of @vari{set} and @varii{set2}, i.e. a new set of all items that are in both
+@vari{set} and @varii{set}.
 @end defun
 
 
 @defun set-difference @vari{set} @varii{set}
-Return the difference of @vari{set} and @varii{set}, i.e. the set of all
-items in @vari{set} that are @strong{not} in @varii{set}.
+Return the difference of @vari{set} and @varii{set}, i.e. the set of all items in @vari{set} that
+are @strong{not} in @varii{set}.
 @end defun
 
 
@@ -1637,7 +1432,7 @@ Return the ordering procedure used internally by @var{set}.
 
 
 Copyright @copyright{} 2019 Marco Maggi @email{marco.maggi-ipsu@@poste.it}@*
-Copyright @copyright{} 2011 Ian Price @email{ianprice90@@googlemail.com}@*
+Copyright @copyright{} 2011, 2012 Ian Price @email{ianprice90@@googlemail.com}@*
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted
