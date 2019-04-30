@@ -55,7 +55,7 @@
 ;; bbtree-ref : bbtree any [any] -> any
 ;; returns the value associated with the key in the bbtree.  If the
 ;; value is not in the tree, then, if the optional third argument is
-;; passed, it is returned, otherwise an &assertion-violation condition
+;; passed, it is returned, otherwise an assertion-violation condition
 ;; is raised.
 ;;
 ;; bbtree-set : bbtree any any -> bbtree

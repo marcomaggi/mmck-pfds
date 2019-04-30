@@ -40,8 +40,8 @@
 
 ;;;; units and module header
 
-(require-library (mmck pfds))
-(require-library (mmck checks))
+(require-library (mmck pfds)
+		 (mmck checks))
 
 (module (test-bbtrees)
     ()
@@ -51,12 +51,10 @@
 		let-values)
 	  (only (chicken sort)
 		sort)
-	  (mmck pfds)
-	  (mmck checks)
 	  (only (chicken condition)
 		condition-case)
-	  (only (simple-exceptions)
-		guard))
+	  (mmck pfds)
+	  (mmck checks))
 
 (check-set-mode! 'report-failed)
 (check-display "*** testing bbtrees\n")
@@ -88,15 +86,11 @@
 
 (define-syntax test-exn
   (syntax-rules ()
-    ((_ ?predicate ?body)
+    ((_ ?condition-kind ?body)
      (check
-	 (guard (E ((?predicate E)
-		    #t)
-		   (else
-		    (write E)
-		    (newline)
-		    #f))
-	   ?body)
+	 (condition-case ?body
+	   (?condition-kind	#t)
+	   (()			#f))
        => #t))))
 
 
@@ -179,7 +173,7 @@
     (test-eqv 'c (bbtree-ref tree3 1))
     (test-eqv #f (bbtree-ref tree1 #xdeadbeef #f))
     (test-eqv 'not-in (bbtree-ref tree1 #xdeadbeef 'not-in))
-    (test-exn assertion-violation? (bbtree-ref tree3 20))
+    (test-exn (pfds-assertion-violation) (bbtree-ref tree3 20))
 
     #f)
 
@@ -404,14 +398,14 @@
 	 (bb (alist->bbtree (map (lambda (x) (cons x #f)) l) char<?)))
     (test-equal '(0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
 		(map (lambda (x) (bbtree-index bb x)) l))
-    (test-exn assertion-violation? (bbtree-index bb #\z))
+    (test-exn (pfds-assertion-violation) (bbtree-index bb #\z))
     (test-equal l
 		(map (lambda (x)
 		       (let-values (((k v) (bbtree-ref/index bb x)))
 			 k))
 		  '(0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)))
-    (test-exn assertion-violation? (bbtree-ref/index bb -1))
-    (test-exn assertion-violation? (bbtree-ref/index bb 15)))
+    (test-exn (pfds-assertion-violation) (bbtree-ref/index bb -1))
+    (test-exn (pfds-assertion-violation) (bbtree-ref/index bb 15)))
 
   #t)
 

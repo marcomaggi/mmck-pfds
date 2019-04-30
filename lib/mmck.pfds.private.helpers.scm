@@ -43,6 +43,7 @@
     ((syntax: assert error)
      fold-left
      assertion-violation
+     assertion-violation?
      ;; reexports
      case-lambda
      condition
@@ -78,7 +79,10 @@
 (define (assertion-violation who message . irritants)
   (raise
    (condition `(exn location ,who message ,message arguments ,irritants)
-	      '(assertion-violation))))
+	      '(pfds-assertion-violation))))
+
+(define assertion-violation?
+  (condition-predicate 'pfds-assertion-violation))
 
 (define (fold-left combine nil ell)
   (if (pair? ell)
