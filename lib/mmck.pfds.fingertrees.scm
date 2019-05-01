@@ -191,7 +191,8 @@
      fingertree-fold
      fingertree-fold-right
      fingertree-reverse
-     fingertree-empty-condition?)
+     fingertree-empty-condition?
+     assert-fingertree-not-empty)
   (import (scheme)
 	  (mmck pfds private helpers)
 	  (mmck pfds private coops))
@@ -656,6 +657,15 @@
 
 (define fingertree-empty-condition?
   (condition-predicate 'pfds-fingertree-empty-condition))
+
+(define (assert-fingertree-not-empty who fingertree)
+  (when (fingertree-empty? fingertree)
+    (raise
+     (condition
+       `(exn location ,who
+	     message "empty fingertree, there are no elements"
+	     arguments ,(list fingertree))
+       '(pfds-fingertree-empty-condition)))))
 
 (define-class <fingertree>
     (<standard-object>)

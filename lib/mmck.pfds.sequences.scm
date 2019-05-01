@@ -1,23 +1,49 @@
-#!r6rs
-;;; sequences.sls --- Purely Functional Sequences
+;;; -*- coding: utf-8-unix  -*-
+;;;
+;;;Part of: MMCK Pfds
+;;;Contents: module deques
+;;;Date: Apr 29, 2019
+;;;
+;;;Abstract
+;;;
+;;;	This unit defines the module deques: purely functional deques.
+;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
+;;;
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
+;;;
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
+;;;
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
+;;;
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 
-;; Copyright (C) 2012 Ian Price <ianprice90@googlemail.com>
-
-;; Author: Ian Price <ianprice90@googlemail.com>
-
-;; This program is free software, you can redistribute it and/or
-;; modify it under the terms of the new-style BSD license.
-
-;; You should have received a copy of the BSD license along with this
-;; program. If not, see <http://www.debian.org/misc/bsd.license>.
-
-;;; Commentary:
+
+;;;; commentary
 
 ;; Sequences are a general-purpose, variable-length collection,
 ;; similar to lists, however they support efficient addition and
 ;; removal from both ends, and random-access. Like other Scheme
 ;; collections, sequences are zero-indexed.
-;;        
+;;
 ;; make-sequence : () -> sequence
 ;; returns a new empty sequence
 ;;
@@ -126,45 +152,79 @@
 ;; sequence-empty-condition? : any -> bool
 ;; returns #t if an object is a &sequence-empty condition, #f otherwise.
 ;;
-(library (pfds sequences)
-(export make-sequence
-        sequence?
-        sequence-empty?
-        sequence-size
-        sequence-cons
-        sequence-uncons
-        sequence-snoc
-        sequence-unsnoc
-        sequence-append
-        list->sequence
-        sequence->list
-        (rename (%sequence sequence))
-        sequence-split-at
-        sequence-take
-        sequence-drop
-        sequence-ref
-        sequence-set
-        sequence-fold
-        sequence-fold-right
-        sequence-reverse
-        sequence-map
-        sequence-filter
-        sequence-empty-condition?
-        )
 
-(import (rnrs)
-        (pfds fingertrees))
+
+(declare (unit mmck.pfds.sequences)
+	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.fingertrees)
+	 (emit-import-library mmck.pfds.sequences))
 
-;; Note: as sequences are not a subtype of fingertrees, but rather a
-;; particular instantiation of them, &sequence-empty is not a subtype
-;; of &fingertree-empty
-(define-condition-type &sequence-empty
-  &assertion
-  make-sequence-empty-condition
-  sequence-empty-condition?)
+(module (mmck.pfds.sequences)
+    (make-sequence
+     sequence?
+     sequence-empty?
+     sequence-size
+     sequence-cons
+     sequence-uncons
+     sequence-snoc
+     sequence-unsnoc
+     sequence-append
+     list->sequence
+     sequence->list
+     sequence
+     sequence-split-at
+     sequence-take
+     sequence-drop
+     sequence-ref
+     sequence-set
+     sequence-fold
+     sequence-fold-right
+     sequence-reverse
+     sequence-map
+     sequence-filter
+     sequence-empty-condition?)
+  (import (scheme)
+	  (mmck pfds private helpers)
+	  (except (mmck pfds private coops)
+		  <sequence>)
+	  (mmck pfds fingertrees))
 
-(define-record-type (sequence %make-sequence sequence?)
-  (fields fingertree))
+
+;;;; exceptional conditions
+
+;;Note:  as sequences  are not  a  subtype of  fingertrees, but  rather a  particular
+;;instantiation of them, &sequence-empty is not a subtype of &fingertree-empty
+(define sequence-empty-condition?
+  (condition-predicate 'pfds-sequence-empty-condition))
+
+(define (assert-sequence-not-empty who sequence)
+  (when (sequence-empty? sequence)
+    (raise-empty-sequence who sequence)))
+
+(define (raise-empty-sequence who sequence)
+  (raise
+   (condition
+     `(exn location ,who
+	   message "empty sequence, there are no elements"
+	   arguments ,(list sequence))
+     '(pfds-sequence-empty-condition))))
+
+
+;;;; implementation
+
+(define-class <sequence>
+    (<standard-object>)
+  ((fingertree	#:reader sequence-fingertree)))
+
+(define (%make-sequence fingertree)
+  (make <sequence>
+    'fingertree fingertree))
+
+(define (sequence? obj)
+  (is-a? obj <sequence>))
+
+;;; --------------------------------------------------------------------
 
 (define (make-sequence)
  (%make-sequence (make-fingertree 0 + (lambda (x) 1))))
@@ -188,12 +248,7 @@
       (lambda ()
         (define ft (sequence-fingertree seq))
         (when (fingertree-empty? ft)
-          (raise
-           (condition
-            (make-sequence-empty-condition)
-            (make-who-condition 'sequence-uncons)
-            (make-message-condition "There are no elements to uncons")
-            (make-irritants-condition (list seq)))))
+	  (raise-empty-sequence 'sequence-unsnoc seq))
         (fingertree-uncons ft))
     (lambda (head tree)
       (values head (%make-sequence tree)))))
@@ -203,12 +258,7 @@
       (lambda ()
         (define ft (sequence-fingertree seq))
         (when (fingertree-empty? ft)
-          (raise
-           (condition
-            (make-sequence-empty-condition)
-            (make-who-condition 'sequence-unsnoc)
-            (make-message-condition "There are no elements to unsnoc")
-            (make-irritants-condition (list seq)))))
+	  (raise-empty-sequence 'sequence-unsnoc seq))
         (fingertree-unsnoc ft))
     (lambda (tree last)
       (values (%make-sequence tree) last))))
@@ -226,7 +276,7 @@
 (define (sequence->list seq)
   (fingertree->list (sequence-fingertree seq)))
 
-(define (%sequence . args)
+(define (sequence . args)
   (list->sequence args))
 
 (define (sequence-split-at seq i)
@@ -249,7 +299,7 @@
 (define (sequence-ref seq i)
   (define size (sequence-size seq))
   (unless (and (<= 0 i) (< i size))
-    (assertion-violation 'sequence-ref "Index out of range" i))
+    (pfds-assertion-violation 'sequence-ref "Index out of range" i))
   (let-values (((_l x _r)
                 (fingertree-split3 (lambda (x) (< i x))
                                    (sequence-fingertree seq))))
@@ -258,7 +308,7 @@
 (define (sequence-set seq i val)
   (define size (sequence-size seq))
   (unless (and (<= 0 i) (< i size))
-    (assertion-violation 'sequence-set "Index out of range" i))
+    (pfds-assertion-violation 'sequence-set "Index out of range" i))
   (let-values (((l x r)
                 (fingertree-split3 (lambda (x) (< i x))
                                    (sequence-fingertree seq))))
@@ -286,4 +336,9 @@
         seq))
   (sequence-fold-right combine (make-sequence) seq))
 
-)
+
+;;;; done
+
+#| end of module |# )
+
+;;; end of file

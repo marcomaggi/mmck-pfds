@@ -50,6 +50,7 @@
 	 (uses mmck.pfds.heaps)
 	 (uses mmck.pfds.psqs)
 	 (uses mmck.pfds.queues)
+	 (uses mmck.pfds.sequences)
 	 (uses mmck.pfds.private.helpers)
 	 (uses mmck.pfds.version)
 	 (emit-import-library mmck.pfds))
@@ -68,6 +69,7 @@
 	    (mmck pfds heaps)
 	    (mmck pfds psqs)
 	    (mmck pfds queues)
+	    (mmck pfds sequences)
 	    (mmck pfds version))
   #| end of module |# )
 
