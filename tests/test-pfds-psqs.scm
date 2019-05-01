@@ -1,33 +1,70 @@
-;;; -*- coding: utf-8-unix -*-
+;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: PFDS
-;;;Contents: generic library tests
-;;;Date: Tue Aug 13, 2013
+;;;Part of: MMCK PFDS
+;;;Contents: test program for psqs
+;;;Date: May  1, 2019
 ;;;
 ;;;Abstract
 ;;;
+;;;	This is a test program for psqs.
 ;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2011, 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
 ;;;
-;;;Copyright (C) 2011,2012 Ian Price <ianprice90@googlemail.com>
-;;;Edited by Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
 ;;;
-;;;Author: Ian Price <ianprice90@googlemail.com>
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
 ;;;
-;;;This program is free software,  you can redistribute it and/or modify
-;;;it under the terms of the new-style BSD license.
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
 ;;;
-;;;You should  have received a copy  of the BSD license  along with this
-;;;program.  If not, see <http://www.debian.org/misc/bsd.license>.
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 ;;;
 
 
-#!r6rs
-(import (vicare)
-  (pfds psqs)
-  (vicare checks))
+;;;; units and module header
+
+(require-library (mmck pfds)
+		 (mmck checks))
+
+(module (test-psqs)
+    ()
+  (import (scheme)
+	  (only (chicken base)
+		let-values
+		let*-values
+		add1)
+	  (only (chicken sort)
+		sort)
+	  (only (chicken condition)
+		condition-case
+		handle-exceptions
+		print-error-message
+		condition
+		condition->list)
+	  (rename (mmck pfds)
+		  (make-fingertree	%make-fingertree)
+		  (list->fingertree	%list->fingertree))
+	  (mmck checks))
 
 (check-set-mode! 'report-failed)
-(check-display "*** testing PFDS: priority search queues\n")
+(check-display "*** testing psqs\n")
 
 
 ;;;; helpers
@@ -44,13 +81,15 @@
 
 (define-syntax test-exn
   (syntax-rules ()
-    ((_ ?predicate ?body)
+    ((_ ?condition-kind ?body)
      (check
-	 (guard (E ((?predicate E)
-		    #t)
-		   (else #f))
-	   ?body)
-       => #t))))
+	 (condition-case
+	     ?body
+	   ((?condition-kind)
+	    #t)
+	   (() #f))
+       => #t))
+    ))
 
 (define-syntax test-predicate
   (syntax-rules ()
@@ -77,8 +116,21 @@
          (make-psq key<? priority<?)
          alist))
 
+(define (list-sort less? seq)
+  (sort seq less?))
+
+(define (filter pred ell)
+  (let loop ((nil '())
+	     (ell (reverse ell)))
+    (if (pair? ell)
+	(loop (if (pred (car ell))
+		  (cons (car ell) nil)
+		nil)
+	      (cdr ell))
+      nil)))
+
 
-(parametrise ((check-test-name	'core))
+(parameterise ((check-test-name	'core))
 
   (check
       (psq? (make-psq < <))
@@ -97,7 +149,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'set))
+(parameterise ((check-test-name	'set))
 
   (let* ((empty (make-psq char<? <))
          (psq1  (psq-set empty #\a 10))
@@ -105,7 +157,7 @@
          (psq3  (psq-set psq2 #\c 3))
          (psq4  (psq-set psq3 #\a 12)))
     (test-eqv 10 (psq-ref psq1 #\a))
-    (test-exn assertion-violation? (psq-ref psq1 #\b))
+    (test-exn pfds-assertion-violation (psq-ref psq1 #\b))
     (test-eqv 1 (psq-size psq1))
 
     (test-eqv 10 (psq-ref psq2 #\a))
@@ -126,7 +178,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'delete))
+(parameterise ((check-test-name	'delete))
 
   (let* ((psq1 (alist->psq '((#\a . 10) (#\b . 33) (#\c . 3))
                            char<?
@@ -147,7 +199,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'update))
+(parameterise ((check-test-name	'update))
 
   (let* ((empty (make-psq char<? <))
          (psq1  (psq-update empty #\a add1 10))
@@ -172,7 +224,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'operations))
+(parameterise ((check-test-name	'operations))
 
   (let* ((psq1 (alist->psq '((#\a . 10) (#\b . 33) (#\c . 3) (#\d . 23) (#\e . 7))
                            char<?
@@ -182,7 +234,7 @@
          (psq4 (make-psq < <)))
     (test-eqv #\c (psq-min psq1))
     (test-eqv #\e (psq-min psq2))
-    (test-exn assertion-violation? (psq-delete-min psq4))
+    (test-exn pfds-assertion-violation (psq-delete-min psq4))
     (test-eqv #\a (psq-min (psq-set psq1 #\a 0)))
     (call-with-values
 	(lambda ()
@@ -194,7 +246,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'operations))
+(parameterise ((check-test-name	'operations))
 
   (let* ((alist '((#\f . 24) (#\u . 42) (#\p . 16) (#\s . 34) (#\e . 17)
 		  (#\x . 45) (#\l . 14) (#\z . 5) (#\t . 45) (#\r . 41)
@@ -219,7 +271,10 @@
     (test-equal '((#\c . 16) (#\d . 12) (#\e . 17) (#\l . 14)
 		  (#\m . 20) (#\p . 16) (#\w . 14) (#\z . 5))
 		(psq-at-most psq 20))
-    (test-equal (filter (lambda (x) (char<=? #\e (car x) #\u)) alist-sorted)
+    (test-equal (filter (lambda (x)
+			  (and (char<=? #\e (car x))
+			       (char<=? (car x) #\u)))
+		  alist-sorted)
 		(psq-at-most-range psq +inf.0 #\e #\u))
     (test-equal '() (psq-at-most-range psq 0 #\e #\u))
     (test-equal '((#\e . 17) (#\l . 14) (#\m . 20) (#\p . 16))
@@ -236,5 +291,7 @@
 ;;;; done
 
 (check-report)
+
+#| end of MODULE |# )
 
 ;;; end of file

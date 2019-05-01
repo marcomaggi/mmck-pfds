@@ -104,7 +104,6 @@
 (declare (unit mmck.pfds.heaps)
 	 (uses mmck.pfds.private.helpers)
 	 (uses mmck.pfds.private.coops)
-	 (uses mmck.pfds.private.lazy-lists)
 	 (emit-import-library mmck.pfds.heaps))
 
 (module (mmck.pfds.heaps)

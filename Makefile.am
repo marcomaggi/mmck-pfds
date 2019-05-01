@@ -24,6 +24,7 @@ MMCK_PFDS_MODULES		= \
 	lib/mmck.pfds.dlists.scm		\
 	lib/mmck.pfds.fingertrees.scm		\
 	lib/mmck.pfds.heaps.scm			\
+	lib/mmck.pfds.psqs.scm			\
 	lib/mmck.pfds.version.scm		\
 	lib/mmck.pfds.scm
 
@@ -38,6 +39,7 @@ MMCK_PFDS_RUNTIME_OBJECTS	= \
 	lib/mmck.pfds.dlists.$(OBJEXT)			\
 	lib/mmck.pfds.fingertrees.$(OBJEXT)		\
 	lib/mmck.pfds.heaps.$(OBJEXT)			\
+	lib/mmck.pfds.psqs.$(OBJEXT)			\
 	lib/mmck.pfds.version.$(OBJEXT)			\
 	lib/mmck.pfds.$(OBJEXT)
 
@@ -52,6 +54,7 @@ MMCK_PFDS_IMPORT_SOURCES	= \
 	lib/mmck.pfds.dlists.import.scm			\
 	lib/mmck.pfds.fingertrees.import.scm		\
 	lib/mmck.pfds.heaps.import.scm			\
+	lib/mmck.pfds.psqs.import.scm			\
 	lib/mmck.pfds.version.import.scm		\
 	lib/mmck.pfds.import.scm
 
@@ -69,6 +72,7 @@ MMCK_PFDS_IMPORT_DEPS	= \
 	lib/mmck.pfds.dlists.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.heaps.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)			\
 	lib/mmck.pfds.version.import.$(MMCK_SOEXT)
 
 # The import  libraries needed  to compile new  code using  the shared
@@ -84,6 +88,7 @@ MMCK_PFDS_IMPORT_SHARED_LIBS	= \
 	lib/mmck.pfds.dlists.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.heaps.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)			\
 	lib/mmck.pfds.version.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.import.$(MMCK_SOEXT)
 
@@ -228,6 +233,22 @@ lib/mmck.pfds.heaps.import.$(MMCK_SOEXT): lib/mmck.pfds.heaps.import.scm
 
 ## --------------------------------------------------------------------
 
+MMCK_PFDS_PSQS_DEPS = \
+	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	$(MMCK_OBJECTS_DEPS)
+
+lib/mmck.pfds.psqs.$(OBJEXT): lib/mmck.pfds.psqs.scm $(MMCK_PFDS_PSQS_DEPS)
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
+	@$(MV) mmck.pfds.psqs.import.scm lib/mmck.pfds.psqs.import.scm
+
+lib/mmck.pfds.psqs.import.scm: lib/mmck.pfds.psqs.$(OBJEXT)
+
+lib/mmck.pfds.psqs.import.$(MMCK_SOEXT): lib/mmck.pfds.psqs.import.scm
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
+
+## --------------------------------------------------------------------
+
 # This is the main compilation unit and it defines the main module; it
 # depends upon all the import libraries of the other modules.
 #
@@ -285,7 +306,8 @@ EXTRA_DIST		+= \
 	tests/test-pfds-deques.scm		\
 	tests/test-pfds-dlists.scm		\
 	tests/test-pfds-fingertrees.scm		\
-	tests/test-pfds-heaps.scm
+	tests/test-pfds-heaps.scm		\
+	tests/test-pfds-psqs.scm
 
 MMCK_CHECK_OBJECTS	= \
 	tests/test-version.$(OBJEXT)		\
@@ -293,7 +315,8 @@ MMCK_CHECK_OBJECTS	= \
 	tests/test-pfds-deques.$(OBJEXT)	\
 	tests/test-pfds-dlists.$(OBJEXT)	\
 	tests/test-pfds-fingertrees.$(OBJEXT)	\
-	tests/test-pfds-heaps.$(OBJEXT)
+	tests/test-pfds-heaps.$(OBJEXT)		\
+	tests/test-pfds-psqs.$(OBJEXT)
 
 MMCK_CHECK_PROGS	= \
 	tests/test-version.exe			\
@@ -301,7 +324,8 @@ MMCK_CHECK_PROGS	= \
 	tests/test-pfds-deques.exe		\
 	tests/test-pfds-dlists.exe		\
 	tests/test-pfds-fingertrees.exe		\
-	tests/test-pfds-heaps.exe
+	tests/test-pfds-heaps.exe		\
+	tests/test-pfds-psqs.exe
 
 CLEANFILES	+= $(MMCK_CHECK_PROGS) $(MMCK_CHECK_OBJECTS)
 
@@ -357,6 +381,14 @@ tests/test-pfds-heaps.$(OBJEXT): tests/test-pfds-heaps.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
 tests/test-pfds-heaps.exe: tests/test-pfds-heaps.$(OBJEXT)
+	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+tests/test-pfds-psqs.$(OBJEXT): tests/test-pfds-psqs.scm $(MMCK_CHECK_DEPS)
+	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
+
+tests/test-pfds-psqs.exe: tests/test-pfds-psqs.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ### end of file

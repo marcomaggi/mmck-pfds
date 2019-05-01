@@ -68,12 +68,6 @@
 (define (list-sort less? seq)
   (sort seq less?))
 
-(define (assertion-violation? E)
-  (condition-case E
-    ((exn assertion)
-     #t)
-    (() #f)))
-
 (define-syntax test-eqv
   (syntax-rules ()
     ((_ ?result ?body)

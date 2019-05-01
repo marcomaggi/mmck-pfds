@@ -97,6 +97,13 @@
 (define assertion-violation?
   (condition-predicate 'pfds-assertion-violation))
 
+(define-syntax assert
+  (syntax-rules ()
+    ((_ ?expr)
+     (unless ?expr
+       (assertion-violation 'assert "failed assertion" (quote ?expr))))
+    ))
+
 
 ;;;; misc
 
@@ -112,12 +119,6 @@
     (if (pair? ell)
 	(loop combine (combine (car ell) nil) (cdr ell))
       nil)))
-
-(define-syntax assert
-  (syntax-rules ()
-    ((_ ?expr)
-     (unless ?expr
-       (error 'assert "failed assertion" (quote ?expr))))))
 
 
 ;;;; done

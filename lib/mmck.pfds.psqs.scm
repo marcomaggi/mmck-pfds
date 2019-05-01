@@ -1,16 +1,42 @@
-#!r6rs
-;;; psqs.sls --- Priority Search Queues
+;;; -*- coding: utf-8-unix  -*-
+;;;
+;;;Part of: MMCK Pfds
+;;;Contents: module psqs
+;;;Date: May  1, 2019
+;;;
+;;;Abstract
+;;;
+;;;	This unit defines the module psqs.
+;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
+;;;
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
+;;;
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
+;;;
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
+;;;
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 
-;; Copyright (C) 2012 Ian Price <ianprice90@googlemail.com>
-
-;; Author: Ian Price <ianprice90@googlemail.com>
-
-;; This program is free software, you can redistribute it and/or
-;; modify it under the terms of the new-style BSD license.
-
-;; You should have received a copy of the BSD license along with this
-;; program. If not, see <http://www.debian.org/misc/bsd.license>.
-
+
 ;;;; Documentation
 ;;
 ;; Priority search queues are a combination of two common abstract
@@ -94,48 +120,100 @@
 ;; Similar to psq-at-most, but it also takes an upper and lower bound,
 ;; for the keys it will return. These bounds are inclusive.
 ;;
-(library (pfds psqs)
-(export make-psq
-        psq?
-        psq-empty?
-        psq-size
-        ;; map operations
-        psq-ref
-        psq-set
-        psq-update
-        psq-delete
-        psq-contains?
-        ;; priority queue operations
-        psq-min
-        psq-delete-min
-        psq-pop
-        ;; ranged query operations
-        psq-at-most
-        psq-at-most-range
-        )
-(import (except (rnrs) min))
 
+
+(declare (unit mmck.pfds.psqs)
+	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.private.coops)
+	 (emit-import-library mmck.pfds.psqs))
+
+(module (mmck.pfds.psqs)
+    (make-psq
+     psq?
+     psq-empty?
+     psq-size
+     ;; map operations
+     psq-ref
+     psq-set
+     psq-update
+     psq-delete
+     psq-contains?
+     ;; priority queue operations
+     psq-min
+     psq-delete-min
+     psq-pop
+     ;; ranged query operations
+     psq-at-most
+     psq-at-most-range)
+  (import (except (scheme) min)
+	  (mmck pfds private helpers)
+	  (mmck pfds private coops))
+
+
 ;;; record types
 
-(define-record-type void)
+(define-class <void>
+    (<standard-object>))
 
-(define-record-type winner
-  (fields key priority loser-tree maximum-key))
+(define (make-void)
+  (make <void>))
 
-(define-record-type start)
+(define (void? obj)
+  (is-a? obj <void>))
 
-(define-record-type (loser %make-loser loser?)
-  (fields size key priority left split-key right))
+;;; --------------------------------------------------------------------
+
+(define-class <winner>
+    (<standard-object>)
+  ((key			#:reader winner-key)
+   (priority		#:reader winner-priority)
+   (loser-tree		#:reader winner-loser-tree)
+   (maximum-key		#:reader winner-maximum-key)))
+
+(define (make-winner key priority loser-tree maximum-key)
+  (make <winner>
+    'key key 'priority priority 'loser-tree loser-tree 'maximum-key maximum-key))
+
+(define (winner? obj)
+  (is-a? obj <winner>))
+
+;;; --------------------------------------------------------------------
+
+(define-class <start>
+    (<standard-object>))
+
+(define (make-start)
+  (make <start>))
+
+(define (start? obj)
+  (is-a? obj <start>))
+
+;;; --------------------------------------------------------------------
+
+(define-class <loser>
+    (<standard-object>)
+  ((size	#:reader loser-size)
+   (key		#:reader loser-key)
+   (priority	#:reader loser-priority)
+   (left	#:reader loser-left)
+   (split-key	#:reader loser-split-key)
+   (right	#:reader loser-right)))
 
 (define (make-loser key priority left split-key right)
-  (%make-loser (+ (size left) (size right) 1)
-               key
-               priority
-               left
-               split-key
-               right))
+  (make <loser>
+    'size (+ (size left) (size right) 1)
+    'key key
+    'priority priority
+    'left left
+    'split-key split-key
+    'right right))
 
+(define (loser? obj)
+  (is-a? obj <loser>))
+
+
 ;;; functions
+
 (define (maximum-key psq)
   (winner-maximum-key psq))
 
@@ -462,8 +540,20 @@
 
 ;;; Exported Type
 
-(define-record-type (psq %make-psq psq?)
-  (fields key<? priority<? tree))
+(define-class <psq>
+    (<standard-object>)
+  ((key<?		#:reader psq-key<?)
+   (priority<?		#:reader psq-priority<?)
+   (tree		#:reader psq-tree)))
+
+(define (%make-psq key<? priority<? tree)
+  (make <psq>
+    'key<? key<?
+    'priority<? priority<?
+    'tree tree))
+
+(define (psq? obj)
+  (is-a? obj <psq>))
 
 (define (%update-psq psq new-tree)
   (%make-psq (psq-key<? psq)
@@ -484,7 +574,7 @@
   (assert (psq? psq))
   (let ((val (lookup (psq-tree psq) key cookie (psq-key<? psq))))
     (if (eq? val cookie)
-        (assertion-violation 'psq-ref "not in tree")
+        (assertion-violation 'psq-ref "not in tree" psq key)
         val)))
 
 (define (psq-set psq key priority)
@@ -541,4 +631,9 @@
         (+ 1 (size (winner-loser-tree tree)))
         0)))
 
-)
+
+;;;; done
+
+#| end of module |# )
+
+;;; end of file
