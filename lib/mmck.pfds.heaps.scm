@@ -1,15 +1,43 @@
-#!r6rs
-;; Copyright (C) 2012 Ian Price <ianprice90@googlemail.com>
+;;; -*- coding: utf-8-unix  -*-
+;;;
+;;;Part of: MMCK Pfds
+;;;Contents: module deques
+;;;Date: May  1, 2019
+;;;
+;;;Abstract
+;;;
+;;;	This unit defines the module deques: purely functional deques.
+;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
+;;;
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
+;;;
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
+;;;
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
+;;;
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 
-;; Author: Ian Price <ianprice90@googlemail.com>
-
-;; This program is free software, you can redistribute it and/or
-;; modify it under the terms of the new-style BSD license.
-
-;; You should have received a copy of the BSD license along with this
-;; program. If not, see <http://www.debian.org/misc/bsd.license>.
-
-;; Documentation:
+
+;;;; documentation
 ;;
 ;; make-heap : (any any -> bool) -> heap
 ;; returns a new empty heap which uses the ordering procedure.
@@ -71,29 +99,60 @@
 ;; heap-empty-condition? : any -> bool
 ;; returns #t if argument is a &heap-empty condition, #f otherwise.
 ;;
-(library (pfds heaps)
-(export make-heap
-        (rename (%heap heap))
-        heap?
-        heap-size
-        heap-empty?
-        heap-min
-        heap-delete-min
-        heap-insert
-        heap-pop
-        heap->list
-        list->heap
-        heap-merge
-        heap-sort
-        (rename (heap-ordering-predicate heap-ordering-procedure))
-        heap-empty-condition?
-        )
-(import (rnrs))
 
-(define-record-type (node %make-node node?)
-  (fields size height value left right))
+
+(declare (unit mmck.pfds.heaps)
+	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.private.lazy-lists)
+	 (emit-import-library mmck.pfds.heaps))
 
-(define-record-type leaf)
+(module (mmck.pfds.heaps)
+    (heap
+     make-heap
+     heap?
+     heap-size
+     heap-empty?
+     heap-min
+     heap-delete-min
+     heap-insert
+     heap-pop
+     heap->list
+     list->heap
+     heap-merge
+     heap-sort
+     heap-ordering-procedure
+     heap-empty-condition?)
+  (import (scheme)
+	  (mmck pfds private helpers)
+	  (mmck pfds private coops))
+
+
+;;;; implementation
+
+(define-class <node>
+    (<standard-object>)
+  ((size	#:reader node-size)
+   (height	#:reader node-height)
+   (value	#:reader node-value)
+   (left	#:reader node-left)
+   (right	#:reader node-right)))
+
+(define (%make-node size height value left right)
+  (make <node>
+    'size size 'height height 'value value 'left left 'right right))
+
+(define (node? obj)
+  (is-a? obj <node>))
+
+(define-class <leaf>
+    (<standard-object>))
+
+(define (make-leaf)
+  (make <leaf>))
+
+(define (leaf? obj)
+  (is-a? obj <leaf>))
 
 (define (height x)
   (if (leaf? x)
@@ -144,13 +203,24 @@
 
 
 ;; outside interface
-(define-record-type (heap %make-heap heap?)
-  (fields tree ordering-predicate))
+(define-class <heap>
+    (<standard-object>)
+  ((tree		#:reader heap-tree)
+   (ordering-predicate	#:reader heap-ordering-predicate)))
+
+(define heap-ordering-procedure heap-ordering-predicate)
+
+(define (%make-heap tree ordering-predicate)
+  (make <heap>
+    'tree tree 'ordering-predicate ordering-predicate))
+
+(define (heap? obj)
+  (is-a? obj <heap>))
 
 (define (make-heap priority<?)
   (%make-heap (make-leaf) priority<?))
 
-(define (%heap < . vals)
+(define (heap < . vals)
   (list->heap vals <))
 
 (define (heap-size heap)
@@ -159,32 +229,27 @@
 (define (heap-empty? heap)
   (leaf? (heap-tree heap)))
 
+(define (raise-empty-condition who . irritants)
+  (raise (condition
+           '(pfds-heap-empty-condition)
+           `(exn location  ,who
+		 message   "There is no minimum element."
+		 arguments ,irritants))))
+
 (define (heap-min heap)
   (when (heap-empty? heap)
-    (raise (condition
-            (make-heap-empty-condition)
-            (make-who-condition 'heap-min)
-            (make-message-condition "There is no minimum element.")
-            (make-irritants-condition (list heap)))))
+    (raise-empty-condition 'heap-min heap))
   (node-value (heap-tree heap)))
 
 (define (heap-delete-min heap)
   (when (heap-empty? heap)
-    (raise (condition
-            (make-heap-empty-condition)
-            (make-who-condition 'heap-delete-min)
-            (make-message-condition "There is no minimum element.")
-            (make-irritants-condition (list heap)))))
+    (raise-empty-condition 'heap-delete-min heap))
   (let ((< (heap-ordering-predicate heap)))
     (%make-heap (delete-min (heap-tree heap) <) <)))
 
 (define (heap-pop heap)
   (when (heap-empty? heap)
-    (raise (condition
-            (make-heap-empty-condition)
-            (make-who-condition 'heap-pop)
-            (make-message-condition "There is no minimum element.")
-            (make-irritants-condition (list heap)))))
+    (raise-empty-condition 'heap-pop heap))
   (let* ((tree (heap-tree heap))
          (top  (node-value tree))
          (<    (heap-ordering-predicate heap))
@@ -225,8 +290,16 @@
 (define (heap-sort < list)
   (heap->list (list->heap list <)))
 
-(define-condition-type &heap-empty
-  &assertion
-  make-heap-empty-condition
-  heap-empty-condition?)
-)
+(define (make-heap-empty-condition)
+  (condition '(pfds-heap-empty-condition)))
+
+(define heap-empty-condition?
+  (condition-predicate 'pfds-heap-empty-condition))
+
+
+;;;; done
+
+#| end of module |# )
+
+;;; end of file
+

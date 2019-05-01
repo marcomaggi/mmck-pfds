@@ -47,6 +47,7 @@
 	 (uses mmck.pfds.deques)
 	 (uses mmck.pfds.dlists)
 	 (uses mmck.pfds.fingertrees)
+	 (uses mmck.pfds.heaps)
 	 (uses mmck.pfds.version)
 	 (emit-import-library mmck.pfds))
 
@@ -57,6 +58,7 @@
   (reexport (mmck pfds deques))
   (reexport (mmck pfds dlists))
   (reexport (mmck pfds fingertrees))
+  (reexport (mmck pfds heaps))
   (reexport (mmck pfds version))
   #| end of module |# )
 
