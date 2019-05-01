@@ -654,7 +654,7 @@
   (condition
     '(pfds-fingertree-empty-condition)))
 
-(define (fingertree-empty-condition? obj)
+(define fingertree-empty-condition?
   (condition-predicate 'pfds-fingertree-empty-condition))
 
 (define-class <fingertree>
