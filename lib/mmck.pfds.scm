@@ -49,6 +49,7 @@
 	 (uses mmck.pfds.fingertrees)
 	 (uses mmck.pfds.heaps)
 	 (uses mmck.pfds.psqs)
+	 (uses mmck.pfds.queues)
 	 (uses mmck.pfds.private.helpers)
 	 (uses mmck.pfds.version)
 	 (emit-import-library mmck.pfds))
@@ -66,6 +67,7 @@
 	    (mmck pfds fingertrees)
 	    (mmck pfds heaps)
 	    (mmck pfds psqs)
+	    (mmck pfds queues)
 	    (mmck pfds version))
   #| end of module |# )
 
