@@ -1,33 +1,67 @@
-;;; -*- coding: utf-8-unix -*-
+;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: PFDS
-;;;Contents: generic library tests
-;;;Date: Tue Aug 13, 2013
+;;;Part of: MMCK PFDS
+;;;Contents: test program for sets
+;;;Date: May  1, 2019
 ;;;
 ;;;Abstract
 ;;;
+;;;	This is a test program for sets.
 ;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2011, 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
 ;;;
-;;;Copyright (C) 2011,2012 Ian Price <ianprice90@googlemail.com>
-;;;Edited by Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
 ;;;
-;;;Author: Ian Price <ianprice90@googlemail.com>
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
 ;;;
-;;;This program is free software,  you can redistribute it and/or modify
-;;;it under the terms of the new-style BSD license.
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
 ;;;
-;;;You should  have received a copy  of the BSD license  along with this
-;;;program.  If not, see <http://www.debian.org/misc/bsd.license>.
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 ;;;
 
 
-#!r6rs
-(import (vicare)
-  (pfds sets)
-  (vicare checks))
+;;;; units and module header
+
+(require-library (mmck pfds)
+		 (mmck checks))
+
+(module (test-sets)
+    ()
+  (import (scheme)
+	  (only (chicken base)
+		let-values
+		let*-values
+		current-error-port)
+	  (only (chicken condition)
+		condition-case
+		handle-exceptions
+		print-error-message
+		condition)
+	  (only (chicken sort)
+		sort)
+	  (mmck pfds)
+	  (mmck checks))
 
 (check-set-mode! 'report-failed)
-(check-display "*** testing PFDS: sets\n")
+(check-display "*** testing sets\n")
 
 
 ;;;; helpers
@@ -44,24 +78,29 @@
 
 (define-syntax test-exn
   (syntax-rules ()
-    ((_ ?predicate ?body)
+    ((_ ?condition-kind ?body)
      (check
-	 (guard (E ((?predicate E)
-		    #t)
-		   (else #f))
-	   ?body)
-       => #t))))
+	 (condition-case
+	     ?body
+	   ((?condition-kind)
+	    #t)
+	   (()
+	    #f))
+       => #t))
+    ))
 
 (define-syntax test-no-exn
   (syntax-rules ()
     ((_ ?body)
      (check
-	 (guard (E (#t
-		    #f)
-		   (else #f))
-	   ?body
-	   #t)
-       => #t))))
+	 (condition-case
+	     (begin
+	       ?body
+	       #t)
+	   (()
+	    #f))
+       => #t))
+    ))
 
 (define-syntax test-predicate
   (syntax-rules ()
@@ -80,8 +119,30 @@
     ((test-not body)
      (test-eqv #f body))))
 
+;;; --------------------------------------------------------------------
+
+(define (fold-left combine nil ell)
+  (if (pair? ell)
+      (fold-left combine (combine nil (car ell)) (cdr ell))
+    nil))
+
+(define (for-all pred ell)
+  (if (pair? ell)
+      (if (pred (car ell))
+	  (for-all pred (cdr ell))
+	#f)
+    #t))
+
+(define (exists pred ell)
+  (and (pair? ell)
+       (or (pred (car ell))
+	   (exists pred (cdr ell)))))
+
+(define (list-sort less? seq)
+  (sort seq less?))
+
 
-(parametrise ((check-test-name	'core))
+(parameterise ((check-test-name	'core))
 
   (check
       (set? (make-set <))
@@ -115,7 +176,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'equality))
+(parameterise ((check-test-name	'equality))
 
   (let* ((empty (make-set string<?))
          (set1  (list->set '("foo" "bar" "baz") string<?))
@@ -132,7 +193,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'operations))
+(parameterise ((check-test-name	'operations))
 
   (let* ((empty (make-set <))
          (set1 (list->set '(0 2 5 7 12 2 3 62 5) <))
@@ -168,7 +229,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'conversion))
+(parameterise ((check-test-name	'conversion))
 
   (test-eqv '() (set->list (make-set <)))
   (test-eqv 0 (set-size (list->set '() <)))
@@ -181,7 +242,7 @@
   #t)
 
 
-(parametrise ((check-test-name	'fold))
+(parameterise ((check-test-name	'fold))
 
   (test-eqv 0 (set-fold + 0 (list->set '() <)))
   (test-eqv 84 (set-fold + 0 (list->set '(3 12 62 7) <)))
@@ -193,5 +254,7 @@
 ;;;; done
 
 (check-report)
+
+#| end of MODULE |# )
 
 ;;; end of file

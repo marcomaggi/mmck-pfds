@@ -27,6 +27,7 @@ MMCK_PFDS_MODULES		= \
 	lib/mmck.pfds.psqs.scm			\
 	lib/mmck.pfds.queues.scm		\
 	lib/mmck.pfds.sequences.scm		\
+	lib/mmck.pfds.sets.scm			\
 	lib/mmck.pfds.version.scm		\
 	lib/mmck.pfds.scm
 
@@ -44,6 +45,7 @@ MMCK_PFDS_RUNTIME_OBJECTS	= \
 	lib/mmck.pfds.psqs.$(OBJEXT)			\
 	lib/mmck.pfds.queues.$(OBJEXT)			\
 	lib/mmck.pfds.sequences.$(OBJEXT)		\
+	lib/mmck.pfds.sets.$(OBJEXT)			\
 	lib/mmck.pfds.version.$(OBJEXT)			\
 	lib/mmck.pfds.$(OBJEXT)
 
@@ -61,6 +63,7 @@ MMCK_PFDS_IMPORT_SOURCES	= \
 	lib/mmck.pfds.psqs.import.scm			\
 	lib/mmck.pfds.queues.import.scm			\
 	lib/mmck.pfds.sequences.import.scm		\
+	lib/mmck.pfds.sets.import.scm			\
 	lib/mmck.pfds.version.import.scm		\
 	lib/mmck.pfds.import.scm
 
@@ -81,6 +84,7 @@ MMCK_PFDS_IMPORT_DEPS	= \
 	lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)			\
 	lib/mmck.pfds.queues.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.sequences.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.sets.import.$(MMCK_SOEXT)			\
 	lib/mmck.pfds.version.import.$(MMCK_SOEXT)
 
 # The import  libraries needed  to compile new  code using  the shared
@@ -99,6 +103,7 @@ MMCK_PFDS_IMPORT_SHARED_LIBS	= \
 	lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)			\
 	lib/mmck.pfds.queues.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.sequences.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.sets.import.$(MMCK_SOEXT)			\
 	lib/mmck.pfds.version.import.$(MMCK_SOEXT)		\
 	lib/mmck.pfds.import.$(MMCK_SOEXT)
 
@@ -278,6 +283,7 @@ lib/mmck.pfds.queues.import.$(MMCK_SOEXT): lib/mmck.pfds.queues.import.scm
 MMCK_PFDS_SEQUENCES_DEPS = \
 	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
 	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.sequences.$(OBJEXT): lib/mmck.pfds.sequences.scm $(MMCK_PFDS_SEQUENCES_DEPS)
@@ -287,6 +293,23 @@ lib/mmck.pfds.sequences.$(OBJEXT): lib/mmck.pfds.sequences.scm $(MMCK_PFDS_SEQUE
 lib/mmck.pfds.sequences.import.scm: lib/mmck.pfds.sequences.$(OBJEXT)
 
 lib/mmck.pfds.sequences.import.$(MMCK_SOEXT): lib/mmck.pfds.sequences.import.scm
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+MMCK_PFDS_SETS_DEPS = \
+	lib/mmck.pfds.private.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.private.coops.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)		\
+	$(MMCK_OBJECTS_DEPS)
+
+lib/mmck.pfds.sets.$(OBJEXT): lib/mmck.pfds.sets.scm $(MMCK_PFDS_SETS_DEPS)
+	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) $(@) $(<)
+	@$(MV) mmck.pfds.sets.import.scm lib/mmck.pfds.sets.import.scm
+
+lib/mmck.pfds.sets.import.scm: lib/mmck.pfds.sets.$(OBJEXT)
+
+lib/mmck.pfds.sets.import.$(MMCK_SOEXT): lib/mmck.pfds.sets.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
 ## --------------------------------------------------------------------
@@ -351,7 +374,8 @@ EXTRA_DIST		+= \
 	tests/test-pfds-heaps.scm		\
 	tests/test-pfds-psqs.scm		\
 	tests/test-pfds-queues.scm		\
-	tests/test-pfds-sequences.scm
+	tests/test-pfds-sequences.scm		\
+	tests/test-pfds-sets.scm
 
 MMCK_CHECK_OBJECTS	= \
 	tests/test-version.$(OBJEXT)		\
@@ -362,7 +386,8 @@ MMCK_CHECK_OBJECTS	= \
 	tests/test-pfds-heaps.$(OBJEXT)		\
 	tests/test-pfds-psqs.$(OBJEXT)		\
 	tests/test-pfds-queues.$(OBJEXT)	\
-	tests/test-pfds-sequences.$(OBJEXT)
+	tests/test-pfds-sequences.$(OBJEXT)	\
+	tests/test-pfds-sets.$(OBJEXT)
 
 MMCK_CHECK_PROGS	= \
 	tests/test-version.exe			\
@@ -373,7 +398,8 @@ MMCK_CHECK_PROGS	= \
 	tests/test-pfds-heaps.exe		\
 	tests/test-pfds-psqs.exe		\
 	tests/test-pfds-queues.exe		\
-	tests/test-pfds-sequences.exe
+	tests/test-pfds-sequences.exe		\
+	tests/test-pfds-sets.exe
 
 CLEANFILES	+= $(MMCK_CHECK_PROGS) $(MMCK_CHECK_OBJECTS)
 
@@ -453,6 +479,14 @@ tests/test-pfds-sequences.$(OBJEXT): tests/test-pfds-sequences.scm $(MMCK_CHECK_
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
 tests/test-pfds-sequences.exe: tests/test-pfds-sequences.$(OBJEXT)
+	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+tests/test-pfds-sets.$(OBJEXT): tests/test-pfds-sets.scm $(MMCK_CHECK_DEPS)
+	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
+
+tests/test-pfds-sets.exe: tests/test-pfds-sets.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ### end of file
