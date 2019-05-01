@@ -1,17 +1,43 @@
-#!r6rs
-;;; fingertrees.sls --- A Simple General-Purpose Data Structure
+;;; -*- coding: utf-8-unix  -*-
+;;;
+;;;Part of: MMCK Pfds
+;;;Contents: module fingertrees
+;;;Date: Apr 30, 2019
+;;;
+;;;Abstract
+;;;
+;;;	This unit defines the module fingertrees: purely functional fingertrees.
+;;;
+;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2012 Ian Price <ianprice90@googlemail.com>
+;;;All rights reserved.
+;;;
+;;;Redistribution and use  in source and binary forms, with  or without modification,
+;;;are permitted provided that the following conditions are met:
+;;;
+;;;1.  Redistributions  of source code must  retain the above copyright  notice, this
+;;;   list of conditions and the following disclaimer.
+;;;
+;;;2. Redistributions in binary form must  reproduce the above copyright notice, this
+;;;   list of  conditions and  the following disclaimer  in the  documentation and/or
+;;;   other materials provided with the distribution.
+;;;
+;;;3. The name of  the author may not be used to endorse  or promote products derived
+;;;   from this software without specific prior written permission.
+;;;
+;;;THIS SOFTWARE  IS PROVIDED  BY THE  AUTHOR ``AS  IS'' AND  ANY EXPRESS  OR IMPLIED
+;;;WARRANTIES,   INCLUDING,  BUT   NOT  LIMITED   TO,  THE   IMPLIED  WARRANTIES   OF
+;;;MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE DISCLAIMED.  IN NO EVENT
+;;;SHALL  THE  AUTHOR  BE  LIABLE  FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,
+;;;EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;;;SUBSTITUTE  GOODS  OR  SERVICES;  LOSS  OF USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+;;;INTERRUPTION) HOWEVER CAUSED AND ON ANY  THEORY OF LIABILITY, WHETHER IN CONTRACT,
+;;;STRICT LIABILITY, OR  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING  IN ANY WAY
+;;;OUT  OF THE  USE OF  THIS SOFTWARE,  EVEN IF  ADVISED OF  THE POSSIBILITY  OF SUCH
+;;;DAMAGE.
 
-;; Copyright (C) 2012 Ian Price <ianprice90@googlemail.com>
-
-;; Author: Ian Price <ianprice90@googlemail.com>
-
-;; This program is free software, you can redistribute it and/or
-;; modify it under the terms of the new-style BSD license.
-
-;; You should have received a copy of the BSD license along with this
-;; program. If not, see <http://www.debian.org/misc/bsd.license>.
-
-;;; Commentary:
+
+;;;; commentary
 ;;
 ;; Fingertrees are a generalised form of deque, that you can parameterise
 ;; to compute a value, called the "measure" of a fingertree. This measure
@@ -141,28 +167,37 @@
 ;; fingertree-empty-condition? : condition -> bool
 ;; returns #t if the argument is a &fingertree-empty condition, #f otherwise.
 ;;
-(library (pfds fingertrees)
-(export fingertree?
-        fingertree-empty?
-        make-fingertree
-        fingertree-cons
-        fingertree-snoc
-        fingertree-uncons
-        fingertree-unsnoc
-        fingertree-append
-        list->fingertree
-        fingertree->list
-        fingertree-measure
-        fingertree-split
-        fingertree-split3
-        fingertree-fold
-        fingertree-fold-right
-        fingertree-reverse
-        fingertree-empty-condition?
-        )
-(import (rnrs))
 
-;;; List helpers
+
+(declare (unit mmck.pfds.fingertrees)
+	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.private.coops)
+	 (emit-import-library mmck.pfds.fingertrees))
+
+(module (mmck.pfds.fingertrees)
+    (fingertree?
+     fingertree-empty?
+     make-fingertree
+     fingertree-cons
+     fingertree-snoc
+     fingertree-uncons
+     fingertree-unsnoc
+     fingertree-append
+     list->fingertree
+     fingertree->list
+     fingertree-measure
+     fingertree-split
+     fingertree-split3
+     fingertree-fold
+     fingertree-fold-right
+     fingertree-reverse
+     fingertree-empty-condition?)
+  (import (scheme)
+	  (mmck pfds private helpers)
+	  (mmck pfds private coops))
+
+
+;;;; list helpers
 
 (define (snoc l val)
   (append l (list val)))
@@ -187,31 +222,46 @@
 (define (map-reverse f l)
   (fold-left (lambda (o n) (cons (f n) o)) '() l))
 
-;;; Node type
+
+;;;; node type
 
-(define-record-type node2
-  (protocol
-   (lambda (new)
-     (lambda (monoid a b)
-       (define app (mappend monoid))
-       (new (app (measure-nodetree a monoid)
-                 (measure-nodetree b monoid))
-            a
-            b))))
-  (fields measure a b))
+(define-class <node2>
+    (<standard-object>)
+  ((measure	#:reader node2-measure)
+   (a		#:reader node2-a)
+   (b		#:reader node2-b)))
 
-(define-record-type node3
-  (protocol
-   (lambda (new)
-     (lambda (monoid a b c)
-       (define app (mappend monoid))
-       (new (app (app (measure-nodetree a monoid)
-                      (measure-nodetree b monoid))
-                 (measure-nodetree c monoid))
-            a
-            b
-            c))))
-  (fields measure a b c))
+(define (make-node2 monoid a b)
+  (let ((app (mappend monoid)))
+    (make <node2>
+      'measure (app (measure-nodetree a monoid)
+		    (measure-nodetree b monoid))
+      'a a 'b b)))
+
+(define (node2? obj)
+  (is-a? obj <node2>))
+
+;;; --------------------------------------------------------------------
+
+(define-class <node3>
+    (<standard-object>)
+  ((measure	#:reader node3-measure)
+   (a		#:reader node3-a)
+   (b		#:reader node3-b)
+   (c		#:reader node3-c)))
+
+(define (make-node3 monoid a b c)
+  (let ((app (mappend monoid)))
+    (make <node3>
+      'measure (app (app (measure-nodetree a monoid)
+			 (measure-nodetree b monoid))
+		    (measure-nodetree c monoid))
+      'a a 'b b 'c c)))
+
+(define (node3? obj)
+  (is-a? obj <node3>))
+
+;;; --------------------------------------------------------------------
 
 (define (node-case node k2 k3)
   (if (node2? node)
@@ -252,27 +302,53 @@
           (else (f node base))))
   (foldl nodetree base))
 
-;;; Tree type
+
+;;;; tree type
 
-(define-record-type empty)
+(define-class <empty>
+    (<standard-object>))
 
-(define-record-type single
-  (fields value))
+(define (make-empty)
+  (make <empty>))
 
-(define-record-type rib
-  (protocol
-   (lambda (new)
-     (lambda (monoid left middle right)
-       (define app (mappend monoid))
-       (new (app (app (measure-digit left monoid)
-                      (measure-ftree middle monoid))
-                 (measure-digit right monoid))
-            left
-            middle
-            right)
-       )))
+(define (empty? obj)
+  (is-a? obj <empty>))
+
+;;; --------------------------------------------------------------------
+
+(define-class <single>
+    (<standard-object>)
+  ((value	#:reader single-value)))
+
+(define (make-single value)
+  (make <single>
+    'value value))
+
+(define (single? obj)
+  (is-a? obj <single>))
+
+;;; --------------------------------------------------------------------
+
+(define-class <rib>
+    (<standard-class>)
   ;; left and right expected to be lists of length 0 < l < 5
-  (fields measure left middle right))
+  ((measure	#:reader rib-measure)
+   (left	#:reader rib-left)
+   (middle	#:reader rib-middle)
+   (right	#:reader rib-right)))
+
+(define (make-rib monoid left middle right)
+  (let ((app (mappend monoid)))
+    (make <rib>
+      'measure (app (app (measure-digit left monoid)
+			 (measure-ftree middle monoid))
+                    (measure-digit right monoid))
+      'left left 'middle middle 'right right)))
+
+(define (rib? obj)
+  (is-a? obj <rib>))
+
+;;; --------------------------------------------------------------------
 
 (define (ftree-case ftree empty-k single-k rib-k)
   (cond ((empty? ftree) (empty-k))
@@ -486,18 +562,25 @@
                      (reverse-nodetree (node3-a l) monoid)))
         (else l)))
 
-;; generalising fingertrees with monoids
+
+;;;; generalising fingertrees with monoids
 
-;; I think I'm going to need a "configuration" type and pass it around
-;; in order to generalize over arbitrary monoids
-;; call the type iMeasured or something
+;;I think  I'm going to need  a "configuration" type and  pass it around in  order to
+;;generalize over arbitrary monoids call the type iMeasured or something
 
-(define-record-type monoid*
-  ;; a monoid, but augmented with a procedure to convert objects into the
-  ;; monoid type
-  (fields (immutable empty mempty)
-          (immutable append mappend)
-          (immutable convert mconvert)))
+(define-class <monoid*>
+    (<standard-class>)
+  ;; a monoid, but augmented with a procedure to convert objects into the monoid type
+  ((empty	#:reader mempty)
+   (append	#:reader mappend)
+   (convert	#:reader mconvert)))
+
+(define (make-monoid* empty append convert)
+  (make <monoid*>
+    'empty empty 'append append 'convert convert))
+
+(define (monoid*? obj)
+  (is-a? obj <monoid*>))
 
 (define (measure-digit obj monoid)
   (fold-left (lambda (i a)
@@ -567,14 +650,24 @@
                           (split-digit proc i* (cdr xs) monoid)))
               (values (cons (car xs) l) x r))))))
 
-;; exported interface
-(define-condition-type &fingertree-empty
-  &assertion
-  make-fingertree-empty-condition
-  fingertree-empty-condition?)
+(define (make-fingertree-empty-condition)
+  (condition
+    '(pfds-fingertree-empty-condition)))
 
-(define-record-type (fingertree %make-fingertree fingertree?)
-  (fields tree monoid))
+(define (fingertree-empty-condition? obj)
+  (condition-predicate 'pfds-fingertree-empty-condition))
+
+(define-class <fingertree>
+    (<standard-object>)
+  ((tree	#:reader fingertree-tree)
+   (monoid	#:reader fingertree-monoid)))
+
+(define (%make-fingertree tree monoid)
+  (make <fingertree>
+    'tree tree 'monoid monoid))
+
+(define (fingertree? obj)
+  (is-a? obj <fingertree>))
 
 (define (%wrap fingertree tree)
   (%make-fingertree tree
@@ -604,11 +697,11 @@
         (define t (fingertree-tree fingertree))
         (when (empty? t)
           (raise
-           (condition
+           (make-composite-condition
             (make-fingertree-empty-condition)
-            (make-who-condition 'fingertree-uncons)
-            (make-message-condition "There are no elements to uncons")
-            (make-irritants-condition (list fingertree)))))
+            (condition `(exn location fingertree-uncons
+			     message "There are no elements to uncons"
+			     arguments ,(list fingertree))))))
         (remove-front t (fingertree-monoid fingertree)))
     (lambda (val rest)
       (values val
@@ -618,13 +711,13 @@
   (call-with-values
       (lambda ()
         (define t (fingertree-tree fingertree))
-        (when (empty? t)
+	(when (empty? t)
           (raise
-           (condition
+           (make-composite-condition
             (make-fingertree-empty-condition)
-            (make-who-condition 'fingertree-unsnoc)
-            (make-message-condition "There are no elements to unsnoc")
-            (make-irritants-condition (list fingertree)))))
+            (condition `(exn location fingertree-unsnoc
+			     message "There are no elements to unsnoc"
+			     arguments ,(list fingertree))))))
         (remove-rear t (fingertree-monoid fingertree)))
     (lambda (rest val)
       (values (%wrap fingertree rest) val))))
@@ -686,4 +779,9 @@
          (reverse-tree (fingertree-tree fingertree)
                        (fingertree-monoid fingertree))))
 
-)
+
+;;;; done
+
+#| end of module |# )
+
+;;; end of file

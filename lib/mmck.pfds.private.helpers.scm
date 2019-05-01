@@ -42,16 +42,20 @@
 (module (mmck pfds private helpers)
     ((syntax: assert error)
      fold-left
+     fold-right
+     make-pfds-assertion-violation
      assertion-violation
      assertion-violation?
      ;; reexports
      case-lambda
+     make-composite-condition
      condition
      condition-case
      condition-predicate
      delay-force
      error
      let-values
+     let*-values
      raise
      raise
      unless
@@ -61,33 +65,53 @@
 		case-lambda
 		error
 		let-values
+		let*-values
 		delay-force
 		unless
 		when)
 	  (only (chicken condition)
 		condition
+		make-composite-condition
 		abort
 		condition-case
 		condition-predicate))
 
 
-;;;; helpers
+;;;; exceptional-condition objects and related stuff
 
 (define (raise obj)
   (abort obj))
 
+;;; --------------------------------------------------------------------
+
+(define (make-pfds-assertion-violation)
+  (condition
+    '(pfds-assertion-violation)))
+
 (define (assertion-violation who message . irritants)
   (raise
-   (condition `(exn location ,who message ,message arguments ,irritants)
-	      '(pfds-assertion-violation))))
+   (make-composite-condition
+    (condition `(exn location ,who message ,message arguments ,irritants))
+    (make-pfds-assertion-violation))))
 
 (define assertion-violation?
   (condition-predicate 'pfds-assertion-violation))
+
+
+;;;; misc
 
 (define (fold-left combine nil ell)
   (if (pair? ell)
       (fold-left combine (combine nil (car ell)) (cdr ell))
     nil))
+
+(define (fold-right combine nil ell)
+  (let loop ((combine	combine)
+	     (nil	nil)
+	     (ell	(reverse ell)))
+    (if (pair? ell)
+	(loop combine (combine (car ell) nil) (cdr ell))
+      nil)))
 
 (define-syntax assert
   (syntax-rules ()

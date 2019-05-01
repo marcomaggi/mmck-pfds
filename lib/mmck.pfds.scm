@@ -13,7 +13,6 @@
 ;;;	bindings.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
-;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
 ;;;All rights reserved.
 ;;;
 ;;;Redistribution and use  in source and binary forms, with  or without modification,
@@ -47,6 +46,7 @@
 	 (uses mmck.pfds.bbtrees)
 	 (uses mmck.pfds.deques)
 	 (uses mmck.pfds.dlists)
+	 (uses mmck.pfds.fingertrees)
 	 (uses mmck.pfds.version)
 	 (emit-import-library mmck.pfds))
 
@@ -56,6 +56,7 @@
   (reexport (mmck pfds bbtrees))
   (reexport (mmck pfds deques))
   (reexport (mmck pfds dlists))
+  (reexport (mmck pfds fingertrees))
   (reexport (mmck pfds version))
   #| end of module |# )
 
