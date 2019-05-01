@@ -44,8 +44,8 @@
      fold-left
      fold-right
      make-pfds-assertion-violation
-     assertion-violation
-     assertion-violation?
+     pfds-assertion-violation
+     pfds-assertion-violation?
      ;; reexports
      case-lambda
      make-composite-condition
@@ -88,20 +88,20 @@
   (condition
     '(pfds-assertion-violation)))
 
-(define (assertion-violation who message . irritants)
+(define (pfds-assertion-violation who message . irritants)
   (raise
    (make-composite-condition
     (condition `(exn location ,who message ,message arguments ,irritants))
     (make-pfds-assertion-violation))))
 
-(define assertion-violation?
+(define pfds-assertion-violation?
   (condition-predicate 'pfds-assertion-violation))
 
 (define-syntax assert
   (syntax-rules ()
     ((_ ?expr)
      (unless ?expr
-       (assertion-violation 'assert "failed assertion" (quote ?expr))))
+       (pfds-assertion-violation 'assert "failed assertion" (quote ?expr))))
     ))
 
 

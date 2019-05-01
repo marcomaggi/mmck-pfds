@@ -57,7 +57,9 @@
     ()
   (import (only (chicken module) reexport))
   (reexport (only (mmck pfds private helpers)
-		  assertion-violation?)
+		  make-pfds-assertion-violation
+		  pfds-assertion-violation
+		  pfds-assertion-violation?)
 	    (mmck pfds bbtrees)
 	    (mmck pfds deques)
 	    (mmck pfds dlists)

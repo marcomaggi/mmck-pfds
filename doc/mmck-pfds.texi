@@ -161,6 +161,7 @@ included in the section entitled ``@gnu{} Free Documentation License''.
 * heaps::                       Heaps.
 * bbtrees::                     Bounded Balance trees.
 * sets::                        Purely functional sets.
+* exceptions::                  Exceptional-condition object-types.
 
 Appendices
 
@@ -1424,6 +1425,28 @@ are @strong{not} in @varii{set}.
 
 @defun set-ordering-procedure @var{set}
 Return the ordering procedure used internally by @var{set}.
+@end defun
+
+@c page
+@node exceptions
+@chapter Exceptional--condition object--types
+
+
+@defun make-pfds-assertion-violation
+Build and return a new exceptional--condition object with kind @code{pfds-assertion-violation}.
+@end defun
+
+
+@defun pfds-assertion-violation? @var{OBJ}
+Return @true{} if @var{OBJ} is an exceptional--condition object with kind
+@code{pfds-assertion-violation}.
+@end defun
+
+
+@defun pfds-assertion-violation @var{WHO} @var{MESSAGE} @var{IRRITANT} @dots{}
+Raise a non--continuable exception having exceptional--condition object with kind
+@code{pfds-assertion-violation} and kind @code{exn} with @code{location}, @code{message} and
+@code{arguments} properties.
 @end defun
 
 @c page

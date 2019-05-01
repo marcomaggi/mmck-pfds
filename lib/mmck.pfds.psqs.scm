@@ -68,7 +68,7 @@
 ;; psq-ref : psq key -> priority
 ;; returns the priority of a key if it is in the priority search
 ;; queue. If the key is not in the priority queue an
-;; assertion-violation is raised.
+;; pfds-assertion-violation is raised.
 ;;
 ;; psq-set : psq key priority -> psq
 ;; returns the priority search queue obtained from inserting a key
@@ -376,13 +376,13 @@
 
 (define (min tree)
   (when (void? tree)
-    (assertion-violation 'psq-min
+    (pfds-assertion-violation 'psq-min
                          "Can't take the minimum of an empty priority search queue"))
   (winner-key tree))
 
 (define (pop tree key<? prio<?)
   (when (void? tree)
-    (assertion-violation 'psq-pop
+    (pfds-assertion-violation 'psq-pop
                          "Can't pop from an empty priority search queue"))
   (values (winner-key tree)
           (delete-min tree key<? prio<?)))
@@ -574,7 +574,7 @@
   (assert (psq? psq))
   (let ((val (lookup (psq-tree psq) key cookie (psq-key<? psq))))
     (if (eq? val cookie)
-        (assertion-violation 'psq-ref "not in tree" psq key)
+        (pfds-assertion-violation 'psq-ref "not in tree" psq key)
         val)))
 
 (define (psq-set psq key priority)

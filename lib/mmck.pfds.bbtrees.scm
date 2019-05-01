@@ -55,7 +55,7 @@
 ;; bbtree-ref : bbtree any [any] -> any
 ;; returns the value associated with the key in the bbtree.  If the
 ;; value is not in the tree, then, if the optional third argument is
-;; passed, it is returned, otherwise an assertion-violation condition
+;; passed, it is returned, otherwise an pfds-assertion-violation condition
 ;; is raised.
 ;;
 ;; bbtree-set : bbtree any any -> bbtree
@@ -253,7 +253,7 @@
 ;; returns the key and value of the minimum element in the tree
 (define (minimum tree)
   (cond [(empty? tree)
-         (assertion-violation 'minimum "Can't take the minimum value of an empty tree")]
+         (pfds-assertion-violation 'minimum "Can't take the minimum value of an empty tree")]
         [(empty? (node-left tree))
          (values (node-key tree)
                  (node-value tree))]
@@ -375,7 +375,7 @@
 
 (define (delete-min tree)
   (cond ((empty? tree)
-         (assertion-violation 'delete-min
+         (pfds-assertion-violation 'delete-min
                               "Can't delete the minimum value of an empty tree"))
         ((empty? (node-left tree))
          (node-right tree))
@@ -564,7 +564,7 @@
 
 (define (rank tree key <)
   (cond [(empty? tree);; error
-         (assertion-violation 'rank "Key is not in the tree" key)]
+         (pfds-assertion-violation 'rank "Key is not in the tree" key)]
         [(< key (node-key tree))
          (rank (node-left tree) key <)]
         [(< (node-key tree) key)
@@ -576,7 +576,7 @@
 
 (define (index tree idx)
   (if (empty? tree)
-      (assertion-violation 'index "No value at index" idx)
+      (pfds-assertion-violation 'index "No value at index" idx)
       (let ([l-size (size (node-left tree))])
         (cond [(< idx l-size)
                (index (node-left tree) idx)]
@@ -608,7 +608,7 @@
     (case-lambda
       ((bbtree key)
        (let ((fail (lambda ()
-		     (assertion-violation 'bbtree-ref "Key is not in the tree" key))))
+		     (pfds-assertion-violation 'bbtree-ref "Key is not in the tree" key))))
 	 (ref bbtree key fail)))
       ((bbtree key ret)
        (ref bbtree key (lambda () ret))))))
@@ -733,7 +733,7 @@
   (let ((tree (bbtree-tree bbtree)))
     (unless (and (integer? idx)
                  (<= 0 idx (- (size tree) 1)))
-      (assertion-violation 'bbtree-ref/index
+      (pfds-assertion-violation 'bbtree-ref/index
                            "Not a valid index into the bbtree"
                            idx))
     (index tree idx)))
