@@ -1,15 +1,14 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
 ;;;Part of: MMCK Pfds
-;;;Contents: add lazy lists
+;;;Contents: common helper functions
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This unit defines the module lazy lists.
+;;;	This unit defines common helper functions.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
-;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
 ;;;All rights reserved.
 ;;;
 ;;;Redistribution and use  in source and binary forms, with  or without modification,
@@ -37,67 +36,78 @@
 ;;;DAMAGE.
 
 
-;;;; commentary
-;;
-;; If you want real lazy lists, use SRFI 41, but Okazaki uses 'odd'
-;; lists, so I wrote a quick implementation.
+(declare (unit mmck.pfds.helpers)
+	 (emit-import-library mmck.pfds.helpers))
 
-
-(declare (unit mmck.pfds.private.lazy-lists)
-	 (emit-import-library mmck.pfds.private.lazy-lists))
-
-(module (mmck pfds private lazy-lists)
-    (cons*
-     tail
-     head
-     empty?
-     take
-     drop
-     rev
-     append*)
+(module (mmck pfds helpers)
+    ((syntax: assert pfds-assertion-violation)
+     fold-left
+     fold-right
+     make-pfds-assertion-violation
+     pfds-assertion-violation
+     pfds-assertion-violation?
+     raise)
   (import (scheme)
-	  (only (chicken base)
-		delay-force))
+	  (only (chicken module)
+		reexport))
+  (reexport (only (chicken base)
+		  define-record-type
+		  let-values
+		  let*-values
+		  unless
+		  when
+		  delay-force
+		  case-lambda)
+	    (only (chicken condition)
+		  abort
+		  condition
+		  make-composite-condition
+		  condition-case
+		  condition-predicate))
 
 
-;;;; implementation
+;;;; exceptional-condition objects and related stuff
 
-(define-syntax cons*
+(define (raise obj)
+  (abort obj))
+
+;;; --------------------------------------------------------------------
+
+(define (make-pfds-assertion-violation)
+  (condition
+    '(pfds-assertion-violation)))
+
+(define (pfds-assertion-violation who message . irritants)
+  (raise
+   (make-composite-condition
+    (condition `(exn location ,who message ,message arguments ,irritants))
+    (make-pfds-assertion-violation))))
+
+(define pfds-assertion-violation?
+  (condition-predicate 'pfds-assertion-violation))
+
+(define-syntax assert
   (syntax-rules ()
-    ((cons* a b)
-     (cons a (delay b)))))
+    ((_ ?expr)
+     (unless ?expr
+       (pfds-assertion-violation 'assert "failed assertion" (quote ?expr))))
+    ))
 
-(define head car)
+
+;;;; misc
 
-(define empty? null?)
+(define (fold-left combine nil ell)
+  (if (pair? ell)
+      (fold-left combine (combine nil (car ell)) (cdr ell))
+    nil))
 
-(define (tail pair)
-  (if (empty? pair)
-      pair
-      (force (cdr pair))))
-
-(define (take n l)
-  (if (zero? n)
-      '()
-      (cons* (head l)
-             (take (- n 1) (tail l)))))
-
-(define (drop n l)
-  (if (zero? n)
-      l
-      (drop (- n 1) (tail l))))
-
-(define (append* x y)
-  (if (empty? x)
-      y
-      (cons* (head x)
-             (append* (tail x) y))))
-
-(define (rev l)
-  (let loop ((l l) (a '()))
-    (if (empty? l)
-        a
-        (loop (tail l) (cons* (head l) a)))))
+(define (fold-right combine nil ell)
+  (let loop ((combine	combine)
+	     (nil	nil)
+	     (ell	(reverse ell)))
+    (if (pair? ell)
+	(loop combine (combine (car ell) nil) (cdr ell))
+      nil)))
 
 
 ;;;; done

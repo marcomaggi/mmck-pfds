@@ -155,8 +155,8 @@
 
 
 (declare (unit mmck.pfds.sequences)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
 	 (uses mmck.pfds.fingertrees)
 	 (emit-import-library mmck.pfds.sequences))
 
@@ -185,8 +185,8 @@
      sequence-filter
      sequence-empty-condition?)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (except (mmck pfds private coops)
+	  (mmck pfds helpers)
+	  (except (mmck pfds coops)
 		  <sequence>)
 	  (mmck pfds fingertrees))
 

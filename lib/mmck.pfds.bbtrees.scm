@@ -158,7 +158,7 @@
 ;;;; units and module header
 
 (declare (unit mmck.pfds.bbtrees)
-	 (uses mmck.pfds.private.helpers)
+	 (uses mmck.pfds.helpers)
 	 (emit-import-library mmck.pfds.bbtrees))
 
 (module (mmck.pfds.bbtrees)
@@ -184,7 +184,7 @@
      bbtree-index
      bbtree-ref/index)
   (import (scheme)
-	  (mmck pfds private helpers))
+	  (mmck pfds helpers))
 
 
 ;;;; implementation

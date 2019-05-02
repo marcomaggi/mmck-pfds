@@ -114,8 +114,8 @@
 
 
 (declare (unit mmck.pfds.sets)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
 	 (uses mmck.pfds.bbtrees)
 	 (emit-import-library mmck.pfds.sets))
 
@@ -142,8 +142,8 @@
      set-difference
      set-ordering-procedure)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops)
+	  (mmck pfds helpers)
+	  (mmck pfds coops)
 	  (mmck pfds bbtrees))
 
 

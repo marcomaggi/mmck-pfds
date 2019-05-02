@@ -102,8 +102,8 @@
 
 
 (declare (unit mmck.pfds.heaps)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.heaps))
 
 (module (mmck.pfds.heaps)
@@ -123,8 +123,8 @@
      heap-ordering-procedure
      heap-empty-condition?)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops))
+	  (mmck pfds helpers)
+	  (mmck pfds coops))
 
 
 ;;;; implementation

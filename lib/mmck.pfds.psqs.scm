@@ -123,8 +123,8 @@
 
 
 (declare (unit mmck.pfds.psqs)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.psqs))
 
 (module (mmck.pfds.psqs)
@@ -146,8 +146,8 @@
      psq-at-most
      psq-at-most-range)
   (import (except (scheme) min)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops))
+	  (mmck pfds helpers)
+	  (mmck pfds coops))
 
 
 ;;; record types

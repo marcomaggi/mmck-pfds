@@ -1,14 +1,15 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
 ;;;Part of: MMCK Pfds
-;;;Contents: interface to COOPS
+;;;Contents: add lazy lists
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This unit defines the interface to the egg COOPS.
+;;;	This unit defines the module lazy lists.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
 ;;;All rights reserved.
 ;;;
 ;;;Redistribution and use  in source and binary forms, with  or without modification,
@@ -36,29 +37,67 @@
 ;;;DAMAGE.
 
 
-(declare (unit mmck.pfds.private.coops)
-	 (emit-import-library mmck.pfds.private.coops))
-
-(require-library (coops)
-		 (coops-primitive-objects))
-
-(module (mmck pfds private coops)
-    (is-a?)
-  (import (scheme)
-	  (only (chicken module) reexport))
-  (reexport (coops)
-	    (coops-primitive-objects))
+;;;; commentary
+;;
+;; If you want real lazy lists, use SRFI 41, but Okazaki uses 'odd'
+;; lists, so I wrote a quick implementation.
 
 
-;;;; extensions
+(declare (unit mmck.pfds.lazy-lists)
+	 (emit-import-library mmck.pfds.lazy-lists))
 
-(define (is-a? obj cls)
-  ;;Return true  if OBJ  is an  instance of  class CLS,  or of  one of  its subtypes;
-  ;;otherwise return false.
-  ;;
-  (let ((obj.cls (class-of obj)))
-    (or (eq? obj.cls cls)
-	(subclass? obj.cls cls))))
+(module (mmck pfds lazy-lists)
+    (cons*
+     tail
+     head
+     empty?
+     take
+     drop
+     rev
+     append*)
+  (import (scheme)
+	  (only (chicken base)
+		delay-force))
+
+
+;;;; implementation
+
+(define-syntax cons*
+  (syntax-rules ()
+    ((cons* a b)
+     (cons a (delay b)))))
+
+(define head car)
+
+(define empty? null?)
+
+(define (tail pair)
+  (if (empty? pair)
+      pair
+      (force (cdr pair))))
+
+(define (take n l)
+  (if (zero? n)
+      '()
+      (cons* (head l)
+             (take (- n 1) (tail l)))))
+
+(define (drop n l)
+  (if (zero? n)
+      l
+      (drop (- n 1) (tail l))))
+
+(define (append* x y)
+  (if (empty? x)
+      y
+      (cons* (head x)
+             (append* (tail x) y))))
+
+(define (rev l)
+  (let loop ((l l) (a '()))
+    (if (empty? l)
+        a
+        (loop (tail l) (cons* (head l) a)))))
 
 
 ;;;; done

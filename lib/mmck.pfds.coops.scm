@@ -1,16 +1,12 @@
 ;;; -*- coding: utf-8-unix  -*-
 ;;;
-;;;Part of: MMCK PFDS
-;;;Contents: main compilation unit
+;;;Part of: MMCK Pfds
+;;;Contents: interface to COOPS
 ;;;Date: Apr 29, 2019
 ;;;
 ;;;Abstract
 ;;;
-;;;	This is the main compilation unit; it USES all the other compilation units.
-;;;
-;;;	This compilation  units defines the main  module: it imports all  the modules
-;;;	exporting  public syntactic  bindings  and it  reexports  all such  syntactic
-;;;	bindings.
+;;;	This unit defines the interface to the egg COOPS.
 ;;;
 ;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
 ;;;All rights reserved.
@@ -40,39 +36,33 @@
 ;;;DAMAGE.
 
 
-;;;; units and module header
+(declare (unit mmck.pfds.coops)
+	 (emit-import-library mmck.pfds.coops))
 
-(declare (unit mmck.pfds)
-	 (uses mmck.pfds.bbtrees)
-	 (uses mmck.pfds.deques)
-	 (uses mmck.pfds.dlists)
-	 (uses mmck.pfds.fingertrees)
-	 (uses mmck.pfds.heaps)
-	 (uses mmck.pfds.psqs)
-	 (uses mmck.pfds.queues)
-	 (uses mmck.pfds.sequences)
-	 (uses mmck.pfds.sets)
-	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.version)
-	 (emit-import-library mmck.pfds))
+(require-library (coops)
+		 (coops-primitive-objects))
 
-(module (mmck.pfds)
-    ()
-  (import (only (chicken module) reexport))
-  (reexport (only (mmck pfds helpers)
-		  make-pfds-assertion-violation
-		  pfds-assertion-violation
-		  pfds-assertion-violation?)
-	    (mmck pfds bbtrees)
-	    (mmck pfds deques)
-	    (mmck pfds dlists)
-	    (mmck pfds fingertrees)
-	    (mmck pfds heaps)
-	    (mmck pfds psqs)
-	    (mmck pfds queues)
-	    (mmck pfds sequences)
-	    (mmck pfds sets)
-	    (mmck pfds version))
-  #| end of module |# )
+(module (mmck pfds coops)
+    (is-a?)
+  (import (scheme)
+	  (only (chicken module) reexport))
+  (reexport (coops)
+	    (coops-primitive-objects))
+
+
+;;;; extensions
+
+(define (is-a? obj cls)
+  ;;Return true  if OBJ  is an  instance of  class CLS,  or of  one of  its subtypes;
+  ;;otherwise return false.
+  ;;
+  (let ((obj.cls (class-of obj)))
+    (or (eq? obj.cls cls)
+	(subclass? obj.cls cls))))
+
+
+;;;; done
+
+#| end of module |# )
 
 ;;; end of file

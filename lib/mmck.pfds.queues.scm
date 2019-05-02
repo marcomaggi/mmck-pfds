@@ -82,9 +82,9 @@
 
 
 (declare (unit mmck.pfds.queues)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
-	 (uses mmck.pfds.private.lazy-lists)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
+	 (uses mmck.pfds.lazy-lists)
 	 (emit-import-library mmck.pfds.queues))
 
 (module (mmck.pfds.queues)
@@ -98,10 +98,10 @@
      list->queue
      queue->list)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (except (mmck pfds private coops)
+	  (mmck pfds helpers)
+	  (except (mmck pfds coops)
 		  <queue>)
-	  (mmck pfds private lazy-lists))
+	  (mmck pfds lazy-lists))
 
 
 ;;;; helpers

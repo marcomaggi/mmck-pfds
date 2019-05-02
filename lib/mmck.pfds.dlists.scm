@@ -75,8 +75,8 @@
 
 
 (declare (unit mmck.pfds.dlists)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.dlists))
 
 (module (mmck.pfds.dlists)
@@ -88,8 +88,8 @@
      dlist->list
      list->dlist)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops))
+	  (mmck pfds helpers)
+	  (mmck pfds coops))
 
 
 ;;;; implementation

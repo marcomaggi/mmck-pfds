@@ -83,9 +83,9 @@
 
 
 (declare (unit mmck.pfds.deques)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
-	 (uses mmck.pfds.private.lazy-lists)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
+	 (uses mmck.pfds.lazy-lists)
 	 (emit-import-library mmck.pfds.deques))
 
 (module (mmck.pfds.deques)
@@ -101,9 +101,9 @@
      deque->list
      list->deque)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops)
-	  (mmck pfds private lazy-lists))
+	  (mmck pfds helpers)
+	  (mmck pfds coops)
+	  (mmck pfds lazy-lists))
 
 
 ;;;; implementation

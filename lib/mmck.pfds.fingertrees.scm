@@ -170,8 +170,8 @@
 
 
 (declare (unit mmck.pfds.fingertrees)
-	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
+	 (uses mmck.pfds.helpers)
+	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.fingertrees))
 
 (module (mmck.pfds.fingertrees)
@@ -194,8 +194,8 @@
      fingertree-empty-condition?
      assert-fingertree-not-empty)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops))
+	  (mmck pfds helpers)
+	  (mmck pfds coops))
 
 
 ;;;; list helpers
