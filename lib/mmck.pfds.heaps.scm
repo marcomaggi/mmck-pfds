@@ -103,7 +103,6 @@
 
 (declare (unit mmck.pfds.heaps)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.heaps))
 
 (module (mmck.pfds.heaps)
@@ -123,35 +122,23 @@
      heap-ordering-procedure
      heap-empty-condition?)
   (import (scheme)
-	  (mmck pfds helpers)
-	  (mmck pfds coops))
+	  (mmck pfds helpers))
 
 
 ;;;; implementation
 
-(define-class <node>
-    (<standard-object>)
-  ((size	#:reader node-size)
-   (height	#:reader node-height)
-   (value	#:reader node-value)
-   (left	#:reader node-left)
-   (right	#:reader node-right)))
+(define-record-type <node>
+  (%make-node size height value left right)
+  node?
+  (size		node-size)
+  (height	node-height)
+  (value	node-value)
+  (left		node-left)
+  (right	node-right))
 
-(define (%make-node size height value left right)
-  (make <node>
-    'size size 'height height 'value value 'left left 'right right))
-
-(define (node? obj)
-  (is-a? obj <node>))
-
-(define-class <leaf>
-    (<standard-object>))
-
-(define (make-leaf)
-  (make <leaf>))
-
-(define (leaf? obj)
-  (is-a? obj <leaf>))
+(define-record-type <leaf>
+  (make-leaf)
+  leaf?)
 
 (define (height x)
   (if (leaf? x)
@@ -202,19 +189,13 @@
 
 
 ;; outside interface
-(define-class <heap>
-    (<standard-object>)
-  ((tree		#:reader heap-tree)
-   (ordering-predicate	#:reader heap-ordering-predicate)))
+(define-record-type <heap>
+  (%make-heap tree ordering-predicate)
+  heap?
+  (tree			heap-tree)
+  (ordering-predicate	heap-ordering-predicate))
 
 (define heap-ordering-procedure heap-ordering-predicate)
-
-(define (%make-heap tree ordering-predicate)
-  (make <heap>
-    'tree tree 'ordering-predicate ordering-predicate))
-
-(define (heap? obj)
-  (is-a? obj <heap>))
 
 (define (make-heap priority<?)
   (%make-heap (make-leaf) priority<?))

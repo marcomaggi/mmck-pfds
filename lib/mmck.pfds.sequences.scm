@@ -156,7 +156,6 @@
 
 (declare (unit mmck.pfds.sequences)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (uses mmck.pfds.fingertrees)
 	 (emit-import-library mmck.pfds.sequences))
 
@@ -186,8 +185,6 @@
      sequence-empty-condition?)
   (import (scheme)
 	  (mmck pfds helpers)
-	  (except (mmck pfds coops)
-		  <sequence>)
 	  (mmck pfds fingertrees))
 
 
@@ -213,18 +210,10 @@
 
 ;;;; implementation
 
-(define-class <sequence>
-    (<standard-object>)
-  ((fingertree	#:reader sequence-fingertree)))
-
-(define (%make-sequence fingertree)
-  (make <sequence>
-    'fingertree fingertree))
-
-(define (sequence? obj)
-  (is-a? obj <sequence>))
-
-;;; --------------------------------------------------------------------
+(define-record-type <sequence>
+  (%make-sequence fingertree)
+  sequence?
+  (fingertree	sequence-fingertree))
 
 (define (make-sequence)
  (%make-sequence (make-fingertree 0 + (lambda (x) 1))))

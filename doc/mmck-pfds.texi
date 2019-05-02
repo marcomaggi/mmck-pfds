@@ -191,9 +191,8 @@ This document describes version @value{VERSION} of @value{PACKAGE}, a set of @ch
 libraries implementing purely functional data structures.  @chicken{} is a Scheme--to--C compiler
 supporting the language features as defined in the ``Revised^5 Report on Scheme''.
 
-This package supports @posix{} platforms.  This package depends upon the @chicken{} egg
-@code{coops}.  To run the tests distributed with the source code: this package depends upon the
-package @mmck{} Checks.
+This package supports @posix{} platforms.  To run the tests distributed with the source code: this
+package depends upon the package @mmck{} Checks.
 
 The package installs the library @library{mmck pfds} along with its import library.  To require the
 library and import its syntactic bindings in a module we can do:

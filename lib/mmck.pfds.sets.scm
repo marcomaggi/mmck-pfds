@@ -115,7 +115,6 @@
 
 (declare (unit mmck.pfds.sets)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (uses mmck.pfds.bbtrees)
 	 (emit-import-library mmck.pfds.sets))
 
@@ -143,7 +142,6 @@
      set-ordering-procedure)
   (import (scheme)
 	  (mmck pfds helpers)
-	  (mmck pfds coops)
 	  (mmck pfds bbtrees))
 
 
@@ -152,16 +150,10 @@
 (define dummy #f)
 
 ;;; basic sets
-(define-class <set>
-    (<standard-object>)
-  ((tree	#:reader set-tree)))
-
-(define (%make-set tree)
-  (make <set>
-    'tree tree))
-
-(define (set? obj)
-  (is-a? obj <set>))
+(define-record-type <set>
+  (%make-set tree)
+  set?
+  (tree		set-tree))
 
 (define (set-ordering-procedure set)
   (bbtree-ordering-procedure (set-tree set)))

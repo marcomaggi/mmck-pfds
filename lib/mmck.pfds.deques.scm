@@ -84,7 +84,6 @@
 
 (declare (unit mmck.pfds.deques)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (uses mmck.pfds.lazy-lists)
 	 (emit-import-library mmck.pfds.deques))
 
@@ -102,7 +101,6 @@
      list->deque)
   (import (scheme)
 	  (mmck pfds helpers)
-	  (mmck pfds coops)
 	  (mmck pfds lazy-lists))
 
 
@@ -124,22 +122,16 @@
                    (drop c r)
                    (append* (rev (take c r)) a)))))
 
-(define-class deque
-    (<standard-class>)
-  ((length	#:reader deque-length)
-   (lenL	#:reader deque-lenL)
-   (lenR	#:reader deque-lenR)
-   (l		#:reader deque-l)
-   (r		#:reader deque-r)
-   (l^		#:reader deque-l^)
-   (r^		#:reader deque-r^)))
-
-(define (%make-deque len lenL lenR l r l^ r^)
-  (make deque
-    'length len 'lenL lenL 'lenR lenR 'l l 'r r 'l^ l^ 'r^ r^))
-
-(define (deque? obj)
-  (is-a? obj deque))
+(define-record-type <deque>
+  (%make-deque length lenL lenR l r l^ r^)
+  deque?
+  (length	deque-length)
+  (lenL		deque-lenL)
+  (lenR		deque-lenR)
+  (l		deque-l)
+  (r		deque-r)
+  (l^		deque-l^)
+  (r^		deque-r^))
 
 (define (make-deque)
   (%make-deque 0 0 0 '() '() '() '()))

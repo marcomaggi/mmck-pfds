@@ -9,9 +9,8 @@ language; the  libraries implement Purely Functional  Data Structures in
 Scheme.   CHICKEN  is a  Scheme-to-C  compiler  supporting the  language
 features as defined in the ``Revised^5 Report on Scheme''.
 
-The library targets POSIX systems.   The libraries depend on the CHICKEN
-egg `coops`.   To run the tests:  this package depends upon  the package
-MMCK Checks.
+The  library targets  POSIX systems.   To  run the  tests: this  package
+depends upon the package MMCK Checks.
 
 The package uses the GNU Autotools and it is tested, using Travis CI, on
 both Ubuntu GNU+Linux  systems and OS X systems.

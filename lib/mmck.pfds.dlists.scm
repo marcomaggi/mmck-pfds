@@ -76,7 +76,6 @@
 
 (declare (unit mmck.pfds.dlists)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.dlists))
 
 (module (mmck.pfds.dlists)
@@ -88,18 +87,15 @@
      dlist->list
      list->dlist)
   (import (scheme)
-	  (mmck pfds helpers)
-	  (mmck pfds coops))
+	  (mmck pfds helpers))
 
 
 ;;;; implementation
 
-(define-class <dlist>
-    (<standard-object>)
-  ((proc	#:reader undl)))
-
-(define (dlist? obj)
-  (is-a? obj <dlist>))
+(define-record-type <dlist>
+  (make-dlist proc)
+  dlist?
+  (proc		undl))
 
 (define (dlist . args)
   (list->dlist args))
@@ -112,7 +108,7 @@
   (list->dlist (list x)))
 
 (define (dlist-append dl1 dl2)
-  (make <dlist> 'proc (compose (undl dl1) (undl dl2))))
+  (make-dlist (compose (undl dl1) (undl dl2))))
 
 (define (dlist-cons element dlist)
   (dlist-append (singleton element) dlist))
@@ -124,9 +120,8 @@
   ((undl dlist) '()))
 
 (define (list->dlist list)
-  (make <dlist> 'proc
-   (lambda (rest)
-     (append list rest))))
+  (make-dlist (lambda (rest)
+		(append list rest))))
 
 
 ;;;; done

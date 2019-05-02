@@ -124,7 +124,6 @@
 
 (declare (unit mmck.pfds.psqs)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.psqs))
 
 (module (mmck.pfds.psqs)
@@ -146,70 +145,44 @@
      psq-at-most
      psq-at-most-range)
   (import (except (scheme) min)
-	  (mmck pfds helpers)
-	  (mmck pfds coops))
+	  (mmck pfds helpers))
 
 
 ;;; record types
 
-(define-class <void>
-    (<standard-object>))
+(define-record-type <void>
+  (make-void)
+  void?)
 
-(define (make-void)
-  (make <void>))
+(define-record-type <winner>
+  (make-winner key priority loser-tree maximum-key)
+  winner?
+  (key			winner-key)
+  (priority		winner-priority)
+  (loser-tree		winner-loser-tree)
+  (maximum-key		winner-maximum-key))
 
-(define (void? obj)
-  (is-a? obj <void>))
+(define-record-type <start>
+  (make-start)
+  start?)
 
-;;; --------------------------------------------------------------------
-
-(define-class <winner>
-    (<standard-object>)
-  ((key			#:reader winner-key)
-   (priority		#:reader winner-priority)
-   (loser-tree		#:reader winner-loser-tree)
-   (maximum-key		#:reader winner-maximum-key)))
-
-(define (make-winner key priority loser-tree maximum-key)
-  (make <winner>
-    'key key 'priority priority 'loser-tree loser-tree 'maximum-key maximum-key))
-
-(define (winner? obj)
-  (is-a? obj <winner>))
-
-;;; --------------------------------------------------------------------
-
-(define-class <start>
-    (<standard-object>))
-
-(define (make-start)
-  (make <start>))
-
-(define (start? obj)
-  (is-a? obj <start>))
-
-;;; --------------------------------------------------------------------
-
-(define-class <loser>
-    (<standard-object>)
-  ((size	#:reader loser-size)
-   (key		#:reader loser-key)
-   (priority	#:reader loser-priority)
-   (left	#:reader loser-left)
-   (split-key	#:reader loser-split-key)
-   (right	#:reader loser-right)))
+(define-record-type <loser>
+  (%make-loser size key priority left split-key right)
+  loser?
+  (size		loser-size)
+  (key		loser-key)
+  (priority	loser-priority)
+  (left		loser-left)
+  (split-key	loser-split-key)
+  (right	loser-right))
 
 (define (make-loser key priority left split-key right)
-  (make <loser>
-    'size (+ (size left) (size right) 1)
-    'key key
-    'priority priority
-    'left left
-    'split-key split-key
-    'right right))
-
-(define (loser? obj)
-  (is-a? obj <loser>))
+  (%make-loser (+ (size left) (size right) 1)
+	       key
+	       priority
+	       left
+	       split-key
+	       right))
 
 
 ;;; functions
@@ -540,20 +513,12 @@
 
 ;;; Exported Type
 
-(define-class <psq>
-    (<standard-object>)
-  ((key<?		#:reader psq-key<?)
-   (priority<?		#:reader psq-priority<?)
-   (tree		#:reader psq-tree)))
-
-(define (%make-psq key<? priority<? tree)
-  (make <psq>
-    'key<? key<?
-    'priority<? priority<?
-    'tree tree))
-
-(define (psq? obj)
-  (is-a? obj <psq>))
+(define-record-type <psq>
+  (%make-psq key<? priority<? tree)
+  psq?
+  (key<?	psq-key<?)
+  (priority<?	psq-priority<?)
+  (tree		psq-tree))
 
 (define (%update-psq psq new-tree)
   (%make-psq (psq-key<? psq)

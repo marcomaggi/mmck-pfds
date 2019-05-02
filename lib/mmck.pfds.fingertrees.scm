@@ -171,7 +171,6 @@
 
 (declare (unit mmck.pfds.fingertrees)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (emit-import-library mmck.pfds.fingertrees))
 
 (module (mmck.pfds.fingertrees)
@@ -194,8 +193,7 @@
      fingertree-empty-condition?
      assert-fingertree-not-empty)
   (import (scheme)
-	  (mmck pfds helpers)
-	  (mmck pfds coops))
+	  (mmck pfds helpers))
 
 
 ;;;; list helpers
@@ -226,41 +224,35 @@
 
 ;;;; node type
 
-(define-class <node2>
-    (<standard-object>)
-  ((measure	#:reader node2-measure)
-   (a		#:reader node2-a)
-   (b		#:reader node2-b)))
+(define-record-type <node2>
+  (%make-node2 measure a b)
+  node2?
+  (measure	node2-measure)
+  (a		node2-a)
+  (b		node2-b))
 
 (define (make-node2 monoid a b)
   (let ((app (mappend monoid)))
-    (make <node2>
-      'measure (app (measure-nodetree a monoid)
-		    (measure-nodetree b monoid))
-      'a a 'b b)))
-
-(define (node2? obj)
-  (is-a? obj <node2>))
+    (%make-node2 (app (measure-nodetree a monoid)
+		      (measure-nodetree b monoid))
+		 a b)))
 
 ;;; --------------------------------------------------------------------
 
-(define-class <node3>
-    (<standard-object>)
-  ((measure	#:reader node3-measure)
-   (a		#:reader node3-a)
-   (b		#:reader node3-b)
-   (c		#:reader node3-c)))
+(define-record-type <node3>
+  (%make-node3 measure a b c)
+  node3?
+  (measure	node3-measure)
+  (a		node3-a)
+  (b		node3-b)
+  (c		node3-c))
 
 (define (make-node3 monoid a b c)
   (let ((app (mappend monoid)))
-    (make <node3>
-      'measure (app (app (measure-nodetree a monoid)
-			 (measure-nodetree b monoid))
-		    (measure-nodetree c monoid))
-      'a a 'b b 'c c)))
-
-(define (node3? obj)
-  (is-a? obj <node3>))
+    (%make-node3 (app (app (measure-nodetree a monoid)
+			   (measure-nodetree b monoid))
+		      (measure-nodetree c monoid))
+		 a b c)))
 
 ;;; --------------------------------------------------------------------
 
@@ -306,48 +298,30 @@
 
 ;;;; tree type
 
-(define-class <empty>
-    (<standard-object>))
+(define-record-type <empty>
+  (make-empty)
+  empty?)
 
-(define (make-empty)
-  (make <empty>))
+(define-record-type <single>
+  (make-single value)
+  single?
+  (value	single-value))
 
-(define (empty? obj)
-  (is-a? obj <empty>))
-
-;;; --------------------------------------------------------------------
-
-(define-class <single>
-    (<standard-object>)
-  ((value	#:reader single-value)))
-
-(define (make-single value)
-  (make <single>
-    'value value))
-
-(define (single? obj)
-  (is-a? obj <single>))
-
-;;; --------------------------------------------------------------------
-
-(define-class <rib>
-    (<standard-class>)
+(define-record-type <rib>
+  (%make-rib measure left middle right)
+  rib?
   ;; left and right expected to be lists of length 0 < l < 5
-  ((measure	#:reader rib-measure)
-   (left	#:reader rib-left)
-   (middle	#:reader rib-middle)
-   (right	#:reader rib-right)))
+  (measure	rib-measure)
+  (left		rib-left)
+  (middle	rib-middle)
+  (right	rib-right))
 
 (define (make-rib monoid left middle right)
   (let ((app (mappend monoid)))
-    (make <rib>
-      'measure (app (app (measure-digit left monoid)
+    (%make-rib (app (app (measure-digit left monoid)
 			 (measure-ftree middle monoid))
                     (measure-digit right monoid))
-      'left left 'middle middle 'right right)))
-
-(define (rib? obj)
-  (is-a? obj <rib>))
+	       left middle right)))
 
 ;;; --------------------------------------------------------------------
 
@@ -569,19 +543,13 @@
 ;;I think  I'm going to need  a "configuration" type and  pass it around in  order to
 ;;generalize over arbitrary monoids call the type iMeasured or something
 
-(define-class <monoid*>
-    (<standard-class>)
+(define-record-type <monoid*>
+  (make-monoid* empty append convert)
+  monoid*?
   ;; a monoid, but augmented with a procedure to convert objects into the monoid type
-  ((empty	#:reader mempty)
-   (append	#:reader mappend)
-   (convert	#:reader mconvert)))
-
-(define (make-monoid* empty append convert)
-  (make <monoid*>
-    'empty empty 'append append 'convert convert))
-
-(define (monoid*? obj)
-  (is-a? obj <monoid*>))
+  (empty	mempty)
+  (append	mappend)
+  (convert	mconvert))
 
 (define (measure-digit obj monoid)
   (fold-left (lambda (i a)
@@ -667,25 +635,17 @@
 	     arguments ,(list fingertree))
        '(pfds-fingertree-empty-condition)))))
 
-(define-class <fingertree>
-    (<standard-object>)
-  ((tree	#:reader fingertree-tree)
-   (monoid	#:reader fingertree-monoid)))
-
-(define (%make-fingertree tree monoid)
-  (make <fingertree>
-    'tree tree 'monoid monoid))
-
-(define (fingertree? obj)
-  (is-a? obj <fingertree>))
+(define-record-type <fingertree>
+  (%make-fingertree tree monoid)
+  fingertree?
+  (tree		fingertree-tree)
+  (monoid	fingertree-monoid))
 
 (define (%wrap fingertree tree)
-  (%make-fingertree tree
-                    (fingertree-monoid fingertree)))
+  (%make-fingertree tree (fingertree-monoid fingertree)))
 
 (define (make-fingertree id append convert)
-  (%make-fingertree (make-empty)
-                    (make-monoid* id append convert)))
+  (%make-fingertree (make-empty) (make-monoid* id append convert)))
 
 (define (fingertree-cons a fingertree)
   ;; TODO: should it obey normal cons interface, or have fingertree

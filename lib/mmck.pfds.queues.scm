@@ -83,7 +83,6 @@
 
 (declare (unit mmck.pfds.queues)
 	 (uses mmck.pfds.helpers)
-	 (uses mmck.pfds.coops)
 	 (uses mmck.pfds.lazy-lists)
 	 (emit-import-library mmck.pfds.queues))
 
@@ -99,8 +98,6 @@
      queue->list)
   (import (scheme)
 	  (mmck pfds helpers)
-	  (except (mmck pfds coops)
-		  <queue>)
 	  (mmck pfds lazy-lists))
 
 
@@ -117,19 +114,13 @@
 
 ;;;; implementation
 
-(define-class <queue>
-    (<standard-object>)
-  ((length	#:reader queue-length)
-   (l		#:reader queue-l)
-   (r		#:reader queue-r)
-   (l^		#:reader queue-l^)))
-
-(define (%make-queue len l r l^)
-  (make <queue>
-    'length len 'l l 'r r 'l^ l^))
-
-(define (queue? obj)
-  (is-a? obj <queue>))
+(define-record-type <queue>
+  (%make-queue length l r l^)
+  queue?
+  (length	queue-length)
+  (l		queue-l)
+  (r		queue-r)
+  (l^		queue-l^))
 
 (define (make-queue)
   (%make-queue 0 '() '() '()))
