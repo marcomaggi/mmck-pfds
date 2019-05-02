@@ -336,7 +336,7 @@ Return a list consisting of all the elements of the @var{dell}.
 
 
 @defun list->dlist @var{list-of-items}
-Return a dlist consisting of all the elements of the given list argument.
+Return a @class{dlist} consisting of all the elements of the given list argument.
 @end defun
 
 
