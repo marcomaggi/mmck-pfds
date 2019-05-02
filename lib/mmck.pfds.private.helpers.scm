@@ -40,41 +40,30 @@
 	 (emit-import-library mmck.pfds.private.helpers))
 
 (module (mmck pfds private helpers)
-    ((syntax: assert error)
+    ((syntax: assert pfds-assertion-violation)
      fold-left
      fold-right
      make-pfds-assertion-violation
      pfds-assertion-violation
      pfds-assertion-violation?
-     ;; reexports
-     case-lambda
-     make-composite-condition
-     condition
-     condition-case
-     condition-predicate
-     delay-force
-     error
-     let-values
-     let*-values
-     raise
-     raise
-     unless
-     when)
+     raise)
   (import (scheme)
-	  (only (chicken base)
-		case-lambda
-		error
-		let-values
-		let*-values
-		delay-force
-		unless
-		when)
-	  (only (chicken condition)
-		condition
-		make-composite-condition
-		abort
-		condition-case
-		condition-predicate))
+	  (only (chicken module)
+		reexport))
+  (reexport (only (chicken base)
+		  define-record-type
+		  let-values
+		  let*-values
+		  unless
+		  when
+		  delay-force
+		  case-lambda)
+	    (only (chicken condition)
+		  abort
+		  condition
+		  make-composite-condition
+		  condition-case
+		  condition-predicate))
 
 
 ;;;; exceptional-condition objects and related stuff
