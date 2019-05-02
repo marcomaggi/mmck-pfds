@@ -99,8 +99,8 @@ and as backup at:
 @center @value{BitbucketUrl}
 
 @noindent
-Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}
-Copyright @copyright{} 2011, 2012 Ian Price @email{ianprice90@@googlemail.com}@*
+Copyright @copyright{} @value{COPYRIGHT_YEARS} by @value{AUTHOR} @value{AUTHOR_EMAIL}@*
+Copyright @copyright{} 2011, 2012 Ian Price @email{ianprice90@@googlemail.com}
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document under the terms of the @gnu{}
@@ -352,13 +352,14 @@ Return a new queue with the enqueued @var{item} at the end.
 
 @defun dequeue @var{queue}
 Return 2 values: the item at the front of @var{queue}, and a new queue containing the all the other
-items.  Raise a condition with kind @code{pfds-queue-empty} condition if @var{queue} is empty.
+items.  Raise a condition with kind @code{pfds-queue-empty-condition} condition if @var{queue} is
+empty.
 @end defun
 
 
 @defun queue-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition object with kind @code{pfds-queue-empty}; otherwise
-return @false{}.
+Return @true{} if @var{obj} is a condition object with kind @code{pfds-queue-empty-condition};
+otherwise return @false{}.
 @end defun
 
 
@@ -410,18 +411,20 @@ Return a new deque with the @var{item} inserted at the rear.
 
 @defun dequeue-front @var{deque}
 Return two values: the item at the front of @var{deque}, and a new deque containing all the other
-items.  Raise a condition with kind @code{pfds-deque-empty} if @var{deque} is empty.
+items.  Raise a condition with kind @code{pfds-deque-empty-condition} if @var{deque} is empty.
 @end defun
 
 
 @defun dequeue-rear @var{deque}
 Return two values: the item at the rear of the deque, and a new deque containing all the other
-items.  Raise a condition with kind @code{pfds-deque-empty} condition if @var{deque} is empty.
+items.  Raise a condition with kind @code{pfds-deque-empty-condition} condition if @var{deque} is
+empty.
 @end defun
 
 
 @defun deque-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition with kind @code{pfds-deque-empty}, @false{} otherwise.
+Return @true{} if @var{obj} is a condition with kind @code{pfds-deque-empty-condition}, @false{}
+otherwise.
 @end defun
 
 
@@ -643,20 +646,21 @@ Return the new fingertree created by adding @var{item} to the end of @var{finger
 
 @defun fingertree-uncons @var{fingertree}
 Returns 2 values: the item at the front of @var{fingertree}, and a new fingertree containing all but
-the front element.  If @var{fingertree} is empty: a @condition{fingertree-empty} condition is
-raised.
+the front element.  If @var{fingertree} is empty: a @code{pfds-fingertree-empty-condition} condition
+is raised.
 @end defun
 
 
 @defun fingertree-unsnoc @var{fingertree}
 Return 2 values: a new fingertree containing all but the rear element of @var{fingertree}, and the
-rear element itself.  If @var{fingertree} is empty: a @condition{fingertree-empty} condition is
-raised.
+rear element itself.  If @var{fingertree} is empty: a @code{pfds-fingertree-empty-condition}
+condition is raised.
 @end defun
 
 
 @defun fingertree-empty-condition? @var{condition}
-Return @true{} if the argument is a @condition{fingertree-empty} condition, @false{} otherwise.
+Return @true{} if the argument is a @code{pfds-fingertree-empty-condition} condition, @false{}
+otherwise.
 @end defun
 
 
@@ -756,7 +760,7 @@ Return a new sequence created by adding @var{item} to the front of @var{sequence
 
 @defun sequence-uncons @var{sequence}
 Return 2 values: the first item of @var{sequence}, and a new sequence containing all but the first
-items.  If the sequence is empty: raise a condition with kind @code{pfds-sequence-empty}.
+items.  If the sequence is empty: raise a condition with kind @code{pfds-sequence-empty-condition}.
 @end defun
 
 
@@ -767,13 +771,14 @@ Return a new sequence created by adding @var{item} to the end of @var{sequence}.
 
 @defun sequence-unsnoc @var{sequence}
 Return 2 values: a new sequence containing all but the last item of @var{sequence}, and the last
-item itself.  If @var{sequence} is empty: raise a condition with kind @code{pfds-sequence-empty}.
+item itself.  If @var{sequence} is empty: raise a condition with kind
+@code{pfds-sequence-empty-condition}.
 @end defun
 
 
 @defun sequence-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition with kind @code{pfds-sequence-empty}; otherwise return
-@false{}.
+Return @true{} if @var{obj} is a condition with kind @code{pfds-sequence-empty-condition}; otherwise
+return @false{}.
 @end defun
 
 
@@ -921,7 +926,7 @@ Return @true{} if the heap contains no items, @false{} otherwise.
 
 @defun heap-min @var{heap}
 Return the minimum item in @var{heap}, according the heap's ordering procedure.  If there are no
-items: a @condition{heap-empty} condition is raised.
+items: a @code{pfds-heap-empty-condition} condition is raised.
 @end defun
 
 
