@@ -435,7 +435,7 @@
 (define (remove-front ftree monoid)
   (view-front ftree
     (lambda ()
-      (error 'remove-front "can't remove from an empty tree"))
+      (pfds-assertion-violation 'remove-front "can't remove from an empty tree"))
     values
     monoid))
 
@@ -460,7 +460,7 @@
 (define (remove-rear ftree monoid)
   (view-rear ftree
     (lambda ()
-      (error 'remove-rear "can't remove from an empty tree"))
+      (pfds-assertion-violation 'remove-rear "can't remove from an empty tree"))
     values
     monoid))
 
@@ -613,7 +613,7 @@
 (define (split-tree proc i tree monoid)
   (ftree-case tree
     (lambda ()
-      (error 'split-tree "shouldn't happen?"))
+      (pfds-assertion-violation 'split-tree "shouldn't happen?"))
     (lambda (a)
       (values (make-empty) a (make-empty)))
     (lambda (l m r)
