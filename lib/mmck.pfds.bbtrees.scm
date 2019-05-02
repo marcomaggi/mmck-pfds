@@ -159,7 +159,6 @@
 
 (declare (unit mmck.pfds.bbtrees)
 	 (uses mmck.pfds.private.helpers)
-	 (uses mmck.pfds.private.coops)
 	 (emit-import-library mmck.pfds.bbtrees))
 
 (module (mmck.pfds.bbtrees)
@@ -185,8 +184,7 @@
      bbtree-index
      bbtree-ref/index)
   (import (scheme)
-	  (mmck pfds private helpers)
-	  (mmck pfds private coops))
+	  (mmck pfds private helpers))
 
 
 ;;;; implementation
@@ -195,39 +193,29 @@
 
 ;;; bbtree is the wrapper that you interact with from outside the
 ;;; module, so there is no need to deal with empty and node record types
-(define-class bbtree
-    (<standard-class>)
-  ((tree		#:reader bbtree-tree)
-   (ordering-procedure	#:reader bbtree-ordering-procedure)))
-
-(define (%make-bbtree tree ordering-procedure)
-  (make bbtree
-    'tree tree 'ordering-procedure ordering-procedure))
-
-(define (bbtree? obj)
-  (is-a? obj bbtree))
+(define-record-type <bbtree>
+  (%make-bbtree tree ordering-procedure)
+  bbtree?
+  (tree			bbtree-tree)
+  (ordering-procedure	bbtree-ordering-procedure))
 
 (define (update-tree bbtree new-tree)
   (%make-bbtree new-tree (bbtree-ordering-procedure bbtree)))
 
 ;;; inner representation of trees
 ;;; all non exposed methods can assume a valid tree
-(define-class <empty>)
+(define-record-type <empty>
+  (make-empty)
+  empty?)
 
-(define (empty? obj)
-  (is-a? obj <empty>))
-
-(define-class <node>
-    (<standard-class>)
-  ((key		#:reader node-key)
-   (value	#:reader node-value)
-   (length	#:reader node-length)
-   (left	#:reader node-left)
-   (right	#:reader node-right)))
-
-(define (make-node key value len left right)
-  (make <node>
-    'key key 'value value 'length len 'left left 'right right))
+(define-record-type <node>
+  (make-node key value length left right)
+  node?
+  (key		node-key)
+  (value	node-value)
+  (length	node-length)
+  (left		node-left)
+  (right	node-right))
 
 ;;; smart constructor for nodes, automatically fills in size field
 (define (node* key value left right)
@@ -333,7 +321,7 @@
 (define (update tree key proc default <)
   (define (add-to tree)
     (if (empty? tree)
-        (make-node key (proc default) 1 (make <empty>) (make <empty>))
+        (make-node key (proc default) 1 (make-empty) (make-empty))
         (let ([k (node-key tree)]
               [v (node-value tree)]
               [l (node-left tree)]
@@ -591,7 +579,7 @@
 
 (define (make-bbtree <)
   (assert (procedure? <))
-  (%make-bbtree (make <empty>) <))
+  (%make-bbtree (make-empty) <))
 
 (define (bbtree-size bbtree)
   (assert (bbtree? bbtree))
