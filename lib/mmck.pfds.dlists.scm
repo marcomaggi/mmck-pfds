@@ -85,7 +85,8 @@
      dlist-snoc
      dlist-append
      dlist->list
-     list->dlist)
+     list->dlist
+     dlist=?)
   (import (scheme)
 	  (mmck pfds helpers))
 
@@ -97,6 +98,13 @@
   dlist?
   (proc		undl))
 
+(define-record-printer (<dlist> record port)
+  (format port "#[dlist")
+  (for-each (lambda (item)
+	      (format port " ~a" item))
+    (dlist->list record))
+  (format port "]"))
+
 (define (dlist . args)
   (list->dlist args))
 
@@ -107,21 +115,63 @@
 (define (singleton x)
   (list->dlist (list x)))
 
-(define (dlist-append dl1 dl2)
-  (make-dlist (compose (undl dl1) (undl dl2))))
+(case-define* dlist-append
+  (()
+   (dlist))
+  ((dell)
+   (assert-argument-type __who__ "<dlist>" dlist? dell 1)
+   dell)
+  ((dell1 dell2)
+   (assert-argument-type __who__ "<dlist>" dlist? dell1 1)
+   (assert-argument-type __who__ "<dlist>" dlist? dell2 2)
+   (make-dlist (compose (undl dell1) (undl dell2))))
+  (dell*
+   (assert-argument-list-type __who__ "<dlist>" dlist? dell* 1)
+   (fold-left (lambda (nil item)
+		(dlist-append nil item))
+     (car dell*)
+     (cdr dell*))))
 
-(define (dlist-cons element dlist)
-  (dlist-append (singleton element) dlist))
+(define* (dlist-cons element dell)
+  (assert-argument-type __who__ "<dlist>" dlist? dell 2)
+  (dlist-append (singleton element) dell))
 
-(define (dlist-snoc dlist element)
-  (dlist-append dlist (singleton element)))
+(define* (dlist-snoc dell element)
+  (assert-argument-type __who__ "<dlist>" dlist? dell 1)
+  (dlist-append dell (singleton element)))
 
-(define (dlist->list dlist)
-  ((undl dlist) '()))
+(define* (dlist->list dell)
+  (assert-argument-type __who__ "<dlist>" dlist? dell 1)
+  ((undl dell) '()))
 
 (define (list->dlist list)
   (make-dlist (lambda (rest)
 		(append list rest))))
+
+
+;;;; comparison
+
+(case-define* dlist=?
+  (()
+   #t)
+  ((dell)
+   (assert-argument-type __who__ "<dlist>" dlist? dell 1)
+   #t)
+  ((dell1 dell2)
+   (assert-argument-type __who__ "<dlist>" dlist? dell1 1)
+   (assert-argument-type __who__ "<dlist>" dlist? dell2 2)
+   (equal? (dlist->list dell1)
+	   (dlist->list dell2)))
+  (dell*
+   (assert-argument-list-type __who__ "<dlist>" dlist? dell* 1)
+   (call/cc
+       (lambda (return)
+	 (fold-left (lambda (first next)
+		      (if (dlist=? first next)
+			  first
+			(return #f)))
+	   (car dell*)
+	   (cdr dell*))))))
 
 
 ;;;; done

@@ -194,8 +194,8 @@ supporting the language features as defined in the ``Revised^5 Report on Scheme'
 This package supports @posix{} platforms.  To run the tests distributed with the source code: this
 package depends upon the package @mmck{} Checks.
 
-The package installs the library @library{mmck pfds} along with its import library.  To require the
-library and import its syntactic bindings in a module we can do:
+The package installs the library @library{mmck pfds} along with its import libraries.  To require
+the library and import its syntactic bindings in a module we can do:
 
 @example
 (declare (unit my-module)
@@ -206,7 +206,7 @@ library and import its syntactic bindings in a module we can do:
 (module (my-module)
     ()
   (import (scheme)
-    (mmck pfds))
+          (mmck pfds))
 
   ...
 
@@ -285,38 +285,64 @@ to either the front or end of a dlist that may be used instead.
 
 
 @defun dlist @var{obj} @dots{}
-Return a dlist containing all the given arguments.
+Return a @class{dlist} containing all the given arguments.
+
+@lisp
+(dlist 1 2 3)   @result{} #[dlist 1 2 3]
+@end lisp
 @end defun
 
 
 @defun dlist? @var{obj}
-Return @true{} if @var{obj} is a dlist, @false{} otherwise.
+Return @true{} if @var{obj} is a @class{dlist}, @false{} otherwise.
 @end defun
 
 
-@defun dlist-cons @var{item} @var{dlist}
-Return a new dlist created by prepending @var{item} to the head of @var{dlist}.
+@defun dlist-cons @var{item} @var{dell}
+Return a new @class{dlist} created by prepending @var{item} to the head of @var{dell}.
+
+@lisp
+(let* ((dell (dlist 5))
+       (dell (dlist-cons 4 dell))
+       (dell (dlist-snoc dell 6)))
+  dell)
+@result{} #[dlist 4 5 6]
+@end lisp
 @end defun
 
 
-@defun dlist-snoc @var{dlist} @var{item}
-Return a new dlist created by appending @var{item} to the tail of @var{dlist}.
+@defun dlist-snoc @var{dell} @var{item}
+Return a new @class{dlist} created by appending @var{item} to the tail of @var{dell}.
 @end defun
 
 
-@defun dlist-append @vari{dlist} @varii{dlist}
-Return a new dlist consisting of all the elements of @vari{dlist}, followed by all the items of
-@varii{dlist}.
+@defun dlist-append @var{dell} @dots{}
+Return a new @class{dlist} consisting of the concatenation of the elements of the @var{dell}
+arguments.  If no arguments are given: return the empty @class{dlist}.
+
+@lisp
+(dlist-append (dlist 1 2)
+              (dlist 3 4)
+              (dlist 5 6)
+              (dlist 7 8))
+@result{} #[dlist 1 2 3 4 5 6 7 8]
+@end lisp
 @end defun
 
 
-@defun dlist->list @var{dlist}
-Return a list consisting of all the elements of the @var{dlist}.
+@defun dlist->list @var{dell}
+Return a list consisting of all the elements of the @var{dell}.
 @end defun
 
 
 @defun list->dlist @var{list-of-items}
 Return a dlist consisting of all the elements of the given list argument.
+@end defun
+
+
+@defun dlist=? @var{dell} @dots{}
+Return @true{} if all the @var{dell} arguments are equal; otherwise return @false{}.  If no
+arguments are given: return @true{}.
 @end defun
 
 @c page

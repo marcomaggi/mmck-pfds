@@ -41,29 +41,37 @@
 
 (module (mmck pfds helpers)
     ((syntax: assert pfds-assertion-violation)
+     (syntax: define*)
+     (syntax: case-define*)
      fold-left
      fold-right
      make-pfds-assertion-violation
      pfds-assertion-violation
      pfds-assertion-violation?
+     assert-argument-type
+     assert-argument-list-type
      raise)
   (import (scheme)
 	  (only (chicken module)
 		reexport))
   (reexport (only (chicken base)
 		  define-record-type
+		  define-record-printer
 		  let-values
 		  let*-values
 		  unless
 		  when
 		  delay-force
-		  case-lambda)
+		  case-lambda
+		  call/cc)
 	    (only (chicken condition)
 		  abort
 		  condition
 		  make-composite-condition
 		  condition-case
-		  condition-predicate))
+		  condition-predicate)
+	    (only (chicken format)
+		  format))
 
 
 ;;;; exceptional-condition objects and related stuff
@@ -93,6 +101,26 @@
        (pfds-assertion-violation 'assert "failed assertion" (quote ?expr))))
     ))
 
+;;; --------------------------------------------------------------------
+
+(define (assert-argument-type who type.str type-pred arg arg.idx)
+  (unless (type-pred arg)
+    (pfds-assertion-violation who (string-append "expected argument "
+						 (number->string arg.idx)
+						 " of type \"" type.str "\"")
+			      arg)))
+
+(define (assert-argument-list-type who type.str type-pred arg* first-arg.idx)
+  (fold-left (lambda (arg.idx arg)
+	       (if (type-pred arg)
+		   (+ 1 arg.idx)
+		 (pfds-assertion-violation who (string-append "expected argument "
+							      (number->string arg.idx)
+							      " of type \"" type.str "\"")
+					   arg)))
+    first-arg.idx
+    arg*))
+
 
 ;;;; misc
 
@@ -108,6 +136,53 @@
     (if (pair? ell)
 	(loop combine (combine (car ell) nil) (cdr ell))
       nil)))
+
+
+;;;; syntaxes: define*, case-define*
+
+(define-syntax %expand-define*/function
+  (ir-macro-transformer
+    (lambda (input-form inject compare)
+      ;;We expect the following input form:
+      ;;
+      ;;  (%expand-define* (?who . ?formals) ?body0 ?body ...)
+      ;;
+      (let ((?who	(caadr input-form))
+	    (?formals	(cdadr input-form))
+	    (?body*	(cddr  input-form)))
+	(let ((%__who__ (inject '__who__)))
+	  `(define (,?who . ,?formals)
+	     (let ((,%__who__ (quote ,?who)))
+	       . ,?body*)))))))
+
+(define-syntax %expand-define*/variable
+  (ir-macro-transformer
+    (lambda (input-form inject compare)
+      ;;We expect the following input form:
+      ;;
+      ;;  (%expand-define* ?who ?expr)
+      ;;
+      (let ((?who	(cadr  input-form))
+	    (?expr	(caddr input-form)))
+	(let ((%__who__ (inject '__who__)))
+	  `(define ,?who
+	     (let ((,%__who__ (quote ,?who)))
+	       ,?expr)))))))
+
+(define-syntax define*
+  (syntax-rules ()
+    ((_ (?who . ?formals) ?body0 ?body ...)
+     (%expand-define*/function (?who . ?formals) ?body0 ?body ...))
+    ((_ ?who ?expr)
+     (%expand-define*/variable ?who ?expr))
+    ))
+
+(define-syntax case-define*
+  (syntax-rules ()
+    ((_ ?who (?formals ?body0 ?body ...) ...)
+     (define* ?who
+       (case-lambda (?formals ?body0 ?body ...) ...)))
+    ))
 
 
 ;;;; done

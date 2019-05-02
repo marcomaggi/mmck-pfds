@@ -350,7 +350,8 @@ EXTRA_DIST		+= \
 	tests/test-pfds-psqs.scm		\
 	tests/test-pfds-queues.scm		\
 	tests/test-pfds-sequences.scm		\
-	tests/test-pfds-sets.scm
+	tests/test-pfds-sets.scm		\
+	tests/test-pfds-docs.scm
 
 MMCK_CHECK_OBJECTS	= \
 	tests/test-version.$(OBJEXT)		\
@@ -362,7 +363,8 @@ MMCK_CHECK_OBJECTS	= \
 	tests/test-pfds-psqs.$(OBJEXT)		\
 	tests/test-pfds-queues.$(OBJEXT)	\
 	tests/test-pfds-sequences.$(OBJEXT)	\
-	tests/test-pfds-sets.$(OBJEXT)
+	tests/test-pfds-sets.$(OBJEXT)		\
+	tests/test-pfds-docs.$(OBJEXT)
 
 MMCK_CHECK_PROGS	= \
 	tests/test-version.exe			\
@@ -374,7 +376,8 @@ MMCK_CHECK_PROGS	= \
 	tests/test-pfds-psqs.exe		\
 	tests/test-pfds-queues.exe		\
 	tests/test-pfds-sequences.exe		\
-	tests/test-pfds-sets.exe
+	tests/test-pfds-sets.exe		\
+	tests/test-pfds-docs.exe
 
 CLEANFILES	+= $(MMCK_CHECK_PROGS) $(MMCK_CHECK_OBJECTS)
 
@@ -462,6 +465,14 @@ tests/test-pfds-sets.$(OBJEXT): tests/test-pfds-sets.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
 tests/test-pfds-sets.exe: tests/test-pfds-sets.$(OBJEXT)
+	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
+
+## --------------------------------------------------------------------
+
+tests/test-pfds-docs.$(OBJEXT): tests/test-pfds-docs.scm $(MMCK_CHECK_DEPS)
+	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
+
+tests/test-pfds-docs.exe: tests/test-pfds-docs.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ### end of file
