@@ -122,18 +122,23 @@
   (r		queue-r)
   (l^		queue-l^))
 
+(define-record-printer (<queue> record port)
+  (format port "#[queue]"))
+
 (define (make-queue)
   (%make-queue 0 '() '() '()))
 
-(define (enqueue queue item)
+(define* (enqueue queue item)
+  (assert-argument-type __who__ "<queue>" queue? queue 1)
   (let ((len (queue-length queue))
         (l (queue-l queue))
         (r (queue-r queue))
         (l^ (queue-l^ queue)))
     (makeq (+ len 1) l (cons* item r) l^)))
 
-(define (dequeue queue)
-  (assert-queue-not-empty 'dequeue queue)
+(define* (dequeue queue)
+  (assert-argument-type __who__ "<queue>" queue? queue 1)
+  (assert-queue-not-empty __who__ queue)
   (let ((len (queue-length queue))
         (l (queue-l queue))
         (r (queue-r queue))
@@ -141,25 +146,27 @@
     (values (head l)
             (makeq (- len 1) (tail l) r l^))))
 
-(define (makeq length l r l^)
+(define (makeq len l r l^)
   (if (empty? l^)
       (let ((l* (rotate l r '())))
-        (%make-queue length l* '() l*))
-      (%make-queue length l r (tail l^))))
+        (%make-queue len l* '() l*))
+      (%make-queue len l r (tail l^))))
 
-(define (queue-empty? queue)
+(define* (queue-empty? queue)
+  (assert-argument-type __who__ "<queue>" queue? queue 1)
   (zero? (queue-length queue)))
 
 (define (list->queue list)
   (fold-left enqueue (make-queue) list))
 
-(define (queue->list queue)
+(define* (queue->list queue)
+  (assert-argument-type __who__ "<queue>" queue? queue 1)
   (let loop ((rev-list '()) (queue queue))
     (if (queue-empty? queue)
         (reverse rev-list)
-        (let-values (((val queue) (dequeue queue)))
-          (loop (cons val rev-list)
-                 queue)))))
+      (let-values (((val queue) (dequeue queue)))
+        (loop (cons val rev-list)
+              queue)))))
 
 
 ;;;; exceptional conditions

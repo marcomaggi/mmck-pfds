@@ -46,6 +46,8 @@
 (module (test-dlists)
     ()
   (import (scheme)
+	  (only (chicken base)
+		receive)
 	  (chicken pretty-print)
 	  (mmck pfds)
 	  (mmck checks))
@@ -75,6 +77,41 @@
   (check
       (dlist-append)
     (=> dlist=?) (dlist))
+
+  (values))
+
+
+(parameterise ((check-test-name	'queues))
+
+  (pretty-print (make-queue))
+
+  (check
+      (let* ((Q (make-queue))
+	     (Q (enqueue Q 1))
+	     (Q (enqueue Q 2))
+	     (Q (enqueue Q 3)))
+	(receive (A Q)
+	    (dequeue Q)
+	  (receive (B Q)
+	      (dequeue Q)
+	    (receive (C Q)
+		(dequeue Q)
+	      (values A B C)))))
+    => 1 2 3)
+
+  (check
+      (let* ((Q (make-queue))
+	     (Q (enqueue Q 1))
+	     (Q (enqueue Q 2))
+	     (Q (enqueue Q 3)))
+	(receive (A Q1)
+	    (dequeue Q)
+	  (receive (B Q1)
+	      (dequeue Q)
+	    (receive (C Q1)
+		(dequeue Q)
+	      (values A B C)))))
+    => 1 1 1)
 
   (values))
 

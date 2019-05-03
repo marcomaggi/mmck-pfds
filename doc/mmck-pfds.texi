@@ -350,6 +350,43 @@ arguments are given: return @true{}.
 @chapter Purely functional queues
 
 
+This module implements a First--In First--Out functional queue:
+
+@lisp
+(let* ((Q (make-queue))
+       (Q (enqueue Q 1))
+       (Q (enqueue Q 2))
+       (Q (enqueue Q 3)))
+  (receive (A Q)
+      (dequeue Q)
+    (receive (B Q)
+        (dequeue Q)
+      (receive (C Q)
+          (dequeue Q)
+        (values A B C)))))
+@result{} 1 2 3
+@end lisp
+
+@noindent
+by applying repeatedly @func{enqueue} to the same @class{queue} object, we extract the same item
+from the queue:
+
+@lisp
+(let* ((Q (make-queue))
+       (Q (enqueue Q 1))
+       (Q (enqueue Q 2))
+       (Q (enqueue Q 3)))
+  (receive (A Q1)
+      (dequeue Q)
+    (receive (B Q1)
+        (dequeue Q)
+      (receive (C Q1)
+          (dequeue Q)
+        (values A B C)))))
+@result{} 1 1 1
+@end lisp
+
+
 @defun make-queue
 Return a queue containing no items.
 @end defun
