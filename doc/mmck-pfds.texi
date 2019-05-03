@@ -766,7 +766,7 @@ return.  These bounds are inclusive.
 @chapter A simple general--purpose data structure
 
 
-Fingertrees are a generalised form of deque, that we can parametrise to compute a value, called the
+Fingertrees are a generalised form of deque, that we can parameterise to compute a value, called the
 ``measure'' of a fingertree.  This measure will be updated incrementally as we add and remove
 elements from the fingertree.  Among other things, this allows fingertrees to be used where you
 otherwise might have written a custom data structure.
@@ -820,7 +820,7 @@ element are expected to form a monoid.
 
 
 @defun make-fingertree @var{identity} @var{COMBINE} @var{measure}
-Return a new fingertree, parametrised by the given monoid.
+Return a new fingertree, parameterised by the given monoid.
 @end defun
 
 
@@ -867,7 +867,7 @@ otherwise.
 
 @defun fingertree-append @vari{fingertree} @varii{fingertree}
 Return a new fingertree which contains all of the elements of @vari{fingertree}, followed by all the
-elements of @varii{fingertree}.  The arguments are assumed to be parametrised by the same monoid.
+elements of @varii{fingertree}.  The arguments are assumed to be parameterised by the same monoid.
 @end defun
 
 
