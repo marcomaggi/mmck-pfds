@@ -57,8 +57,10 @@
   (reexport (only (chicken base)
 		  define-record-type
 		  define-record-printer
+		  define-constant
 		  let-values
 		  let*-values
+		  receive
 		  unless
 		  when
 		  delay-force

@@ -104,9 +104,9 @@
 	  (mmck pfds lazy-lists))
 
 
-;;;; implementation
+;;;; helpers
 
-(define c 2)
+(define-constant c 2)
 
 (define (rot1 n l r)
   (if (>= n c)
@@ -122,6 +122,9 @@
                    (drop c r)
                    (append* (rev (take c r)) a)))))
 
+
+;;;; implementation
+
 (define-record-type <deque>
   (%make-deque length lenL lenR l r l^ r^)
   deque?
@@ -133,13 +136,18 @@
   (l^		deque-l^)
   (r^		deque-r^))
 
+(define-record-printer (<deque> record port)
+  (format port "#[deque]"))
+
 (define (make-deque)
   (%make-deque 0 0 0 '() '() '() '()))
 
-(define (deque-empty? deque)
+(define* (deque-empty? deque)
+  (assert-argument-type __who__ "<deque>" deque? deque 1)
   (zero? (deque-length deque)))
 
-(define (enqueue-front deque item)
+(define* (enqueue-front deque item)
+  (assert-argument-type __who__ "<deque>" deque? deque 1)
   (let ((len (deque-length deque))
         (l (deque-l deque))
         (r (deque-r deque))
@@ -149,7 +157,8 @@
         (r^ (deque-r^ deque)))
     (makedq (+ 1 len) (+ 1 lenL) lenR (cons* item l) r (tail l^) (tail r^))))
 
-(define (enqueue-rear deque item)
+(define* (enqueue-rear deque item)
+  (assert-argument-type __who__ "<deque>" deque? deque 1)
   (let ((len (deque-length deque))
         (l (deque-l deque))
         (r (deque-r deque))
@@ -159,8 +168,9 @@
         (r^ (deque-r^ deque)))
     (makedq (+ 1 len) lenL (+ 1 lenR) l (cons* item r) (tail l^) (tail r^))))
 
-(define (dequeue-front deque)
-  (assert-deque-not-empty 'deque-front deque)
+(define* (dequeue-front deque)
+  (assert-argument-type __who__ "<deque>" deque? deque 1)
+  (assert-deque-not-empty __who__ deque)
   (let ((len (deque-length deque))
         (lenL (deque-lenL deque))
         (lenR (deque-lenR deque))
@@ -179,8 +189,9 @@
                       (tail (tail l^))
                       (tail (tail r^)))))))
 
-(define (dequeue-rear deque)
-  (assert-deque-not-empty 'deque-front deque)
+(define* (dequeue-rear deque)
+  (assert-argument-type __who__ "<deque>" deque? deque 1)
+  (assert-deque-not-empty __who__ deque)
   (let ((len (deque-length deque))
         (lenL (deque-lenL deque))
         (lenR (deque-lenR deque))
@@ -215,15 +226,18 @@
         (else
          (%make-deque len lenL lenR l r l^ r^))))
 
-(define (list->deque l)
-  (fold-left enqueue-rear (make-deque) l))
+(define* (list->deque ell)
+  (assert-argument-type __who__ "<list>" list? ell 1)
+  (fold-left enqueue-rear (make-deque) ell))
 
-(define (deque->list deq)
+(define* (deque->list deq)
+  (assert-argument-type __who__ "<deque>" deque? deq 1)
   (define (recur deq l)
     (if (deque-empty? deq)
         l
-        (let-values ([(last deq*) (dequeue-rear deq)])
-          (recur deq* (cons last l)))))
+      (receive (last deq*)
+	  (dequeue-rear deq)
+        (recur deq* (cons last l)))))
   (recur deq '()))
 
 

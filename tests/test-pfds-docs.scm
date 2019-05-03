@@ -116,6 +116,55 @@
   (values))
 
 
+(parameterise ((check-test-name	'deques))
+
+  (pretty-print (make-deque))
+
+  (check
+      (let* ((Q (make-deque))
+	     (Q (enqueue-front Q 1))
+	     (Q (enqueue-front Q 2))
+	     (Q (enqueue-front Q 3)))
+	(receive (A Q)
+	    (dequeue-front Q)
+	  (receive (B Q)
+	      (dequeue-front Q)
+	    (receive (C Q)
+		(dequeue-front Q)
+	      (values A B C)))))
+    => 3 2 1)
+
+  (check
+      (let* ((Q (make-deque))
+	     (Q (enqueue-front Q 1))
+	     (Q (enqueue-front Q 2))
+	     (Q (enqueue-front Q 3)))
+	(receive (A Q)
+	    (dequeue-rear Q)
+	  (receive (B Q)
+	      (dequeue-rear Q)
+	    (receive (C Q)
+		(dequeue-rear Q)
+	      (values A B C)))))
+    => 1 2 3)
+
+  (check
+      (let* ((Q (make-deque))
+	     (Q (enqueue-front Q 1))
+	     (Q (enqueue-front Q 2))
+	     (Q (enqueue-front Q 3)))
+	(receive (A Q1)
+	    (dequeue-front Q)
+	  (receive (B Q1)
+	      (dequeue-front Q)
+	    (receive (C Q1)
+		(dequeue-front Q)
+	      (values A B C)))))
+    => 3 3 3)
+
+  (values))
+
+
 ;;;; done
 
 (check-report)

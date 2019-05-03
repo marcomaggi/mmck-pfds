@@ -368,7 +368,7 @@ This module implements a First--In First--Out functional queue:
 @end lisp
 
 @noindent
-by applying repeatedly @func{enqueue} to the same @class{queue} object, we extract the same item
+by applying repeatedly @func{dequeue} to the same @class{queue} object, we extract the same item
 from the queue:
 
 @lisp
@@ -439,6 +439,56 @@ the same as the order in the list.
 @c page
 @node deques
 @chapter Double queues
+
+
+This module implements a functional deque:
+
+@lisp
+(let* ((Q (make-deque))
+       (Q (enqueue-front Q 1))
+       (Q (enqueue-front Q 2))
+       (Q (enqueue-front Q 3)))
+  (receive (A Q)
+      (dequeue-front Q)
+    (receive (B Q)
+        (dequeue-front Q)
+      (receive (C Q)
+          (dequeue-front Q)
+        (values A B C)))))
+@result{} 3 2 1
+
+(let* ((Q (make-deque))
+       (Q (enqueue-front Q 1))
+       (Q (enqueue-front Q 2))
+       (Q (enqueue-front Q 3)))
+  (receive (A Q)
+      (dequeue-rear Q)
+    (receive (B Q)
+        (dequeue-rear Q)
+      (receive (C Q)
+          (dequeue-rear Q)
+        (values A B C)))))
+@result{} 1 2 3
+@end lisp
+
+@noindent
+by applying repeatedly the dequeue functions to the same @class{deque} object, we extract the same
+item:
+
+@lisp
+(let* ((Q (make-deque))
+       (Q (enqueue-front Q 1))
+       (Q (enqueue-front Q 2))
+       (Q (enqueue-front Q 3)))
+  (receive (A Q1)
+      (dequeue-front Q)
+    (receive (B Q1)
+        (dequeue-front Q)
+      (receive (C Q1)
+          (dequeue-front Q)
+        (values A B C)))))
+@result{} 3 3 3
+@end lisp
 
 
 @defun make-deque
