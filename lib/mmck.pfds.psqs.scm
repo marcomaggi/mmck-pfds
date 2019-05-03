@@ -283,30 +283,30 @@
                   (lookup w2 key default key<?)))
             key<?))
 
-(define (update psq key f default key<? prio<?)
+(define (update psq key priority-update default-priority key<? prio<?)
   (psq-case psq
-            (lambda () (singleton key (f default)))
+            (lambda () (singleton key (priority-update default-priority)))
             (lambda (k p)
               (cond ((key<? key k)
-                     (play-match (singleton key (f default))
+                     (play-match (singleton key (priority-update default-priority))
                                  (singleton k p)
                                  key<?
                                  prio<?))
                     ((key<? k key)
                      (play-match (singleton k p)
-                                 (singleton key (f default))
+                                 (singleton key (priority-update default-priority))
                                  key<?
                                  prio<?))
                     (else
-                     (singleton key (f p)))))
+                     (singleton key (priority-update p)))))
             (lambda (w1 w2)
               (if (not (key<? (max-key w1) key))
-                  (play-match (update w1 key f default key<? prio<?)
+                  (play-match (update w1 key priority-update default-priority key<? prio<?)
                               w2
                               key<?
                               prio<?)
                   (play-match w1
-                              (update w2 key f default key<? prio<?)
+                              (update w2 key priority-update default-priority key<? prio<?)
                               key<?
                               prio<?)))
             key<?))
@@ -511,7 +511,8 @@
                   key<?
                   prio<?)))
 
-;;; Exported Type
+
+;;;; exported Type
 
 (define-record-type <psq>
   (%make-psq key<? priority<? tree)
@@ -520,77 +521,81 @@
   (priority<?	psq-priority<?)
   (tree		psq-tree))
 
+(define-record-printer (<psq> record port)
+  (format port "#[psq]"))
+
 (define (%update-psq psq new-tree)
   (%make-psq (psq-key<? psq)
              (psq-priority<? psq)
              new-tree))
 
-;;; Exported Procedures
+
+;;;; exported Procedures
 
 (define (make-psq key<? priority<?)
   (%make-psq key<? priority<? (make-void)))
 
-(define (psq-empty? psq)
-  (assert (psq? psq))
+(define* (psq-empty? psq)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (void? (psq-tree psq)))
 
-(define (psq-ref psq key)
+(define* (psq-ref psq key)
   (define cookie (cons #f #f))
-  (assert (psq? psq))
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (let ((val (lookup (psq-tree psq) key cookie (psq-key<? psq))))
     (if (eq? val cookie)
-        (pfds-assertion-violation 'psq-ref "not in tree" psq key)
-        val)))
+        (pfds-assertion-violation __who__ "not in tree" psq key)
+      val)))
 
-(define (psq-set psq key priority)
-  (assert (psq? psq))
+(define* (psq-set psq key priority)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (%update-psq psq
                (insert (psq-tree psq) key priority (psq-key<? psq) (psq-priority<? psq))))
 
-(define (psq-update psq key f default)
-  (assert (psq? psq))
-  (%update-psq psq (update (psq-tree psq) key f default (psq-key<? psq) (psq-priority<? psq))))
+(define* (psq-update psq key priority-update default-priority)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
+  (%update-psq psq (update (psq-tree psq) key priority-update default-priority (psq-key<? psq) (psq-priority<? psq))))
 
-(define (psq-delete psq key)
-  (assert (psq? psq))
+(define* (psq-delete psq key)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (%update-psq psq (delete (psq-tree psq) key (psq-key<? psq) (psq-priority<? psq))))
 
-(define (psq-contains? psq key)
+(define* (psq-contains? psq key)
   (define cookie (cons #f #f))
-  (assert (psq? psq))
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (let ((val (lookup (psq-tree psq) key cookie (psq-key<? psq))))
     (not (eq? val cookie))))
 
-(define (psq-min psq)
-  (assert (psq? psq))
+(define* (psq-min psq)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (min (psq-tree psq)))
 
-(define (psq-delete-min psq)
-  (assert (and (psq? psq)
-               (not (psq-empty? psq))))
+(define* (psq-delete-min psq)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
+  (assert (not (psq-empty? psq)))
   (%update-psq psq (delete-min (psq-tree psq) (psq-key<? psq) (psq-priority<? psq))))
 
-(define (psq-pop psq)
-  (assert (psq? psq))
+(define* (psq-pop psq)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (let-values (((min rest) (pop (psq-tree psq) (psq-key<? psq) (psq-priority<? psq))))
     (values min (%update-psq psq rest))))
 
-(define (psq-at-most psq max-priority)
-  (assert (psq? psq))
+(define* (psq-at-most psq max-priority)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (let ((tree   (psq-tree psq))
         (key<?  (psq-key<? psq))
         (prio<? (psq-priority<? psq)))
     (at-most tree max-priority key<? prio<?)))
 
-(define (psq-at-most-range psq max-priority min-key max-key)
-  (assert (psq? psq))
+(define* (psq-at-most-range psq max-priority min-key max-key)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (let ((tree   (psq-tree psq))
         (key<?  (psq-key<? psq))
         (prio<? (psq-priority<? psq)))
     (at-most-range tree max-priority min-key max-key key<? prio<?)))
 
-(define (psq-size psq)
-  (assert (psq? psq))
+(define* (psq-size psq)
+  (assert-argument-type __who__ "<psq>" psq? psq 1)
   (let ((tree (psq-tree psq)))
     (if (winner? tree)
         (+ 1 (size (winner-loser-tree tree)))

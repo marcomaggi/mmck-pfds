@@ -284,7 +284,7 @@ function.  Dlists are a representation of lists as functions that provide for co
 to either the front or end of a dlist that may be used instead.
 
 
-@defun dlist @var{obj} @dots{}
+@defun dlist @var{OBJ} @dots{}
 Return a @class{dlist} containing all the given arguments.
 
 @lisp
@@ -293,8 +293,8 @@ Return a @class{dlist} containing all the given arguments.
 @end defun
 
 
-@defun dlist? @var{obj}
-Return @true{} if @var{obj} is a @class{dlist}, @false{} otherwise.
+@defun dlist? @var{OBJ}
+Return @true{} if @var{OBJ} is a @class{dlist}, @false{} otherwise.
 @end defun
 
 
@@ -392,8 +392,8 @@ Return a queue containing no items.
 @end defun
 
 
-@defun queue? @var{obj}
-Return @true{} if @var{obj} is a queue, @false{} otherwise.
+@defun queue? @var{OBJ}
+Return @true{} if @var{OBJ} is a queue, @false{} otherwise.
 @end defun
 
 
@@ -419,8 +419,8 @@ empty.
 @end defun
 
 
-@defun queue-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition object with kind @code{pfds-queue-empty-condition};
+@defun queue-empty-condition? @var{OBJ}
+Return @true{} if @var{OBJ} is a condition object with kind @code{pfds-queue-empty-condition};
 otherwise return @false{}.
 @end defun
 
@@ -496,8 +496,8 @@ Return a deque containing to items.
 @end defun
 
 
-@defun deque? @var{obj}
-Return @true{} if @var{obj} is a deque, @false{} otherwise.
+@defun deque? @var{OBJ}
+Return @true{} if @var{OBJ} is a deque, @false{} otherwise.
 @end defun
 
 
@@ -534,8 +534,8 @@ empty.
 @end defun
 
 
-@defun deque-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition with kind @code{pfds-deque-empty-condition}, @false{}
+@defun deque-empty-condition? @var{OBJ}
+Return @true{} if @var{OBJ} is a condition with kind @code{pfds-deque-empty-condition}, @false{}
 otherwise.
 @end defun
 
@@ -561,7 +561,25 @@ priority queues.  As such, it provides for access, insertion, removal and update
 as well as for easy removal of the element with the lowest priority.
 
 Where a procedure takes a key or priority these are expected to be compatible with the relevant
-ordering procedures on the psq.
+ordering procedures on the @class{psq}.
+
+@lisp
+(let* ((Q (make-psq string< <))
+       (Q (psq-set Q "salut" 2))
+       (Q (psq-set Q "hello" 1))
+       (Q (psq-set Q "ciao"  1))
+       (Q (psq-set Q "ohayo" 2)))
+  (receive (key1 Q1)
+      (psq-pop Q)
+    (receive (key2 Q2)
+        (psq-pop Q1)
+      (receive (key3 Q3)
+          (psq-pop Q2)
+        (receive (key4 Q4)
+            (psq-pop Q3)
+          (values key1 key2 key3 key4))))))
+@result{} "ciao" "hello" "ohayo" "salut"
+@end lisp
 
 @menu
 * psqs basic::                  Basic operations.
@@ -575,23 +593,23 @@ ordering procedures on the psq.
 @section Basic operations
 
 
-@defun make-psq @var{key<} @var{priority<}
+@defun make-psq @var{KEY<} @var{PRIORITY<}
 Take two ordering procedures: one for keys, and another for priorities, and return an empty priority
 search queue.
 @end defun
 
 
-@defun psq? @var{obj}
-Return @true{} if @var{obj} is a priority search queue, @false{} otherwise.
+@defun psq? @var{OBJ}
+Return @true{} if @var{OBJ} is a priority search queue, @false{} otherwise.
 @end defun
 
 
-@defun psq-empty? @var{psq}
+@defun psq-empty? @var{PSQ}
 Return @true{} if the priority search queue contains no elements, @false{} otherwise.
 @end defun
 
 
-@defun psq-size @var{psq}
+@defun psq-size @var{PSQ}
 Return a non--negative integer represeting the number of associations in the priority search queue.
 @end defun
 
@@ -600,37 +618,69 @@ Return a non--negative integer represeting the number of associations in the pri
 @section Finite map operations
 
 
-@defun psq-ref @var{psq} @var{key}
-Return the priority of @var{key} if it is in @var{psq}.  If @var{key} is not in @var{psq} an
+@defun psq-ref @var{PSQ} @var{KEY}
+Return the priority of @var{KEY} if it is in @var{PSQ}.  If @var{KEY} is not in @var{PSQ} an
 assertion violation is raised.
+
+@lisp
+(let* ((Q (make-psq string< <))
+       (Q (psq-set Q "salut" 2))
+       (Q (psq-set Q "hello" 1))
+       (Q (psq-set Q "ciao"  4))
+       (Q (psq-set Q "ohayo" 3)))
+  (values (psq-ref Q "salut")
+          (psq-ref Q "hello")
+          (psq-ref Q "ciao")
+          (psq-ref Q "ohayo")))
+@result{} 2 1 4 3
+@end lisp
 @end defun
 
 
-@defun psq-set @var{psq} @var{key} @var{priority}
-Return the priority search queue obtained from inserting @var{key} with a given @var{priority}.  If
-@var{key} is already in the priority search queue, it updates the priority to the new value.
+@defun psq-set @var{PSQ} @var{KEY} @var{PRIORITY}
+Return the priority search queue obtained from inserting @var{KEY} with a given @var{PRIORITY}.  If
+@var{KEY} is already in the priority search queue, it updates the priority to the new value.
 @end defun
 
 
-@defun psq-update @var{psq} @var{key} @var{priority-update} @var{priority}
-Return the priority search queue obtained by modifying the priority of @var{key}, by the given
-function @var{priority-update}.  If @var{key} is not in @var{psq}: it is inserted with the priority
-obtained by calling the function @var{update} on the default value @var{priority-update}.
+@defun psq-update @var{PSQ} @var{KEY} @var{PRIORITY-UPDATE} @var{DEFAULT-PRIORITY}
+Return the priority search queue obtained by modifying the priority of @var{KEY}, by the given
+function @var{PRIORITY-UPDATE}.  If @var{KEY} is not in @var{PSQ}: it is inserted with the priority
+obtained by calling the function @var{PRIORITY-UPDATE} on the value @var{DEFAULT-PRIORITY}.
 
-@var{priority-update} must be a procedure accepting a priority value as single argument and
+@var{PRIORITY-UPDATE} must be a procedure accepting a priority value as single argument and
 returning a priority value as single value.
+
+@lisp
+(let* ((Q  (make-psq string< <))
+       (Q  (psq-set Q "salut" 2))
+       (P1 (psq-ref Q "salut"))
+       (Q  (psq-update Q "salut"
+                       (lambda (P) (+ 2 P))
+                       0))
+       (P2 (psq-ref Q "salut")))
+  (values P1 P2))
+@result{} 2 4
+
+(let* ((Q  (make-psq string< <))
+       (Q  (psq-update Q "salut"
+                       (lambda (P) (+ 1 P))
+                       9)))
+  (psq-ref Q "salut"))
+@result{} 10
+@end lisp
 @end defun
 
 
-@defun psq-delete @var{psq} @var{key}
-Return the priority search queue obtained by removing the @var{key}/priority association from the
-@var{psq}.  If @var{key} is not in the queue: the returned search queue will be the same as the
+@defun psq-delete @var{PSQ} @var{KEY}
+Return the priority search queue obtained by removing the @var{KEY}/priority association from the
+@var{PSQ}.  If @var{KEY} is not in the queue: the returned search queue will be the same as the
 original.
 @end defun
 
 
-@defun psq-contains? @var{psq} @var{key}
-Return @true{} if there is an association for the given @var{key} in @var{psq}, @false{} otherwise.
+@defun psq-contains? @var{PSQ} @var{KEY}
+Return @true{} if there is an association for the given @var{KEY} in @var{PSQ}, @false{} otherwise.
 @end defun
 
 @c page
@@ -638,21 +688,40 @@ Return @true{} if there is an association for the given @var{key} in @var{psq}, 
 @section Priority queue operations
 
 
-@defun psq-min @var{psq}
-Return the key of the minimum association in @var{psq}.  If the queue is empty: an assertion
+@defun psq-min @var{PSQ}
+Return the key of the minimum association in @var{PSQ}.  If the queue is empty: an assertion
 violation is raised.
+
+@lisp
+(let* ((Q (make-psq string< <))
+       (Q (psq-set Q "salut" 2))
+       (Q (psq-set Q "hello" 1))
+       (Q (psq-set Q "ciao"  4))
+       (Q (psq-set Q "ohayo" 3)))
+  (psq-min Q))
+@result{} "hello"
+@end lisp
 @end defun
 
 
-@defun psq-delete-min : psq -> psq
-Return the priority search queue obtained by removing the minimum association in @var{psq}.  If the
+@defun psq-delete-min @var{PSQ}
+Return the priority search queue obtained by removing the minimum association in @var{PSQ}.  If the
 queue is empty: an assertion violation is raised.
 @end defun
 
 
-@defun psq-pop @var{psq}
-Return 2 values: the minimum key and the priority search queue obtained by removing the minimum
-association from @var{psq}.  If the queue is empty: an assertion violation is raised.
+@defun psq-pop @var{PSQ}
+Return 2 values:
+
+@enumerate
+@item
+The minimum key.
+
+@item
+The priority search queue obtained by removing the minimum association from @var{PSQ}.
+@end enumerate
+
+If the queue is empty: an assertion violation is raised.
 @end defun
 
 @c page
@@ -660,16 +729,36 @@ association from @var{psq}.  If the queue is empty: an assertion violation is ra
 @section Ranged query functions
 
 
-@defun psq-at-most @var{psq} @var{priority}
-Return an alist containing all the associations in @var{psq} with priority less than, or equal to,
-the given @var{priority}.  The returned alist is ordered by key according to the predicate for
-@var{psq}.
+@defun psq-at-most @var{PSQ} @var{PRIORITY}
+Return an alist containing all the associations in @var{PSQ} with priority less than, or equal to,
+the given @var{PRIORITY}.  The returned alist is ordered by key according to the predicate for
+@var{PSQ}.
+
+@lisp
+(let* ((Q (make-psq key< priority<))
+       (Q (psq-set Q "salut" 2))
+       (Q (psq-set Q "hello" 1))
+       (Q (psq-set Q "ciao"  4))
+       (Q (psq-set Q "ohayo" 3)))
+  (psq-at-most Q 2))
+@result{} (("hello" . 1) ("salut" . 2))
+@end lisp
 @end defun
 
 
-@defun psq-at-most-range @var{psq} @var{priority} @var{min-key} @var{max-key}
+@defun psq-at-most-range @var{PSQ} @var{PRIORITY} @var{MIN-KEY} @var{MAX-KEY}
 Similar to @func{psq-at-most}, but it also takes an upper and lower bound, for the keys it will
 return.  These bounds are inclusive.
+
+@lisp
+(let* ((Q (make-psq key< priority<))
+       (Q (psq-set Q "salut" 1))
+       (Q (psq-set Q "hello" 2))
+       (Q (psq-set Q "ciao"  2))
+       (Q (psq-set Q "ohayo" 2)))
+  (psq-at-most-range Q 2 "hello" "salut"))
+@result{} (("hello" . 2) ("ohayo" . 2) ("salut" . 1))
+@end lisp
 @end defun
 
 @c page
@@ -730,13 +819,13 @@ Mathematically speaking, the @strong{return type} of the converter, the combiner
 element are expected to form a monoid.
 
 
-@defun make-fingertree @var{identity} @var{combine} @var{measure}
+@defun make-fingertree @var{identity} @var{COMBINE} @var{measure}
 Return a new fingertree, parametrised by the given monoid.
 @end defun
 
 
-@defun fingertree? @var{obj}
-Return @true{} if @var{obj} is a fingertree, @false{} otherwise.
+@defun fingertree? @var{OBJ}
+Return @true{} if @var{OBJ} is a fingertree, @false{} otherwise.
 @end defun
 
 
@@ -850,7 +939,7 @@ Return a new sequence containing all of the argument items, in the given order.
 @end defun
 
 
-@defun sequence? @var{obj}
+@defun sequence? @var{OBJ}
 Return @true{} if the argument is a sequence, @false{} otherwise.
 @end defun
 
@@ -888,8 +977,8 @@ item itself.  If @var{sequence} is empty: raise a condition with kind
 @end defun
 
 
-@defun sequence-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition with kind @code{pfds-sequence-empty-condition}; otherwise
+@defun sequence-empty-condition? @var{OBJ}
+Return @true{} if @var{OBJ} is a condition with kind @code{pfds-sequence-empty-condition}; otherwise
 return @false{}.
 @end defun
 
@@ -943,12 +1032,12 @@ empty sequence is returned.
 @end defun
 
 
-@defun sequence-ref @var{sequence} @var{index}
-Return the item at the specified @var{index} in the sequence; @var{index} must be a non--negative
-exact integer.  If @var{index} is outside the range:
+@defun sequence-ref @var{sequence} @var{INDEX}
+Return the item at the specified @var{INDEX} in the sequence; @var{INDEX} must be a non--negative
+exact integer.  If @var{INDEX} is outside the range:
 
 @example
-0 <= @var{index} < (sequence-size @var{sequence})
+0 <= @var{INDEX} < (sequence-size @var{sequence})
 @end example
 
 @noindent
@@ -956,12 +1045,12 @@ an assertion violation is raised.
 @end defun
 
 
-@defun sequence-set @var{sequence} @var{index} @var{item}
-Return the new sequence obtained by replacing the item at the specified @var{index} in
-@var{sequence} with the given @var{item}.  If @var{index} is outside the range:
+@defun sequence-set @var{sequence} @var{INDEX} @var{item}
+Return the new sequence obtained by replacing the item at the specified @var{INDEX} in
+@var{sequence} with the given @var{item}.  If @var{INDEX} is outside the range:
 
 @example
-0 <= @var{index} < (sequence-size @var{sequence})
+0 <= @var{INDEX} < (sequence-size @var{sequence})
 @end example
 
 @noindent
@@ -1004,25 +1093,25 @@ true.
 @chapter Heaps
 
 
-For all the procedures: the argument @var{item<} must be a procedure accepting 2 arguments, being
+For all the procedures: the argument @var{ITEM<} must be a procedure accepting 2 arguments, being
 items from the heap, and returning @true{} if the first is less than the second; if the collected
-items are numbers: @var{item<} can be @func{<}; if the collected items are strings: @var{item<} can
+items are numbers: @var{ITEM<} can be @func{<}; if the collected items are strings: @var{ITEM<} can
 be @func{string<?}.
 
 
-@defun make-heap @var{item<}
+@defun make-heap @var{ITEM<}
 Return a new empty heap which uses the given ordering procedure.
 @end defun
 
 
-@defun heap @var{item<} @var{item} @dots{}
-Return a new heap, ordered by the procedure argument @var{item<}, that contains all the other
+@defun heap @var{ITEM<} @var{item} @dots{}
+Return a new heap, ordered by the procedure argument @var{ITEM<}, that contains all the other
 arguments as items.
 @end defun
 
 
-@defun heap? @var{obj}
-Return @true{} if @var{obj} is a heap, @false{} otherwise.
+@defun heap? @var{OBJ}
+Return @true{} if @var{OBJ} is a heap, @false{} otherwise.
 @end defun
 
 
@@ -1049,8 +1138,8 @@ determined by the heap's ordering procedure.  If there are no items: raise a con
 @end defun
 
 
-@defun heap-empty-condition? @var{obj}
-Return @true{} if @var{obj} is a condition with kind @code{pfds-heap-empty}; otherwise return
+@defun heap-empty-condition? @var{OBJ}
+Return @true{} if @var{OBJ} is a condition with kind @code{pfds-heap-empty}; otherwise return
 @false{}.
 @end defun
 
@@ -1073,8 +1162,8 @@ to the heap's ordering procedure.
 @end defun
 
 
-@defun list->heap @var{list-of-items} @var{item<}
-Return a heap containing all the items of the given list, using the procedure argument @var{item<}
+@defun list->heap @var{list-of-items} @var{ITEM<}
+Return a heap containing all the items of the given list, using the procedure argument @var{ITEM<}
 to order them.
 @end defun
 
@@ -1085,9 +1174,9 @@ be using the same ordering procedure.
 @end defun
 
 
-@defun heap-sort @var{item<} @var{list-of-items}
+@defun heap-sort @var{ITEM<} @var{list-of-items}
 Return a new list that is a permutation of the @var{list-of-items}, such that all the items are
-ordered by the given procedure @var{item<}.
+ordered by the given procedure @var{ITEM<}.
 @end defun
 
 
@@ -1122,13 +1211,13 @@ The following conventions for function arguments hold:
 It is the instance of bbtree the function acts upon.  Bbtree arguments are @strong{never} mutated.
 
 @item key
-The argument is an association key.  For all procedures which take a @var{key} as an argument, the
-@var{key} must be comparable with the ordering procedure of the bbtree.
+The argument is an association key.  For all procedures which take a @var{KEY} as an argument, the
+@var{KEY} must be comparable with the ordering procedure of the bbtree.
 
 @item item<
-The argument @var{item<} must be the ordering procedure: a predicate function accepting two
+The argument @var{ITEM<} must be the ordering procedure: a predicate function accepting two
 arguments and returning a boolean, @true{} if the first argument is strictly less than the second.
-For numeric collected items: @var{item<} can be @func{<}; for string collected items: @var{item<}
+For numeric collected items: @var{ITEM<} can be @func{<}; for string collected items: @var{ITEM<}
 can be @func{string<?}.
 @end table
 
@@ -1137,9 +1226,9 @@ can be @func{string<?}.
 @section Constructors and predicates
 
 
-@defun make-bbtree @var{item<}
+@defun make-bbtree @var{ITEM<}
 Build and return a new, empty bbtree.  Bbtrees derived from the returned one will use the procedure
-argument @var{item<} for ordering keys.
+argument @var{ITEM<} for ordering keys.
 @end defun
 
 
@@ -1148,9 +1237,9 @@ Return @true{} if the argument is a bbtree, @false{} otherwise.
 @end defun
 
 
-@defun bbtree->alist @var{bbtree}
-Return the key/value associations from @var{bbtree} as a list of pairs.  The list returned is in
-sorted order according to the ordering procedure of @var{bbtree}.  A consequence of this is that one
+@defun bbtree->alist @var{BBTREE}
+Return the key/value associations from @var{BBTREE} as a list of pairs.  The list returned is in
+sorted order according to the ordering procedure of @var{BBTREE}.  A consequence of this is that one
 could write a sort procedure for lists of pairs as:
 
 @example
@@ -1160,8 +1249,8 @@ could write a sort procedure for lists of pairs as:
 @end defun
 
 
-@defun alist->bbtree @var{alist} @var{item<}
-Return the bbtree containing each of the key/value pairs in @var{alist}, using the @var{item<}
+@defun alist->bbtree @var{alist} @var{ITEM<}
+Return the bbtree containing each of the key/value pairs in @var{alist}, using the @var{ITEM<}
 argument as the ordering procedure.
 
 @example
@@ -1176,23 +1265,23 @@ argument as the ordering procedure.
 @section Inspection functions
 
 
-@defun bbtree-size @var{bbtree}
+@defun bbtree-size @var{BBTREE}
 Return a non--negative integer representing number of elements in a bbtree.
 @end defun
 
 
-@defun bbtree-contains? @var{bbtree} @var{key}
-Return @true{} if there is association for @var{key} in @var{bbtree}, @false{} otherwise.
+@defun bbtree-contains? @var{BBTREE} @var{KEY}
+Return @true{} if there is association for @var{KEY} in @var{BBTREE}, @false{} otherwise.
 @end defun
 
 
-@defun bbtree-ordering-procedure @var{bbtree}
-Return the ordering procedure used internally to order @var{bbtree}.
+@defun bbtree-ordering-procedure @var{BBTREE}
+Return the ordering procedure used internally to order @var{BBTREE}.
 @end defun
 
 
-@defun bbtree-keys @var{bbtree}
-Return a list containing all the keys of @var{bbtree}.  The keys are sorted according to the
+@defun bbtree-keys @var{BBTREE}
+Return a list containing all the keys of @var{BBTREE}.  The keys are sorted according to the
 bbtree's ordering procedure.
 
 @example
@@ -1207,24 +1296,24 @@ bbtree's ordering procedure.
 @section Setters and getters
 
 
-@defun bbtree-ref @var{bbtree} @var{key}
-@defunx bbtree-ref @var{bbtree} @var{key} @var{default}
-Return the value associated with the @var{key} in the @var{bbtree}.  If the value is not in the
+@defun bbtree-ref @var{BBTREE} @var{KEY}
+@defunx bbtree-ref @var{BBTREE} @var{KEY} @var{default}
+Return the value associated with the @var{KEY} in the @var{BBTREE}.  If the value is not in the
 tree, then, if the optional third argument is passed, it is returned, otherwise raise a condition
 with kind @code{pfds-assertion-violation}.
 @end defun
 
 
-@defun bbtree-set @var{bbtree} @var{key} @var{new-value}
-Return a new bbtree with @var{key} associated to @var{new-value}.  If the @var{key} is already in
-@var{bbtree}, its associated value is replaced with the new @var{new-value} in the returned bbtree.
+@defun bbtree-set @var{BBTREE} @var{KEY} @var{new-value}
+Return a new bbtree with @var{KEY} associated to @var{new-value}.  If the @var{KEY} is already in
+@var{BBTREE}, its associated value is replaced with the new @var{new-value} in the returned bbtree.
 @end defun
 
 
-@defun bbtree-update @var{bbtree} @var{key} @var{proc} @var{default}
-Return a new bbtree with the value associated to @var{key} updated according to the update procedure
-@var{proc}.  If @var{key} was not already in @var{bbtree}, the update procedure is applied to
-@var{default}, and @var{key} is associated to the resulting value.
+@defun bbtree-update @var{BBTREE} @var{KEY} @var{proc} @var{default}
+Return a new bbtree with the value associated to @var{KEY} updated according to the update procedure
+@var{proc}.  If @var{KEY} was not already in @var{BBTREE}, the update procedure is applied to
+@var{default}, and @var{KEY} is associated to the resulting value.
 
 The update procedure @var{proc} must accept a single argument, being the old value, and return a
 single value, being the new value.
@@ -1249,9 +1338,9 @@ single value, being the new value.
 @end defun
 
 
-@defun bbtree-delete @var{bbtree} @var{key}
-Return a new bbtree with the @var{key} and its associated value removed.  If @var{key} is not in
-@var{bbtree}: the returned bbtree is a copy of the original.
+@defun bbtree-delete @var{BBTREE} @var{KEY}
+Return a new bbtree with the @var{KEY} and its associated value removed.  If @var{KEY} is not in
+@var{BBTREE}: the returned bbtree is a copy of the original.
 @end defun
 
 @c page
@@ -1259,7 +1348,7 @@ Return a new bbtree with the @var{key} and its associated value removed.  If @va
 @section Traversing functions
 
 
-@defun bbtree-traverse @var{traverser} @var{accum-base} @var{bbtree}
+@defun bbtree-traverse @var{traverser} @var{accum-base} @var{BBTREE}
 A general tree traversal procedure.  Return the value of applying the @var{traverser} procedure to:
 the current node's key, the current node's value, a procedure to traverse the left subtree, a
 procedure to traverse the right subtree, and an accumulator value.
@@ -1326,8 +1415,8 @@ implements a left--to--right pre--order traversal variant of @func{bbtree-fold}.
 @end defun
 
 
-@defun bbtree-fold @var{combine} @var{accum-base} @var{bbtree}
-Return the value obtained by iterating the @var{combine} procedure over each node in the tree.  The
+@defun bbtree-fold @var{COMBINE} @var{accum-base} @var{BBTREE}
+Return the value obtained by iterating the @var{COMBINE} procedure over each node in the tree.  The
 combine procedure takes 3 arguments: the key and value of the current node, and an accumulator
 value; its return value is used as the accumulator value for the next node.  The initial accumulator
 value is provided by the @var{accum-base} argument.
@@ -1348,7 +1437,7 @@ value is provided by the @var{accum-base} argument.
 @end defun
 
 
-@defun bbtree-fold-right @var{combine} @var{accum-base} @var{bbtree}
+@defun bbtree-fold-right @var{COMBINE} @var{accum-base} @var{BBTREE}
 Like @func{bbtree-fold}, but it performs a right--to--left in--order traversal instead (i.e. maximum
 to minimum).
 
@@ -1366,8 +1455,8 @@ to minimum).
 @end defun
 
 
-@defun bbtree-map @var{func} @var{bbtree}
-Return a new bbtree obtained by updating the value of each node in @var{bbtree} with the result of
+@defun bbtree-map @var{func} @var{BBTREE}
+Return a new bbtree obtained by updating the value of each node in @var{BBTREE} with the result of
 applying the procedure to its value.  @var{func} must take a single argument, being the original
 value, and return a single value, being the new value.
 
@@ -1392,21 +1481,21 @@ value, and return a single value, being the new value.
 @section Set operations
 
 
-@defun bbtree-union @vari{bbtree} @varii{bbtree}
-Return a bbtree containing the union of the associations in @vari{bbtree} and @varii{bbtree}.  Where
-the same key occurs in both: the value in @vari{bbtree} is preferred.
+@defun bbtree-union @vari{BBTREE} @varii{BBTREE}
+Return a bbtree containing the union of the associations in @vari{BBTREE} and @varii{BBTREE}.  Where
+the same key occurs in both: the value in @vari{BBTREE} is preferred.
 @end defun
 
 
-@defun bbtree-difference @vari{bbtree} @varii{bbtree}
-Return a bbtree containing the all the associations in @vari{bbtree}, which do not occur in
-@varii{bbtree}.
+@defun bbtree-difference @vari{BBTREE} @varii{BBTREE}
+Return a bbtree containing the all the associations in @vari{BBTREE}, which do not occur in
+@varii{BBTREE}.
 @end defun
 
 
-@defun bbtree-intersection @vari{bbtree} @varii{bbtree}
-Return a bbtree containing all the associations which appear in both @vari{bbtree} and
-@varii{bbtree}.  The values in @vari{bbtree} are preferred over those in @varii{bbtree}.
+@defun bbtree-intersection @vari{BBTREE} @varii{BBTREE}
+Return a bbtree containing all the associations which appear in both @vari{BBTREE} and
+@varii{BBTREE}.  The values in @vari{BBTREE} are preferred over those in @varii{BBTREE}.
 @end defun
 
 @c page
@@ -1414,17 +1503,17 @@ Return a bbtree containing all the associations which appear in both @vari{bbtre
 @section Indexing operations
 
 
-@defun bbtree-index @var{bbtree} @var{key}
-Return a non--negative integer representing the index of @var{key} in the @var{bbtree}.  The index
+@defun bbtree-index @var{BBTREE} @var{KEY}
+Return a non--negative integer representing the index of @var{KEY} in the @var{BBTREE}.  The index
 is an integer between @code{0} and @code{@var{size} - 1}, where @var{size} is the number of
-associations in @var{bbtree}.
+associations in @var{BBTREE}.
 @end defun
 
 
-@defun bbtree-ref/index @var{bbtree} @var{index}
-Return 2 values: the key and value of the association in @var{bbtree} at the given @var{index}.
-@var{index} must be a non--negative integer between @code{0} and @code{@var{size} - 1}, where
-@var{size} is the number of associations in @var{bbtree}.
+@defun bbtree-ref/index @var{BBTREE} @var{INDEX}
+Return 2 values: the key and value of the association in @var{BBTREE} at the given @var{INDEX}.
+@var{INDEX} must be a non--negative integer between @code{0} and @code{@var{size} - 1}, where
+@var{size} is the number of associations in @var{BBTREE}.
 @end defun
 
 @c page
@@ -1432,21 +1521,21 @@ Return 2 values: the key and value of the association in @var{bbtree} at the giv
 @chapter Purely functional sets
 
 
-For all the procedures: the argument @var{item<} must be the ordering procedure: a predicate
+For all the procedures: the argument @var{ITEM<} must be the ordering procedure: a predicate
 function accepting two arguments and returning a boolean, @true{} if the first argument is strictly
-less than the second.  For numeric collected items: @var{item<} can be @func{<}; for string
-collected items: @var{item<} can be @func{string<?}.
+less than the second.  For numeric collected items: @var{ITEM<} can be @func{<}; for string
+collected items: @var{ITEM<} can be @func{string<?}.
 
 The following bindings are exported by the library @library{pfds sets}.
 
 
-@defun make-set @var{item<}
-Return a new empty set ordered by the procedure @var{item<}.
+@defun make-set @var{ITEM<}
+Return a new empty set ordered by the procedure @var{ITEM<}.
 @end defun
 
 
-@defun set? @var{obj}
-Return @true{} if @var{obj} is a set, @false{} otherwise.
+@defun set? @var{OBJ}
+Return @true{} if @var{OBJ} is a set, @false{} otherwise.
 @end defun
 
 
@@ -1505,15 +1594,15 @@ Return the new set created by applying the procedure @var{mapper} to each item o
 @end defun
 
 
-@defun set-fold @var{combine} @var{accum-base} @var{set}
-Return the value obtained by iterating the procedure @var{combine} over each item of @var{set} and
+@defun set-fold @var{COMBINE} @var{accum-base} @var{set}
+Return the value obtained by iterating the procedure @var{COMBINE} over each item of @var{set} and
 an accumulator value (in this order).  The value of the accumulator is initially @var{accum-base},
-and the return value of @var{combine} is used as the accumulator for the next iteration.
+and the return value of @var{COMBINE} is used as the accumulator for the next iteration.
 @end defun
 
 
-@defun list->set @var{list-of-items} @var{item<}
-Return the set containing all the items of the given list, ordered by @var{item<}.
+@defun list->set @var{list-of-items} @var{ITEM<}
+Return the set containing all the items of the given list, ordered by @var{ITEM<}.
 @end defun
 
 
