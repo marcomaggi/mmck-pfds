@@ -635,6 +635,9 @@
 	     arguments ,(list fingertree))
        '(pfds-fingertree-empty-condition)))))
 
+
+;;;; public API
+
 (define-record-type <fingertree>
   (%make-fingertree tree monoid)
   fingertree?
@@ -644,24 +647,26 @@
 (define (%wrap fingertree tree)
   (%make-fingertree tree (fingertree-monoid fingertree)))
 
-(define (make-fingertree id append convert)
-  (%make-fingertree (make-empty) (make-monoid* id append convert)))
+(define (make-fingertree identity append convert)
+  (%make-fingertree (make-empty) (make-monoid* identity append convert)))
 
-(define (fingertree-cons a fingertree)
-  ;; TODO: should it obey normal cons interface, or have fingertree
-  ;; first?
+(define* (fingertree-cons a fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 2)
+  ;; TODO: should it obey normal cons interface, or have fingertree first?
   (%wrap fingertree
          (insert-front (fingertree-tree fingertree)
                        a
                        (fingertree-monoid fingertree))))
 
-(define (fingertree-snoc fingertree a)
+(define* (fingertree-snoc fingertree a)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 1)
   (%wrap fingertree
          (insert-rear (fingertree-tree fingertree)
                       a
                       (fingertree-monoid fingertree))))
 
-(define (fingertree-uncons fingertree)
+(define* (fingertree-uncons fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 1)
   (call-with-values
       (lambda ()
         (define t (fingertree-tree fingertree))
@@ -677,7 +682,8 @@
       (values val
               (%wrap fingertree rest)))))
 
-(define (fingertree-unsnoc fingertree)
+(define* (fingertree-unsnoc fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 1)
   (call-with-values
       (lambda ()
         (define t (fingertree-tree fingertree))
@@ -692,10 +698,13 @@
     (lambda (rest val)
       (values (%wrap fingertree rest) val))))
 
-(define (fingertree-empty? fingertree)
+(define* (fingertree-empty? fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 1)
   (empty? (fingertree-tree fingertree)))
 
-(define (fingertree-append fingertree1 fingertree2)
+(define* (fingertree-append fingertree1 fingertree2)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree1 1)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree2 2)
   (%wrap fingertree1
          (app3 (fingertree-tree fingertree1)
                '()
@@ -703,19 +712,25 @@
                (fingertree-monoid fingertree1))))
 
 ;; TODO: fix this
-(define (list->fingertree l id append convert)
-  (define monoid (make-monoid* id append convert))
-  (%make-fingertree (list->tree l monoid) monoid))
+(define* (list->fingertree ell identity append convert)
+  (assert-argument-type __who__ "<list>" list? ell 1)
+  (assert-argument-type __who__ "<procedure>" procedure? append   3)
+  (assert-argument-type __who__ "<procedure>" procedure? convert  4)
+  (let ((monoid (make-monoid* identity append convert)))
+    (%make-fingertree (list->tree ell monoid) monoid)))
 
-(define (fingertree->list t)
-  (fingertree-fold-right cons '() t))
+(define* (fingertree->list ft)
+  (assert-argument-type __who__ "<fingertree>" fingertree? ft 1)
+  (fingertree-fold-right cons '() ft))
 
-(define (fingertree-measure fingertree)
+(define* (fingertree-measure fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 1)
   (measure-ftree (fingertree-tree fingertree)
                  (fingertree-monoid fingertree)))
 
 
-(define (fingertree-split p fingertree)
+(define* (fingertree-split p fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 2)
   (call-with-values
       (lambda ()
         (split p
@@ -725,7 +740,8 @@
       (values (%wrap fingertree a)
               (%wrap fingertree b)))))
 
-(define (fingertree-split3 p fingertree)
+(define* (fingertree-split3 p fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 2)
   (call-with-values
       (lambda ()
         (define monoid (fingertree-monoid fingertree))
@@ -738,13 +754,16 @@
               b
               (%wrap fingertree c)))))
 
-(define (fingertree-fold f b fingertree)
+(define* (fingertree-fold f b fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 3)
   (ftree-fold-left f b (fingertree-tree fingertree)))
 
-(define (fingertree-fold-right f b fingertree)
+(define* (fingertree-fold-right f b fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 3)
   (ftree-fold-right f b (fingertree-tree fingertree)))
 
-(define (fingertree-reverse fingertree)
+(define* (fingertree-reverse fingertree)
+  (assert-argument-type __who__ "<fingertree>" fingertree? fingertree 1)
   (%wrap fingertree
          (reverse-tree (fingertree-tree fingertree)
                        (fingertree-monoid fingertree))))

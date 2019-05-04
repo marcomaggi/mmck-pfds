@@ -766,6 +766,17 @@ return.  These bounds are inclusive.
 @chapter A simple general--purpose data structure
 
 
+@menu
+* fingertrees intro::           Introduction to fingertrees.
+* fingertrees ctors::           Core constructors and predicates.
+* fingertrees exceptions::      Excepional-conditions related to fingertrees.
+@end menu
+
+@c page
+@node fingertrees intro
+@section Introduction to fingertrees
+
+
 Fingertrees are a generalised form of deque, that we can parameterise to compute a value, called the
 ``measure'' of a fingertree.  This measure will be updated incrementally as we add and remove
 elements from the fingertree.  Among other things, this allows fingertrees to be used where you
@@ -818,9 +829,18 @@ integers, the combiner would be @func{+}, and the identity @code{0}.
 Mathematically speaking, the @strong{return type} of the converter, the combiner and the identity
 element are expected to form a monoid.
 
+@c page
+@node fingertrees ctors
+@section Core constructors and predicates
 
-@defun make-fingertree @var{identity} @var{COMBINE} @var{measure}
+
+@defun make-fingertree @var{IDENTITY} @var{COMBINE} @var{measure}
 Return a new fingertree, parameterised by the given monoid.
+@end defun
+
+
+@defun fingertree-measure @var{FINGERTREE}
+Return the measure of @var{FINGERTREE}, as defined by @var{FINGERTREE}'s monoid.
 @end defun
 
 
@@ -829,39 +849,32 @@ Return @true{} if @var{OBJ} is a fingertree, @false{} otherwise.
 @end defun
 
 
-@defun fingertree-empty? @var{fingertree}
-Return @true{} if there are no items in the fingertree, @false{}
-otherwise.
+@defun fingertree-empty? @var{FINGERTREE}
+Return @true{} if there are no items in the fingertree, @false{} otherwise.
 @end defun
 
 
-@defun fingertree-cons @var{item} @var{fingertree}
-Return the new fingertree created by adding the @var{item} to the front of @var{fingertree}.
+@defun fingertree-cons @var{item} @var{FINGERTREE}
+Return the new fingertree created by adding the @var{item} to the front of @var{FINGERTREE}.
 @end defun
 
 
-@defun fingertree-snoc @var{fingertree} @var{item}
-Return the new fingertree created by adding @var{item} to the end of @var{fingertree}.
+@defun fingertree-snoc @var{FINGERTREE} @var{item}
+Return the new fingertree created by adding @var{item} to the end of @var{FINGERTREE}.
 @end defun
 
 
-@defun fingertree-uncons @var{fingertree}
-Returns 2 values: the item at the front of @var{fingertree}, and a new fingertree containing all but
-the front element.  If @var{fingertree} is empty: a @code{pfds-fingertree-empty-condition} condition
+@defun fingertree-uncons @var{FINGERTREE}
+Returns 2 values: the item at the front of @var{FINGERTREE}, and a new fingertree containing all but
+the front element.  If @var{FINGERTREE} is empty: a @code{pfds-fingertree-empty-condition} condition
 is raised.
 @end defun
 
 
-@defun fingertree-unsnoc @var{fingertree}
-Return 2 values: a new fingertree containing all but the rear element of @var{fingertree}, and the
-rear element itself.  If @var{fingertree} is empty: a @code{pfds-fingertree-empty-condition}
+@defun fingertree-unsnoc @var{FINGERTREE}
+Return 2 values: a new fingertree containing all but the rear element of @var{FINGERTREE}, and the
+rear element itself.  If @var{FINGERTREE} is empty: a @code{pfds-fingertree-empty-condition}
 condition is raised.
-@end defun
-
-
-@defun fingertree-empty-condition? @var{condition}
-Return @true{} if the argument is a @code{pfds-fingertree-empty-condition} condition, @false{}
-otherwise.
 @end defun
 
 
@@ -876,18 +889,13 @@ Return a fingertree containing all of the elements of the list argument, in the 
 @end defun
 
 
-@defun fingertree->list @var{fingertree}
-Return a list of all the items in @var{fingertree}, in the order they would be unconsed.
+@defun fingertree->list @var{FINGERTREE}
+Return a list of all the items in @var{FINGERTREE}, in the order they would be unconsed.
 @end defun
 
 
-@defun fingertree-measure @var{fingertree}
-Return the measure of @var{fingertree}, as defined by @var{fingertree}'s monoid.
-@end defun
-
-
-@defun fingertree-split @var{predicate} @var{fingertree}
-Return 2 values: a new finger tree representing the largest prefix of @var{fingertree} for which
+@defun fingertree-split @var{predicate} @var{FINGERTREE}
+Return 2 values: a new finger tree representing the largest prefix of @var{FINGERTREE} for which
 applying the @var{predicate} to it's accumulated measure returns @false{}; is a new fingertree
 containing all those elements not in the first fingertree.
 
@@ -895,28 +903,38 @@ containing all those elements not in the first fingertree.
 @end defun
 
 
-@defun fingertree-split3 @var{predicate} @var{fingertree}
+@defun fingertree-split3 @var{predicate} @var{FINGERTREE}
 Similar to @func{fingertree-split}, however, instead of returning the remainder as the second
 argument, return the head of the remainder as second value, and tail of the remainder as third
 value.
 @end defun
 
 
-@defun fingertree-fold @var{combiner} @var{accum-base} @var{fingertree}
-Return the value obtained by iterating the @var{combiner} procedure over @var{fingertree} in
-left--to--right order.  This procedure takes two arguments: the current value from @var{fingertree},
+@defun fingertree-fold @var{COMBINER} @var{ACCUM-BASE} @var{FINGERTREE}
+Return the value obtained by iterating the @var{COMBINER} procedure over @var{FINGERTREE} in
+left--to--right order.  This procedure takes two arguments: the current value from @var{FINGERTREE},
 and an accumulator; it's return value is used as accumulator for the next iteration.  The initial
 value for the accumulator is given by the base argument.
 @end defun
 
 
-@defun fingertree-fold-right @var{combiner} @var{fingertree}
+@defun fingertree-fold-right @var{COMBINER} @var{FINGERTREE}
 Similar to @func{fingertree-fold}, but iterate in right--to--left order.
 @end defun
 
 
-@defun fingertree-reverse @var{fingertree}
-Return a new fingertree in which the items are in the opposite order from @var{fingertree}.
+@defun fingertree-reverse @var{FINGERTREE}
+Return a new fingertree in which the items are in the opposite order from @var{FINGERTREE}.
+@end defun
+
+@c page
+@node fingertrees exceptions
+@section Excepional-conditions related to fingertrees
+
+
+@defun fingertree-empty-condition? @var{condition}
+Return @true{} if the argument is a @code{pfds-fingertree-empty-condition} condition, @false{}
+otherwise.
 @end defun
 
 @c page
@@ -1058,15 +1076,15 @@ an assertion violation is raised.
 @end defun
 
 
-@defun sequence-fold @var{combiner} @var{accum-base} @var{sequence}
-Return the value obtained by iterating the @var{combiner} procedure over @var{sequence} in
-left--to--right order.  The @var{combiner} procedure takes two arguments: the value of the position
+@defun sequence-fold @var{COMBINER} @var{ACCUM-BASE} @var{sequence}
+Return the value obtained by iterating the @var{COMBINER} procedure over @var{sequence} in
+left--to--right order.  The @var{COMBINER} procedure takes two arguments: the value of the position
 in the sequence, and an accumulator, and its return value is used as the value of the accumulator
-for the next call.  The initial accumulator value is given by the @var{accum-base} argument.
+for the next call.  The initial accumulator value is given by the @var{ACCUM-BASE} argument.
 @end defun
 
 
-@defun sequence-fold-right @var{combiner} @var{accum-base} @var{sequence}
+@defun sequence-fold-right @var{COMBINER} @var{ACCUM-BASE} @var{sequence}
 Like @func{sequence-fold}, but the sequence is traversed in right--to--left order, rather than
 left--to--right.
 @end defun
@@ -1348,7 +1366,7 @@ Return a new bbtree with the @var{KEY} and its associated value removed.  If @va
 @section Traversing functions
 
 
-@defun bbtree-traverse @var{traverser} @var{accum-base} @var{BBTREE}
+@defun bbtree-traverse @var{traverser} @var{ACCUM-BASE} @var{BBTREE}
 A general tree traversal procedure.  Return the value of applying the @var{traverser} procedure to:
 the current node's key, the current node's value, a procedure to traverse the left subtree, a
 procedure to traverse the right subtree, and an accumulator value.
@@ -1415,11 +1433,11 @@ implements a left--to--right pre--order traversal variant of @func{bbtree-fold}.
 @end defun
 
 
-@defun bbtree-fold @var{COMBINE} @var{accum-base} @var{BBTREE}
+@defun bbtree-fold @var{COMBINE} @var{ACCUM-BASE} @var{BBTREE}
 Return the value obtained by iterating the @var{COMBINE} procedure over each node in the tree.  The
 combine procedure takes 3 arguments: the key and value of the current node, and an accumulator
 value; its return value is used as the accumulator value for the next node.  The initial accumulator
-value is provided by the @var{accum-base} argument.
+value is provided by the @var{ACCUM-BASE} argument.
 
 @func{bbtree-fold} performs a left--to--right in--order traversal or ``minimum key to maximum key''.
 
@@ -1437,7 +1455,7 @@ value is provided by the @var{accum-base} argument.
 @end defun
 
 
-@defun bbtree-fold-right @var{COMBINE} @var{accum-base} @var{BBTREE}
+@defun bbtree-fold-right @var{COMBINE} @var{ACCUM-BASE} @var{BBTREE}
 Like @func{bbtree-fold}, but it performs a right--to--left in--order traversal instead (i.e. maximum
 to minimum).
 
@@ -1594,9 +1612,9 @@ Return the new set created by applying the procedure @var{mapper} to each item o
 @end defun
 
 
-@defun set-fold @var{COMBINE} @var{accum-base} @var{set}
+@defun set-fold @var{COMBINE} @var{ACCUM-BASE} @var{set}
 Return the value obtained by iterating the procedure @var{COMBINE} over each item of @var{set} and
-an accumulator value (in this order).  The value of the accumulator is initially @var{accum-base},
+an accumulator value (in this order).  The value of the accumulator is initially @var{ACCUM-BASE},
 and the return value of @var{COMBINE} is used as the accumulator for the next iteration.
 @end defun
 

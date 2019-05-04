@@ -323,6 +323,14 @@
   (values))
 
 
+(parameterise ((check-test-name	'fingertrees))
+
+  (pretty-print (make-fingertree 0 + (lambda (x) x)))
+
+
+  (values))
+
+
 ;;;; done
 
 (check-report)
