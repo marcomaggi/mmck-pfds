@@ -102,6 +102,49 @@ MMCK_PFDS_IMPORT_SHARED_LIBS	= \
 	lib/mmck.pfds.version.import.$(MMCK_SOEXT)	\
 	lib/mmck.pfds.import.$(MMCK_SOEXT)
 
+MMCK_PFDS_TEMP_FILES	= \
+	lib/mmck.pfds.helpers.temp			\
+	lib/mmck.pfds.lazy-lists.temp			\
+	lib/mmck.pfds.bbtrees.temp			\
+	lib/mmck.pfds.deques.temp			\
+	lib/mmck.pfds.dlists.temp			\
+	lib/mmck.pfds.fingertrees.temp			\
+	lib/mmck.pfds.heaps.temp			\
+	lib/mmck.pfds.psqs.temp				\
+	lib/mmck.pfds.queues.temp			\
+	lib/mmck.pfds.sequences.temp			\
+	lib/mmck.pfds.sets.temp				\
+	lib/mmck.pfds.version.temp			\
+	lib/mmck.pfds.temp				\
+	\
+	lib/mmck.pfds.helpers.lock			\
+	lib/mmck.pfds.lazy-lists.lock			\
+	lib/mmck.pfds.bbtrees.lock			\
+	lib/mmck.pfds.deques.lock			\
+	lib/mmck.pfds.dlists.lock			\
+	lib/mmck.pfds.fingertrees.lock			\
+	lib/mmck.pfds.heaps.lock			\
+	lib/mmck.pfds.psqs.lock				\
+	lib/mmck.pfds.queues.lock			\
+	lib/mmck.pfds.sequences.lock			\
+	lib/mmck.pfds.sets.lock				\
+	lib/mmck.pfds.version.lock			\
+	lib/mmck.pfds.lock				\
+	\
+	lib/mmck.pfds.helpers.stamp			\
+	lib/mmck.pfds.lazy-lists.stamp			\
+	lib/mmck.pfds.bbtrees.stamp			\
+	lib/mmck.pfds.deques.stamp			\
+	lib/mmck.pfds.dlists.stamp			\
+	lib/mmck.pfds.fingertrees.stamp			\
+	lib/mmck.pfds.heaps.stamp			\
+	lib/mmck.pfds.psqs.stamp			\
+	lib/mmck.pfds.queues.stamp			\
+	lib/mmck.pfds.sequences.stamp			\
+	lib/mmck.pfds.sets.stamp			\
+	lib/mmck.pfds.version.stamp			\
+	lib/mmck.pfds.stamp
+
 # This is the "(mmck pfds)" shared library file pathname.
 #
 MMCK_PFDS_RUNTIME_SHARED_LIBS	= lib/mmck.pfds.$(MMCK_SOEXT)
@@ -114,7 +157,8 @@ CLEANFILES	+= \
 	$(MMCK_PFDS_RUNTIME_SHARED_LIBS)	\
 	$(MMCK_PFDS_RUNTIME_OBJECTS)		\
 	$(MMCK_PFDS_IMPORT_SHARED_LIBS)		\
-	$(MMCK_PFDS_IMPORT_SOURCES)
+	$(MMCK_PFDS_IMPORT_SOURCES)		\
+	$(MMCK_PFDS_TEMP_FILES)
 
 ## --------------------------------------------------------------------
 
