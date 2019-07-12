@@ -5,10 +5,31 @@ include meta/automake/mmck-rules.make
 
 #### documentation
 
+EXTRA_DIST		+= doc/mmck-chicken-docs.style.css
+CLEANFILES		+= doc/mmck-chicken-docs.css
+AM_MAKEINFOHTMLFLAGS	+= --css-ref=mmck-chicken-docs.css
+
 info_TEXINFOS		= doc/mmck-pfds.texi
 doc_mmck_pfds_TEXINFOS = \
 	doc/macros.texi			\
 	doc/fdl-1.3.texi
+
+## --------------------------------------------------------------------
+
+doc/mmck-pfds.html/$(am__dirstamp): doc/$(am__dirstamp)
+	@$(MKDIR_P) doc/mmck-pfds.html/
+	@: > doc/mmck-pfds.html/$(am__dirstamp)
+
+doc/mmck-pfds.html/mmck-chicken-docs.css: doc/mmck-chicken-docs.style.css doc/mmck-pfds.html/$(am__dirstamp)
+	$(INSTALL) -m 0444 "$(top_srcdir)/doc/mmck-chicken-docs.style.css" "$(builddir)/doc/mmck-pfds.html/mmck-chicken-docs.css"
+
+## --------------------------------------------------------------------
+
+html-local: doc/mmck-pfds.html/mmck-chicken-docs.css
+
+install-html-local:
+	$(MKDIR_P) "$(DESTDIR)$(htmldir)/mmck-pfds.html/"
+	$(INSTALL) -m 0444 $(builddir)/doc/mmck-pfds.html/mmck-chicken-docs.css "$(DESTDIR)$(htmldir)/mmck-pfds.html/"
 
 
 #### library build targets
