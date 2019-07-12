@@ -8,7 +8,7 @@
 ;;;
 ;;;	This is a test program for fingertrees.
 ;;;
-;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2019 Marco Maggi <mrc.mgg@gmail.com>
 ;;;Copyright (c) 2011, 2012 Ian Price <ianprice90@googlemail.com>
 ;;;All rights reserved.
 ;;;

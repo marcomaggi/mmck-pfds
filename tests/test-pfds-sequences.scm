@@ -11,7 +11,7 @@
 ;;;	Note: at  the moment, sequences  are a trivial instantiation  of fingertrees,
 ;;;	and so are pretty much covered by the fingertrees tests.
 ;;;
-;;;Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+;;;Copyright (c) 2019 Marco Maggi <mrc.mgg@gmail.com>
 ;;;Copyright (c) 2011, 2012 Ian Price <ianprice90@googlemail.com>
 ;;;All rights reserved.
 ;;;

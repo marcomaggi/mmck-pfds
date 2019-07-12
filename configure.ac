@@ -4,11 +4,11 @@
 AC_PREREQ([2.69])
 MMUX_PKG_VERSIONS([0],[5],[0],[devel.1])
 AC_INIT([MMCK PFDS],[MMUX_PACKAGE_VERSION],
-  [marco.maggi-ipsu@poste.it],
+  [mrc.mgg@gmail.com],
   [mmck-pfds],[http://github.com/marcomaggi/mmck-pfds])
 MMUX_INIT
 AC_REVISION([0.1])
-AC_COPYRIGHT([Copyright (c) 2019 Marco Maggi <marco.maggi-ipsu@poste.it>
+AC_COPYRIGHT([Copyright (c) 2019 Marco Maggi <mrc.mgg@gmail.com>
 Copyright (c) 2011 Ian Price <ianprice90@googlemail.com>
 
 Redistribution  and use  in source  and  binary forms,  with or  without
