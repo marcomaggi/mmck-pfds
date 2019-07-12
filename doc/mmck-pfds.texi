@@ -79,8 +79,8 @@ This document describes version @value{VERSION} of @value{PACKAGE}, a set of @ch
 libraries implementing purely functional data structures.  @chicken{} is a Scheme--to--C compiler
 supporting the language features as defined in the ``Revised^5 Report on Scheme''.
 
-The library supports @posix{} platforms.  This package has been tested with @chicken{} version
-@value{CHICKEN_VERSION}.
+The library supports @posix{} platforms.  This package should work with @chicken{} version 5+; it
+has been tested with @chicken{} version @value{CHICKEN_VERSION}.
 
 This package is distributed under the terms of a liberal license.
 
@@ -1678,7 +1678,7 @@ Raise a non--continuable exception having exceptional--condition object with kin
 @appendix Package license
 
 
-Copyright @copyright{} 2019 Marco Maggi @email{marco.maggi-ipsu@@poste.it}@*
+Copyright @copyright{} 2019 Marco Maggi @value{AUTHOR_EMAIL}@*
 Copyright @copyright{} 2011, 2012 Ian Price @email{ianprice90@@googlemail.com}@*
 All rights reserved.
 
