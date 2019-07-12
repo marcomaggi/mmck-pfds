@@ -13,155 +13,65 @@ doc_mmck_pfds_TEXINFOS = \
 
 #### library build targets
 
-# All the source files of the extension library.
+# All the source files ".scm" of the extension library.
 #
-MMCK_PFDS_MODULES		= \
-	lib/mmck.pfds.helpers.scm		\
-	lib/mmck.pfds.lazy-lists.scm		\
-	lib/mmck.pfds.bbtrees.scm		\
-	lib/mmck.pfds.deques.scm		\
-	lib/mmck.pfds.dlists.scm		\
-	lib/mmck.pfds.fingertrees.scm		\
-	lib/mmck.pfds.heaps.scm			\
-	lib/mmck.pfds.psqs.scm			\
-	lib/mmck.pfds.queues.scm		\
-	lib/mmck.pfds.sequences.scm		\
-	lib/mmck.pfds.sets.scm			\
-	lib/mmck.pfds.version.scm		\
-	lib/mmck.pfds.scm
+MMCK_PFDS_MODULES		=
 
-# All the object files that must be linked in the extension library.
+# All  the object  files ".o"  that must  be linked  in the  extension
+# library.
 #
-MMCK_PFDS_RUNTIME_OBJECTS	= \
-	lib/mmck.pfds.helpers.$(OBJEXT)		\
-	lib/mmck.pfds.lazy-lists.$(OBJEXT)	\
-	lib/mmck.pfds.bbtrees.$(OBJEXT)		\
-	lib/mmck.pfds.deques.$(OBJEXT)		\
-	lib/mmck.pfds.dlists.$(OBJEXT)		\
-	lib/mmck.pfds.fingertrees.$(OBJEXT)	\
-	lib/mmck.pfds.heaps.$(OBJEXT)		\
-	lib/mmck.pfds.psqs.$(OBJEXT)		\
-	lib/mmck.pfds.queues.$(OBJEXT)		\
-	lib/mmck.pfds.sequences.$(OBJEXT)	\
-	lib/mmck.pfds.sets.$(OBJEXT)		\
-	lib/mmck.pfds.version.$(OBJEXT)		\
-	lib/mmck.pfds.$(OBJEXT)
+MMCK_PFDS_RUNTIME_OBJECTS	=
 
-# All the source files of all the modules' import libraries.
+# All  the  source files  ".import.scm"  of  all the  modules'  import
+# libraries.
 #
-MMCK_PFDS_IMPORT_SOURCES	= \
-	lib/mmck.pfds.helpers.import.scm	\
-	lib/mmck.pfds.lazy-lists.import.scm	\
-	lib/mmck.pfds.bbtrees.import.scm	\
-	lib/mmck.pfds.deques.import.scm		\
-	lib/mmck.pfds.dlists.import.scm		\
-	lib/mmck.pfds.fingertrees.import.scm	\
-	lib/mmck.pfds.heaps.import.scm		\
-	lib/mmck.pfds.psqs.import.scm		\
-	lib/mmck.pfds.queues.import.scm		\
-	lib/mmck.pfds.sequences.import.scm	\
-	lib/mmck.pfds.sets.import.scm		\
-	lib/mmck.pfds.version.import.scm	\
-	lib/mmck.pfds.import.scm
+MMCK_PFDS_IMPORT_SOURCES	=
 
-# The module's import libraries needed to compile main module's object
-# file.  It does not include the main import library:
+# The  module's  import  libraries ".import.$(MMCK_SOEXT)"  needed  to
+# compile main  module's object  file.  It does  not include  the main
+# import library:
 #
 #   lib/mmck.pfds.import.$(MMCK_SOEXT)
 #
-MMCK_PFDS_IMPORT_DEPS	= \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.deques.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.dlists.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.heaps.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)		\
-	lib/mmck.pfds.queues.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.sequences.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.sets.import.$(MMCK_SOEXT)		\
-	lib/mmck.pfds.version.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_DEPS		=
 
-# The import  libraries needed  to compile new  code using  the shared
-# library  "(mmck pfds)".   We need  to build  and install  all of
-# them.
+# The import  libraries ".import.$(MMCK_SOEXT)" needed to  compile new
+# code using the  shared library "(mmck pfds)".  We need  to build and
+# install all of them.
 #
-MMCK_PFDS_IMPORT_SHARED_LIBS	= \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.deques.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.dlists.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.heaps.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)		\
-	lib/mmck.pfds.queues.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.sequences.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.sets.import.$(MMCK_SOEXT)		\
-	lib/mmck.pfds.version.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.import.$(MMCK_SOEXT)
-
-MMCK_PFDS_TEMP_FILES	= \
-	lib/mmck.pfds.helpers.temp			\
-	lib/mmck.pfds.lazy-lists.temp			\
-	lib/mmck.pfds.bbtrees.temp			\
-	lib/mmck.pfds.deques.temp			\
-	lib/mmck.pfds.dlists.temp			\
-	lib/mmck.pfds.fingertrees.temp			\
-	lib/mmck.pfds.heaps.temp			\
-	lib/mmck.pfds.psqs.temp				\
-	lib/mmck.pfds.queues.temp			\
-	lib/mmck.pfds.sequences.temp			\
-	lib/mmck.pfds.sets.temp				\
-	lib/mmck.pfds.version.temp			\
-	lib/mmck.pfds.temp				\
-	\
-	lib/mmck.pfds.helpers.lock			\
-	lib/mmck.pfds.lazy-lists.lock			\
-	lib/mmck.pfds.bbtrees.lock			\
-	lib/mmck.pfds.deques.lock			\
-	lib/mmck.pfds.dlists.lock			\
-	lib/mmck.pfds.fingertrees.lock			\
-	lib/mmck.pfds.heaps.lock			\
-	lib/mmck.pfds.psqs.lock				\
-	lib/mmck.pfds.queues.lock			\
-	lib/mmck.pfds.sequences.lock			\
-	lib/mmck.pfds.sets.lock				\
-	lib/mmck.pfds.version.lock			\
-	lib/mmck.pfds.lock				\
-	\
-	lib/mmck.pfds.helpers.stamp			\
-	lib/mmck.pfds.lazy-lists.stamp			\
-	lib/mmck.pfds.bbtrees.stamp			\
-	lib/mmck.pfds.deques.stamp			\
-	lib/mmck.pfds.dlists.stamp			\
-	lib/mmck.pfds.fingertrees.stamp			\
-	lib/mmck.pfds.heaps.stamp			\
-	lib/mmck.pfds.psqs.stamp			\
-	lib/mmck.pfds.queues.stamp			\
-	lib/mmck.pfds.sequences.stamp			\
-	lib/mmck.pfds.sets.stamp			\
-	lib/mmck.pfds.version.stamp			\
-	lib/mmck.pfds.stamp
+MMCK_PFDS_IMPORT_SHARED_LIBS	=
 
 # This is the "(mmck pfds)" shared library file pathname.
 #
-MMCK_PFDS_RUNTIME_SHARED_LIBS	= lib/mmck.pfds.$(MMCK_SOEXT)
+MMCK_PFDS_RUNTIME_SHARED_LIBS	= \
+	lib/mmck.pfds.$(MMCK_SOEXT)
 
-## --------------------------------------------------------------------
+# Temporary  files  we need  for  parallel  builds, ".temp",  ".lock",
+# ".stamp".
+#
+MMCK_PFDS_TEMP_FILES		=
 
-EXTRA_DIST	+= $(MMCK_PFDS_MODULES)
+
+#### library (mmck pfds): module version
 
-CLEANFILES	+= \
-	$(MMCK_PFDS_RUNTIME_SHARED_LIBS)	\
-	$(MMCK_PFDS_RUNTIME_OBJECTS)		\
-	$(MMCK_PFDS_IMPORT_SHARED_LIBS)		\
-	$(MMCK_PFDS_IMPORT_SOURCES)		\
-	$(MMCK_PFDS_TEMP_FILES)
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.version.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.version.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.version.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.version.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.version.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.version.temp				\
+	lib/mmck.pfds.version.lock				\
+	lib/mmck.pfds.version.stamp
 
-## --------------------------------------------------------------------
-
+# A compiler  invokation to build  an object file, also  generates the
+# source  file for  the import  library; a  single rule  generates two
+# targets.  We implement  the rules as suggested  in the documentation
+# of GNU Automake, node "Multiple Outputs".
+#
+# It is ugly, I know.  But it  is supposed to support all the cases of
+# parallel build and dry runs.  (Marco Maggi; May  4, 2019)
+#
 lib/mmck.pfds.version.stamp: lib/mmck.pfds.version.scm $(MMCK_OBJECTS_DEPS)
 	@rm -f lib/mmck.pfds.version.temp
 	@touch lib/mmck.pfds.version.temp
@@ -193,7 +103,18 @@ lib/mmck.pfds.version.import.scm lib/mmck.pfds.version.$(OBJEXT): lib/mmck.pfds.
 lib/mmck.pfds.version.import.$(MMCK_SOEXT): lib/mmck.pfds.version.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module helpers
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.helpers.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.helpers.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.helpers.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.helpers.temp				\
+	lib/mmck.pfds.helpers.lock				\
+	lib/mmck.pfds.helpers.stamp
 
 lib/mmck.pfds.helpers.stamp: lib/mmck.pfds.helpers.scm $(MMCK_OBJECTS_DEPS)
 	@rm -f lib/mmck.pfds.helpers.temp
@@ -226,9 +147,24 @@ lib/mmck.pfds.helpers.import.scm lib/mmck.pfds.helpers.$(OBJEXT): lib/mmck.pfds.
 lib/mmck.pfds.helpers.import.$(MMCK_SOEXT): lib/mmck.pfds.helpers.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module lazy-lists
 
-lib/mmck.pfds.lazy-lists.stamp: lib/mmck.pfds.lazy-lists.scm $(MMCK_OBJECTS_DEPS)
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.lazy-lists.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.lazy-lists.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.lazy-lists.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.lazy-lists.temp				\
+	lib/mmck.pfds.lazy-lists.lock				\
+	lib/mmck.pfds.lazy-lists.stamp
+
+MMCK_PFDS_LAZY_LISTS_DEPS = \
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
+	$(MMCK_OBJECTS_DEPS)
+
+lib/mmck.pfds.lazy-lists.stamp: lib/mmck.pfds.lazy-lists.scm $(MMCK_PFDS_LAZY_LISTS_DEPS)
 	@rm -f lib/mmck.pfds.lazy-lists.temp
 	@touch lib/mmck.pfds.lazy-lists.temp
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_OBJECT_SHARED) lib/mmck.pfds.lazy-lists.$(OBJEXT) $(<)
@@ -259,10 +195,21 @@ lib/mmck.pfds.lazy-lists.import.scm lib/mmck.pfds.lazy-lists.$(OBJEXT): lib/mmck
 lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT): lib/mmck.pfds.lazy-lists.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module bbtrees
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.bbtrees.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.bbtrees.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.bbtrees.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.bbtrees.temp				\
+	lib/mmck.pfds.bbtrees.lock				\
+	lib/mmck.pfds.bbtrees.stamp
 
 MMCK_PFDS_BBTREES_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.bbtrees.stamp: lib/mmck.pfds.bbtrees.scm $(MMCK_PFDS_BBTREES_DEPS)
@@ -296,11 +243,22 @@ lib/mmck.pfds.bbtrees.import.scm lib/mmck.pfds.bbtrees.$(OBJEXT): lib/mmck.pfds.
 lib/mmck.pfds.bbtrees.import.$(MMCK_SOEXT): lib/mmck.pfds.bbtrees.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module deques
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.deques.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.deques.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.deques.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.deques.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.deques.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.deques.temp				\
+	lib/mmck.pfds.deques.lock				\
+	lib/mmck.pfds.deques.stamp
 
 MMCK_PFDS_DEQUES_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.lazy-lists.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.deques.stamp: lib/mmck.pfds.deques.scm $(MMCK_PFDS_DEQUES_DEPS)
@@ -334,10 +292,21 @@ lib/mmck.pfds.deques.import.scm lib/mmck.pfds.deques.$(OBJEXT): lib/mmck.pfds.de
 lib/mmck.pfds.deques.import.$(MMCK_SOEXT): lib/mmck.pfds.deques.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module dlists
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.dlists.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.dlists.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.dlists.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.dlists.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.dlists.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.dlists.temp				\
+	lib/mmck.pfds.dlists.lock				\
+	lib/mmck.pfds.dlists.stamp
 
 MMCK_PFDS_DLISTS_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.dlists.stamp: lib/mmck.pfds.dlists.scm $(MMCK_PFDS_DLISTS_DEPS)
@@ -371,10 +340,21 @@ lib/mmck.pfds.dlists.import.scm lib/mmck.pfds.dlists.$(OBJEXT): lib/mmck.pfds.dl
 lib/mmck.pfds.dlists.import.$(MMCK_SOEXT): lib/mmck.pfds.dlists.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module fingertrees
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.fingertrees.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.fingertrees.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.fingertrees.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.fingertrees.temp				\
+	lib/mmck.pfds.fingertrees.lock				\
+	lib/mmck.pfds.fingertrees.stamp
 
 MMCK_PFDS_FINGERTREES_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.fingertrees.stamp: lib/mmck.pfds.fingertrees.scm $(MMCK_PFDS_FINGERTREES_DEPS)
@@ -408,10 +388,21 @@ lib/mmck.pfds.fingertrees.import.scm lib/mmck.pfds.fingertrees.$(OBJEXT): lib/mm
 lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT): lib/mmck.pfds.fingertrees.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module heaps
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.heaps.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.heaps.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.heaps.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.heaps.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.heaps.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.heaps.temp				\
+	lib/mmck.pfds.heaps.lock				\
+	lib/mmck.pfds.heaps.stamp
 
 MMCK_PFDS_HEAPS_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.heaps.stamp: lib/mmck.pfds.heaps.scm $(MMCK_PFDS_HEAPS_DEPS)
@@ -445,10 +436,21 @@ lib/mmck.pfds.heaps.import.scm lib/mmck.pfds.heaps.$(OBJEXT): lib/mmck.pfds.heap
 lib/mmck.pfds.heaps.import.$(MMCK_SOEXT): lib/mmck.pfds.heaps.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module psqs
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.psqs.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.psqs.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.psqs.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.psqs.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.psqs.temp				\
+	lib/mmck.pfds.psqs.lock				\
+	lib/mmck.pfds.psqs.stamp
 
 MMCK_PFDS_PSQS_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.psqs.stamp: lib/mmck.pfds.psqs.scm $(MMCK_PFDS_PSQS_DEPS)
@@ -482,10 +484,21 @@ lib/mmck.pfds.psqs.import.scm lib/mmck.pfds.psqs.$(OBJEXT): lib/mmck.pfds.psqs.s
 lib/mmck.pfds.psqs.import.$(MMCK_SOEXT): lib/mmck.pfds.psqs.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module queues
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.queues.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.queues.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.queues.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.queues.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.queues.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.queues.temp				\
+	lib/mmck.pfds.queues.lock				\
+	lib/mmck.pfds.queues.stamp
 
 MMCK_PFDS_QUEUES_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.queues.stamp: lib/mmck.pfds.queues.scm $(MMCK_PFDS_QUEUES_DEPS)
@@ -519,11 +532,22 @@ lib/mmck.pfds.queues.import.scm lib/mmck.pfds.queues.$(OBJEXT): lib/mmck.pfds.qu
 lib/mmck.pfds.queues.import.$(MMCK_SOEXT): lib/mmck.pfds.queues.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module sequences
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.sequences.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.sequences.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.sequences.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.sequences.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.sequences.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.sequences.temp				\
+	lib/mmck.pfds.sequences.lock				\
+	lib/mmck.pfds.sequences.stamp
 
 MMCK_PFDS_SEQUENCES_DEPS = \
-	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
-	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)	\
+	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)		\
+	lib/mmck.pfds.fingertrees.import.$(MMCK_SOEXT)		\
 	$(MMCK_OBJECTS_DEPS)
 
 lib/mmck.pfds.sequences.stamp: lib/mmck.pfds.sequences.scm $(MMCK_PFDS_SEQUENCES_DEPS)
@@ -557,7 +581,18 @@ lib/mmck.pfds.sequences.import.scm lib/mmck.pfds.sequences.$(OBJEXT): lib/mmck.p
 lib/mmck.pfds.sequences.import.$(MMCK_SOEXT): lib/mmck.pfds.sequences.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): module sets
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.sets.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.sets.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.sets.import.scm
+MMCK_PFDS_IMPORT_DEPS		+= lib/mmck.pfds.sets.import.$(MMCK_SOEXT)
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.sets.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.sets.temp				\
+	lib/mmck.pfds.sets.lock				\
+	lib/mmck.pfds.sets.stamp
 
 MMCK_PFDS_SETS_DEPS = \
 	lib/mmck.pfds.helpers.import.$(MMCK_SOEXT)	\
@@ -595,7 +630,17 @@ lib/mmck.pfds.sets.import.scm lib/mmck.pfds.sets.$(OBJEXT): lib/mmck.pfds.sets.s
 lib/mmck.pfds.sets.import.$(MMCK_SOEXT): lib/mmck.pfds.sets.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): main module
+
+MMCK_PFDS_MODULES		+= lib/mmck.pfds.scm
+MMCK_PFDS_RUNTIME_OBJECTS	+= lib/mmck.pfds.$(OBJEXT)
+MMCK_PFDS_IMPORT_SOURCES	+= lib/mmck.pfds.import.scm
+MMCK_PFDS_IMPORT_SHARED_LIBS	+= lib/mmck.pfds.import.$(MMCK_SOEXT)
+MMCK_PFDS_TEMP_FILES		+= \
+	lib/mmck.pfds.temp				\
+	lib/mmck.pfds.lock				\
+	lib/mmck.pfds.stamp
 
 # This is the main compilation unit and it defines the main module; it
 # depends upon all the import libraries of the other modules.
@@ -631,10 +676,21 @@ lib/mmck.pfds.import.scm lib/mmck.pfds.$(OBJEXT): lib/mmck.pfds.stamp
 lib/mmck.pfds.import.$(MMCK_SOEXT): lib/mmck.pfds.import.scm
 	$(MMCK_LIB_ENV) $(CSC_COMPILE_LIBRARY) $(@) $(<)
 
-## --------------------------------------------------------------------
+
+#### library (mmck pfds): wrapping up
+
+EXTRA_DIST	+= $(MMCK_PFDS_MODULES)
+
+CLEANFILES	+= \
+	$(MMCK_PFDS_RUNTIME_SHARED_LIBS)	\
+	$(MMCK_PFDS_RUNTIME_OBJECTS)		\
+	$(MMCK_PFDS_IMPORT_SHARED_LIBS)		\
+	$(MMCK_PFDS_IMPORT_SOURCES)		\
+	$(MMCK_PFDS_TEMP_FILES)
 
 lib/mmck.pfds.$(MMCK_SOEXT): $(MMCK_PFDS_RUNTIME_OBJECTS)
 	$(MMCK_LIB_ENV) $(CSC_LINK_LIBRARY) $(@) $(^)
+
 
 
 #### shared libraries installation
@@ -670,54 +726,24 @@ sharedlib_SCRIPTS	= $(MMCK_ALL_RUNTIME_SHARED_LIBS) $(MMCK_ALL_IMPORT_SHARED_LIB
 # understand how to use this interface for "make check".
 #
 
-EXTRA_DIST		+= \
-	tests/test-version.scm			\
-	tests/test-pfds-bbtrees.scm		\
-	tests/test-pfds-deques.scm		\
-	tests/test-pfds-dlists.scm		\
-	tests/test-pfds-fingertrees.scm		\
-	tests/test-pfds-heaps.scm		\
-	tests/test-pfds-psqs.scm		\
-	tests/test-pfds-queues.scm		\
-	tests/test-pfds-sequences.scm		\
-	tests/test-pfds-sets.scm		\
-	tests/test-pfds-docs.scm
+# The list of object files.  We will store it in CLEANFILES.
+#
+MMCK_CHECK_OBJECTS	=
 
-MMCK_CHECK_OBJECTS	= \
-	tests/test-version.$(OBJEXT)		\
-	tests/test-pfds-bbtrees.$(OBJEXT)	\
-	tests/test-pfds-deques.$(OBJEXT)	\
-	tests/test-pfds-dlists.$(OBJEXT)	\
-	tests/test-pfds-fingertrees.$(OBJEXT)	\
-	tests/test-pfds-heaps.$(OBJEXT)		\
-	tests/test-pfds-psqs.$(OBJEXT)		\
-	tests/test-pfds-queues.$(OBJEXT)	\
-	tests/test-pfds-sequences.$(OBJEXT)	\
-	tests/test-pfds-sets.$(OBJEXT)		\
-	tests/test-pfds-docs.$(OBJEXT)
+# The list of test programs.  We will set TESTS to it.
+#
+MMCK_CHECK_PROGS	=
 
-MMCK_CHECK_PROGS	= \
-	tests/test-version.exe			\
-	tests/test-pfds-bbtrees.exe		\
-	tests/test-pfds-deques.exe		\
-	tests/test-pfds-dlists.exe		\
-	tests/test-pfds-fingertrees.exe		\
-	tests/test-pfds-heaps.exe		\
-	tests/test-pfds-psqs.exe		\
-	tests/test-pfds-queues.exe		\
-	tests/test-pfds-sequences.exe		\
-	tests/test-pfds-sets.exe		\
-	tests/test-pfds-docs.exe
+# Dependencies common to all the test programs.
+#
+MMCK_CHECK_DEPS		+= $(MMCK_ALL_RUNTIME_SHARED_LIBS) $(MMCK_ALL_IMPORT_LIBS)
 
-CLEANFILES	+= $(MMCK_CHECK_PROGS) $(MMCK_CHECK_OBJECTS)
+
+#### test programs
 
-if MMCK_TESTING_ENABLED
-TESTS		= $(MMCK_CHECK_PROGS)
-endif
-
-MMCK_CHECK_DEPS	+= $(MMCK_ALL_RUNTIME_SHARED_LIBS) $(MMCK_ALL_IMPORT_LIBS)
-
-## --------------------------------------------------------------------
+EXTRA_DIST		+= tests/test-version.scm
+MMCK_CHECK_OBJECTS	+= tests/test-version.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-version.exe
 
 tests/test-version.$(OBJEXT): tests/test-version.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
@@ -727,6 +753,10 @@ tests/test-version.exe: tests/test-version.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
+EXTRA_DIST		+= tests/test-pfds-bbtrees.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-bbtrees.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-bbtrees.exe
+
 tests/test-pfds-bbtrees.$(OBJEXT): tests/test-pfds-bbtrees.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
@@ -734,6 +764,10 @@ tests/test-pfds-bbtrees.exe: tests/test-pfds-bbtrees.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ## --------------------------------------------------------------------
+
+EXTRA_DIST		+= tests/test-pfds-deques.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-deques.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-deques.exe
 
 tests/test-pfds-deques.$(OBJEXT): tests/test-pfds-deques.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
@@ -743,6 +777,10 @@ tests/test-pfds-deques.exe: tests/test-pfds-deques.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
+EXTRA_DIST		+= tests/test-pfds-dlists.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-dlists.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-dlists.exe
+
 tests/test-pfds-dlists.$(OBJEXT): tests/test-pfds-dlists.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
@@ -750,6 +788,10 @@ tests/test-pfds-dlists.exe: tests/test-pfds-dlists.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ## --------------------------------------------------------------------
+
+EXTRA_DIST		+= tests/test-pfds-fingertrees.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-fingertrees.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-fingertrees.exe
 
 tests/test-pfds-fingertrees.$(OBJEXT): tests/test-pfds-fingertrees.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
@@ -759,6 +801,10 @@ tests/test-pfds-fingertrees.exe: tests/test-pfds-fingertrees.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
+EXTRA_DIST		+= tests/test-pfds-heaps.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-heaps.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-heaps.exe
+
 tests/test-pfds-heaps.$(OBJEXT): tests/test-pfds-heaps.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
@@ -766,6 +812,10 @@ tests/test-pfds-heaps.exe: tests/test-pfds-heaps.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ## --------------------------------------------------------------------
+
+EXTRA_DIST		+= tests/test-pfds-psqs.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-psqs.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-psqs.exe
 
 tests/test-pfds-psqs.$(OBJEXT): tests/test-pfds-psqs.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
@@ -775,6 +825,10 @@ tests/test-pfds-psqs.exe: tests/test-pfds-psqs.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
+EXTRA_DIST		+= tests/test-pfds-queues.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-queues.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-queues.exe
+
 tests/test-pfds-queues.$(OBJEXT): tests/test-pfds-queues.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
@@ -782,6 +836,10 @@ tests/test-pfds-queues.exe: tests/test-pfds-queues.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
 
 ## --------------------------------------------------------------------
+
+EXTRA_DIST		+= tests/test-pfds-sequences.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-sequences.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-sequences.exe
 
 tests/test-pfds-sequences.$(OBJEXT): tests/test-pfds-sequences.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
@@ -791,6 +849,10 @@ tests/test-pfds-sequences.exe: tests/test-pfds-sequences.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
+EXTRA_DIST		+= tests/test-pfds-sets.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-sets.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-sets.exe
+
 tests/test-pfds-sets.$(OBJEXT): tests/test-pfds-sets.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
@@ -799,10 +861,23 @@ tests/test-pfds-sets.exe: tests/test-pfds-sets.$(OBJEXT)
 
 ## --------------------------------------------------------------------
 
+EXTRA_DIST		+= tests/test-pfds-docs.scm
+MMCK_CHECK_OBJECTS	+= tests/test-pfds-docs.$(OBJEXT)
+MMCK_CHECK_PROGS	+= tests/test-pfds-docs.exe
+
 tests/test-pfds-docs.$(OBJEXT): tests/test-pfds-docs.scm $(MMCK_CHECK_DEPS)
 	$(MMCK_CHECK_ENV) $(CSC_COMPILE_OBJECT_STATIC) $(@) $(<)
 
 tests/test-pfds-docs.exe: tests/test-pfds-docs.$(OBJEXT)
 	$(MMCK_CHECK_ENV) $(CSC_LINK_PROGRAM) $(@) $(<)
+
+
+#### wrapping up tests
+
+CLEANFILES	+= $(MMCK_CHECK_PROGS) $(MMCK_CHECK_OBJECTS)
+
+if MMCK_TESTING_ENABLED
+TESTS		= $(MMCK_CHECK_PROGS)
+endif
 
 ### end of file

@@ -3,6 +3,14 @@
 			News file for MMCK PFDS
 			=======================
 
+Revision 0.5.0-devel.1
+----------------------
+
+* Updated packaging infrastructure.
+
+* Changed libraries installation directory.
+
+
 Revision 0.5.0-devel.0
 ----------------------
 

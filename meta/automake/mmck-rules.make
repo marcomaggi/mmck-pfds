@@ -250,12 +250,25 @@ installcheck-local: $(TESTS)
 
 #### running the interpreter and the tests
 
-.PHONY: repl test tests
+MMCK_SCRIPT_TEST_ENV = CHICKEN_REPOSITORY_PATH=$(top_srcdir)/lib:$(top_srcdir)/tests:$(builddir)/lib:$(CHICKEN_REPOSITORY_PATH); export CHICKEN_REPOSITORY_PATH;
+
+# In this shell environment we also set LD_LIBRARY_PATH (for Unix) and
+# DYLD_LIBRARY_PATH (for Darwin) to allow  the programs to find shared
+# libraries  that are  built using  GNU Libtool.   These settings  are
+# there even if this package does not build such libraries.  Sue me...
+#
+MMCK_SCRIPT_TEST_ENV += LD_LIBRARY_PATH=$(builddir)/.libs:$(LD_LIBRARY_PATH); export LD_LIBRARY_PATH;
+MMCK_SCRIPT_TEST_ENV += DYLD_LIBRARY_PATH=$(builddir)/.libs:$(DYLD_LIBRARY_PATH); export DYLD_LIBRARY_PATH;
+
+.PHONY: repl test tests script-test test-script script-tests tests-script
 
 repl:
 	$(MMCK_CHECK_ENV) $(CHICKEN_INTERPRETER)
 
 test tests: $(TESTS)
 	for f in $(builddir)/tests/test-*$(file)*.exe; do $(MMCK_CHECK_ENV) $$f; done
+
+script-test test-script script-tests tests-script:
+	for f in $(top_srcdir)/tests/test-*$(file)*.scm; do $(MMCK_SCRIPT_TEST_ENV) $(CHICKEN_INTERPRETER) -script $$f ; done
 
 ### end of file
